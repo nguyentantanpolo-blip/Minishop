@@ -1915,21 +1915,28 @@ export default function AdminPage() {
           MODAL 1: ADD / EDIT PRODUCT (WITH FILE UPLOAD - NO TYPING URLS)
           ===================================================================== */}
       <div className={`modal-overlay ${isProdModalOpen ? 'open' : ''}`}>
-        <div className="modal-admin-card" style={{ maxWidth: '680px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-              {editingProduct ? '✏️ Chỉnh Sửa Sản Phẩm' : '➕ Thêm Sản Phẩm Mới'}
-            </h2>
+        <div className="modal-admin-card modal-admin-card--lg">
+          {/* Header */}
+          <div className="modal-admin-header">
+            <div className="modal-admin-title-wrap">
+              <h3>{editingProduct ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}</h3>
+              <p className="modal-admin-subtitle">
+                {editingProduct
+                  ? 'Cập nhật thông tin sản phẩm đang quản lý.'
+                  : 'Điền đầy đủ thông tin để thêm sản phẩm vào gian hàng.'}
+              </p>
+            </div>
             <button
               type="button"
+              className="modal-close-btn"
               onClick={() => setIsProdModalOpen(false)}
-              style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
+              aria-label="Đóng"
             >
               ×
             </button>
           </div>
 
-          <form onSubmit={handleSaveProductForm} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form id="product-form" onSubmit={handleSaveProductForm} className="modal-admin-body">
             {/* Hidden File Input for Main Image */}
             <input
               type="file"
@@ -1949,173 +1956,284 @@ export default function AdminPage() {
               onChange={(e) => handleGalleryFiles(e.target.files)}
             />
 
-            <div className="form-group">
-              <label className="form-label">Tên sản phẩm (*)</label>
-              <input
-                type="text"
-                className="form-input"
-                required
-                placeholder="VD: Giày Tây Lười Da Bò Nam Tanpolo Luxury"
-                value={modalName}
-                onChange={(e) => setModalName(e.target.value)}
-              />
-            </div>
-
-            {/* Product Main Image: Upload from File (NO URL INPUT) */}
-            <div className="form-group">
-              <label className="form-label">📸 Ảnh đại diện chính sản phẩm (* Chọn từ máy)</label>
-              <div className="image-upload-wrapper">
-                {modalImage ? (
-                  <div className="image-preview-box">
-                    <img src={modalImage} alt="Ảnh sản phẩm" className="image-preview-thumb" />
-                    <div className="image-preview-info">
-                      <div className="image-preview-title">Ảnh chính đã chọn</div>
-                      <div className="image-preview-meta">
-                        {modalImageFileName || 'Đã chọn tệp hình ảnh từ thiết bị'}
-                      </div>
-                      <div className="image-preview-actions">
-                        <button
-                          type="button"
-                          className="btn-upload-action"
-                          onClick={() => mainImageInputRef.current?.click()}
-                        >
-                          🔄 Chọn ảnh khác từ máy
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-upload-action danger"
-                          onClick={() => {
-                            setModalImage('');
-                            setModalImageFileName('');
-                          }}
-                        >
-                          🗑️ Xóa ảnh
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className={`image-dropzone ${isDraggingMainImage ? 'dragging' : ''}`}
-                    onClick={() => mainImageInputRef.current?.click()}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setIsDraggingMainImage(true);
-                    }}
-                    onDragLeave={() => setIsDraggingMainImage(false)}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      setIsDraggingMainImage(false);
-                      handleMainImageFiles(e.dataTransfer.files);
-                    }}
-                  >
-                    <div className="image-dropzone-icon">📁</div>
-                    <div className="image-dropzone-title">Nhấp để chọn ảnh từ máy tính hoặc kéo thả vào đây</div>
-                    <div className="image-dropzone-subtitle">Hỗ trợ định dạng PNG, JPG, JPEG, WEBP (Tối đa 15MB)</div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div className="form-group">
-                <label className="form-label">Danh mục (*)</label>
-                <select
-                  className="form-input"
-                  value={modalCategory}
-                  onChange={(e) => setModalCategory(e.target.value)}
-                >
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+            {/* Section 1: Thông tin cơ bản */}
+            <div className="modal-form-section">
+              <div className="modal-form-section-title">
+                <span className="step-dot" />
+                Thông tin cơ bản
               </div>
 
               <div className="form-group">
-                <label className="form-label">Tình trạng kho (*)</label>
-                <select
-                  className="form-input"
-                  value={modalStock}
-                  onChange={(e) => setModalStock(e.target.value)}
-                >
-                  <option value="Còn hàng">Còn hàng (Sẵn sàng bán)</option>
-                  <option value="Sắp hết hàng">Sắp hết hàng</option>
-                  <option value="Tạm hết hàng">Tạm hết hàng</option>
-                  <option value="Hết hàng">Hết hàng</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px' }}>
-              <div className="form-group">
-                <label className="form-label">Số lượng tồn kho (*)</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  required
-                  min="0"
-                  placeholder="VD: 50"
-                  value={modalStockQuantity}
-                  onChange={(e) => setModalStockQuantity(e.target.value === '' ? '' : Number(e.target.value))}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Giá bán VNĐ (*)</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  required
-                  min="0"
-                  placeholder="VD: 680000"
-                  value={modalPrice}
-                  onChange={(e) => setModalPrice(e.target.value === '' ? '' : Number(e.target.value))}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Giá gốc VNĐ (Tùy chọn)</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  min="0"
-                  placeholder="VD: 850000"
-                  value={modalOldPrice}
-                  onChange={(e) => setModalOldPrice(e.target.value === '' ? '' : Number(e.target.value))}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Nhãn Badge</label>
+                <label className="form-label">
+                  Tên sản phẩm <span className="required">*</span>
+                </label>
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="VD: Mới, Hot, -20%"
-                  value={modalBadge}
-                  onChange={(e) => setModalBadge(e.target.value)}
+                  required
+                  placeholder="VD: Giày Tây Lười Da Bò Nam Tanpolo Luxury"
+                  value={modalName}
+                  onChange={(e) => setModalName(e.target.value)}
+                />
+              </div>
+
+              <div className="form-grid-2">
+                <div className="form-group">
+                  <label className="form-label">
+                    Danh mục <span className="required">*</span>
+                  </label>
+                  <select
+                    className="form-input"
+                    value={modalCategory}
+                    onChange={(e) => setModalCategory(e.target.value)}
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Tình trạng kho <span className="required">*</span>
+                  </label>
+                  <select
+                    className="form-input"
+                    value={modalStock}
+                    onChange={(e) => setModalStock(e.target.value)}
+                  >
+                    <option value="Còn hàng">Còn hàng (Sẵn sàng bán)</option>
+                    <option value="Sắp hết hàng">Sắp hết hàng</option>
+                    <option value="Tạm hết hàng">Tạm hết hàng</option>
+                    <option value="Hết hàng">Hết hàng</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Giá & kho */}
+            <div className="modal-form-section">
+              <div className="modal-form-section-title">
+                <span className="step-dot" />
+                Giá & tồn kho
+              </div>
+
+              <div className="form-grid-4">
+                <div className="form-group">
+                  <label className="form-label">
+                    Số lượng tồn <span className="required">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    required
+                    min="0"
+                    placeholder="VD: 50"
+                    value={modalStockQuantity}
+                    onChange={(e) => setModalStockQuantity(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Giá bán VNĐ <span className="required">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    required
+                    min="0"
+                    placeholder="VD: 680000"
+                    value={modalPrice}
+                    onChange={(e) => setModalPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Giá gốc VNĐ</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    min="0"
+                    placeholder="VD: 850000"
+                    value={modalOldPrice}
+                    onChange={(e) => setModalOldPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Nhãn Badge</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Mới, Hot, -20%"
+                    value={modalBadge}
+                    onChange={(e) => setModalBadge(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  Mô tả sản phẩm <span className="required">*</span>
+                </label>
+                <textarea
+                  className="form-input"
+                  rows={3}
+                  required
+                  placeholder="Mô tả chất liệu, tính năng, điểm nổi bật..."
+                  value={modalDesc}
+                  onChange={(e) => setModalDesc(e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Mô tả sản phẩm (*)</label>
-              <textarea
-                className="form-input"
-                rows={3}
-                required
-                placeholder="Mô tả chất liệu, tính năng, điểm nổi bật..."
-                value={modalDesc}
-                onChange={(e) => setModalDesc(e.target.value)}
-              />
+            {/* Section 3: Hình ảnh */}
+            <div className="modal-form-section">
+              <div className="modal-form-section-title">
+                <span className="step-dot" />
+                Hình ảnh sản phẩm
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Ảnh đại diện chính</label>
+                <div className="image-upload-wrapper">
+                  {modalImage ? (
+                    <div className="image-preview-box">
+                      <img src={modalImage} alt="Ảnh sản phẩm" className="image-preview-thumb" />
+                      <div className="image-preview-info">
+                        <div className="image-preview-title">Ảnh chính đã chọn</div>
+                        <div className="image-preview-meta">
+                          {modalImageFileName || 'Đã chọn tệp hình ảnh từ thiết bị'}
+                        </div>
+                        <div className="image-preview-actions">
+                          <button
+                            type="button"
+                            className="btn-upload-action"
+                            onClick={() => mainImageInputRef.current?.click()}
+                          >
+                            🔄 Chọn ảnh khác
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-upload-action danger"
+                            onClick={() => {
+                              setModalImage('');
+                              setModalImageFileName('');
+                            }}
+                          >
+                            🗑️ Xóa ảnh
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`image-dropzone ${isDraggingMainImage ? 'dragging' : ''}`}
+                      onClick={() => mainImageInputRef.current?.click()}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDraggingMainImage(true);
+                      }}
+                      onDragLeave={() => setIsDraggingMainImage(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDraggingMainImage(false);
+                        handleMainImageFiles(e.dataTransfer.files);
+                      }}
+                    >
+                      <div className="image-dropzone-icon">📁</div>
+                      <div className="image-dropzone-title">Nhấp để chọn ảnh hoặc kéo thả vào đây</div>
+                      <div className="image-dropzone-subtitle">PNG, JPG, JPEG, WEBP (Tối đa 15MB)</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Gallery */}
+              <div className="form-group">
+                <div className="gallery-header-row">
+                  <label className="form-label">Thư viện ảnh phụ</label>
+                  <div className="gallery-header-actions">
+                    <button
+                      type="button"
+                      className="btn-upload-action"
+                      onClick={() => galleryInputRef.current?.click()}
+                      style={{ background: 'var(--primary-light)', color: 'var(--primary-color)', borderColor: 'var(--primary-border)' }}
+                    >
+                      ➕ Thêm ảnh
+                    </button>
+                    {modalGallery.length > 0 && (
+                      <button
+                        type="button"
+                        className="btn-upload-action danger"
+                        onClick={() => setModalGallery([])}
+                      >
+                        Xóa tất cả ({modalGallery.length})
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div
+                  className="gallery-grid-wrapper"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDraggingGallery(true);
+                  }}
+                  onDragLeave={() => setIsDraggingGallery(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDraggingGallery(false);
+                    handleGalleryFiles(e.dataTransfer.files);
+                  }}
+                  style={{
+                    padding: isDraggingGallery ? '10px' : '0',
+                    borderRadius: '8px',
+                    background: isDraggingGallery ? '#f0fdf4' : 'transparent',
+                    border: isDraggingGallery ? '2px dashed var(--primary-color)' : 'none',
+                  }}
+                >
+                  {modalGallery.map((url, idx) => (
+                    <div key={idx} className="gallery-tile">
+                      <img src={url} alt={`gallery-${idx}`} />
+                      <span className="gallery-tile-badge">#{idx + 1}</span>
+                      <button
+                        type="button"
+                        className="gallery-tile-delete"
+                        onClick={() => handleRemoveGalleryItem(idx)}
+                        title="Xóa ảnh này"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Add Tile Button */}
+                  <div
+                    className="gallery-add-tile"
+                    onClick={() => galleryInputRef.current?.click()}
+                    title="Nhấp để tải thêm ảnh từ máy"
+                  >
+                    <span>+</span>
+                    <small>Chọn ảnh</small>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.875rem', marginBottom: '10px' }}>⚙️ Thông số kỹ thuật chi tiết</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>
-                  <label className="form-label" style={{ fontSize: '0.75rem' }}>Chất liệu</label>
+            {/* Section 4: Thông số kỹ thuật */}
+            <div className="modal-form-section">
+              <div className="modal-form-section-title">
+                <span className="step-dot" />
+                Thông số kỹ thuật
+              </div>
+
+              <div className="form-grid-2">
+                <div className="form-group">
+                  <label className="form-label">Chất liệu</label>
                   <input
                     type="text"
                     className="form-input"
@@ -2124,8 +2242,8 @@ export default function AdminPage() {
                     onChange={(e) => setModalMaterial(e.target.value)}
                   />
                 </div>
-                <div>
-                  <label className="form-label" style={{ fontSize: '0.75rem' }}>Màu sắc</label>
+                <div className="form-group">
+                  <label className="form-label">Màu sắc</label>
                   <input
                     type="text"
                     className="form-input"
@@ -2134,8 +2252,8 @@ export default function AdminPage() {
                     onChange={(e) => setModalColor(e.target.value)}
                   />
                 </div>
-                <div>
-                  <label className="form-label" style={{ fontSize: '0.75rem' }}>Kích thước / Size</label>
+                <div className="form-group">
+                  <label className="form-label">Kích thước / Size</label>
                   <input
                     type="text"
                     className="form-input"
@@ -2144,8 +2262,8 @@ export default function AdminPage() {
                     onChange={(e) => setModalDimensions(e.target.value)}
                   />
                 </div>
-                <div>
-                  <label className="form-label" style={{ fontSize: '0.75rem' }}>Xuất xứ</label>
+                <div className="form-group">
+                  <label className="form-label">Xuất xứ</label>
                   <input
                     type="text"
                     className="form-input"
@@ -2156,97 +2274,21 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-
-            {/* Gallery Management: Multi-file Upload (NO URL INPUT) */}
-            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <label className="form-label" style={{ marginBottom: 0 }}>
-                  🖼️ Thư viện ảnh phụ (Chọn nhiều ảnh từ máy tính)
-                </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    type="button"
-                    className="btn-upload-action"
-                    onClick={() => galleryInputRef.current?.click()}
-                    style={{ background: 'var(--primary-light)', color: 'var(--primary-color)', borderColor: 'var(--primary-border)' }}
-                  >
-                    ➕ Thêm ảnh từ máy
-                  </button>
-                  {modalGallery.length > 0 && (
-                    <button
-                      type="button"
-                      className="btn-upload-action danger"
-                      onClick={() => setModalGallery([])}
-                    >
-                      Xóa tất cả ({modalGallery.length})
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Gallery Grid */}
-              <div
-                className="gallery-grid-wrapper"
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsDraggingGallery(true);
-                }}
-                onDragLeave={() => setIsDraggingGallery(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setIsDraggingGallery(false);
-                  handleGalleryFiles(e.dataTransfer.files);
-                }}
-                style={{
-                  padding: isDraggingGallery ? '10px' : '0',
-                  borderRadius: '8px',
-                  background: isDraggingGallery ? '#f0fdf4' : 'transparent',
-                  border: isDraggingGallery ? '2px dashed var(--primary-color)' : 'none',
-                }}
-              >
-                {modalGallery.map((url, idx) => (
-                  <div key={idx} className="gallery-tile">
-                    <img src={url} alt={`gallery-${idx}`} />
-                    <span className="gallery-tile-badge">#{idx + 1}</span>
-                    <button
-                      type="button"
-                      className="gallery-tile-delete"
-                      onClick={() => handleRemoveGalleryItem(idx)}
-                      title="Xóa ảnh này"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-
-                {/* Add Tile Button */}
-                <div
-                  className="gallery-add-tile"
-                  onClick={() => galleryInputRef.current?.click()}
-                  title="Nhấp để tải thêm ảnh từ máy"
-                >
-                  <span>+</span>
-                  <small>Chọn ảnh</small>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '16px' }}>
-              <button
-                type="button"
-                className="btn-admin-reset"
-                onClick={() => setIsProdModalOpen(false)}
-              >
-                Hủy bỏ
-              </button>
-              <button
-                type="submit"
-                className="btn-admin-add"
-              >
-                💾 {editingProduct ? 'Cập nhật sản phẩm' : 'Lưu sản phẩm mới'}
-              </button>
-            </div>
           </form>
+
+          {/* Footer actions (fixed, outside scrollable body) */}
+          <div className="modal-admin-footer">
+            <button
+              type="button"
+              className="btn-admin-reset"
+              onClick={() => setIsProdModalOpen(false)}
+            >
+              Hủy bỏ
+            </button>
+            <button type="submit" form="product-form" className="btn-admin-add">
+              💾 {editingProduct ? 'Cập nhật sản phẩm' : 'Lưu sản phẩm mới'}
+            </button>
+          </div>
         </div>
       </div>
 

@@ -2456,23 +2456,43 @@ img {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.25);
   display: flex;
   flex-direction: column;
 }
 
+.modal-admin-card--lg {
+  max-width: 720px;
+  overflow: hidden;
+}
+
 .modal-admin-header {
   padding: 20px 24px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
+  background-color: #ffffff;
 }
 
 .modal-admin-header h3 {
   font-size: 1.25rem;
   font-weight: 800;
   color: var(--text-dark);
+  margin: 0;
+}
+
+.modal-admin-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-admin-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .modal-close-btn {
@@ -2484,6 +2504,7 @@ img {
   line-height: 1;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
 }
 
 .modal-close-btn:hover {
@@ -2495,17 +2516,73 @@ img {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: #ffffff;
 }
 
 .modal-admin-footer {
   padding: 16px 24px;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  background-color: var(--bg-subtle);
+  background-color: #f8fafc;
+  flex-shrink: 0;
+}
+
+/* Form section grouping inside modals */
+.modal-admin-body .form-group {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.modal-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-form-section-title .step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .form-grid-2,
+  .form-grid-4 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Footer Styles (TANPOLO Brand Design) */
@@ -3031,6 +3108,20 @@ img {
 }
 
 /* Gallery Upload Grid */
+.gallery-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.gallery-header-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .gallery-grid-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
