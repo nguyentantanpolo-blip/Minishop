@@ -115,7 +115,7 @@ export default function Footer() {
 
               {/* Facebook */}
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/tanpolovietnam"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-channel-item"
