@@ -29,6 +29,7 @@ export interface Product {
   stock: string;
   stockQuantity: number;
   specs?: ProductSpecs;
+  createdAt?: string;
 }
 
 export interface CartItem {
@@ -75,6 +76,7 @@ export interface Customer {
   totalOrders?: number;
   totalSpent?: number;
   createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface DashboardStats {
