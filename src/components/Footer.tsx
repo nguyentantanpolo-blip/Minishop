@@ -166,22 +166,22 @@ export default function Footer() {
             <h4 className="footer-heading">CHÍNH SÁCH</h4>
             <ul className="footer-links-group">
               <li>
-                <a href="#footer">Chăm sóc khách hàng</a>
+                <Link href="/chinh-sach/cham-soc-khach-hang">Chăm sóc khách hàng</Link>
               </li>
               <li>
-                <a href="#footer">Chính sách bảo hành</a>
+                <Link href="/chinh-sach/bao-hanh">Chính sách bảo hành</Link>
               </li>
               <li>
-                <a href="#footer">Chính sách đổi hàng</a>
+                <Link href="/chinh-sach/doi-tra-hang">Chính sách đổi hàng</Link>
               </li>
               <li>
-                <a href="#footer">Chính sách thanh toán</a>
+                <Link href="/chinh-sach/thanh-toan">Chính sách thanh toán</Link>
               </li>
               <li>
-                <a href="#footer">Chính sách vận chuyển</a>
+                <Link href="/chinh-sach/van-chuyen">Chính sách vận chuyển</Link>
               </li>
               <li>
-                <a href="#footer">Chính sách bảo mật</a>
+                <Link href="/chinh-sach/bao-mat">Chính sách bảo mật</Link>
               </li>
             </ul>
           </div>

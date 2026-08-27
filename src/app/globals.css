@@ -2,6 +2,8 @@
    MINI SHOP - GLOBAL DESIGN SYSTEM & STYLES (NEXT.JS)
    ========================================================================== */
 
+@import './policy-pages.css';
+
 :root {
   /* Color Palette */
   --primary-color: #22c55e;
