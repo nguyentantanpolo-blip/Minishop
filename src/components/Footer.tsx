@@ -11,10 +11,10 @@ export default function Footer() {
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes('@')) {
-      showToast('⚠️ Vui lòng nhập địa chỉ email hợp lệ!', 'warning');
+      showToast('Vui lòng nhập địa chỉ email hợp lệ!', 'warning');
       return;
     }
-    showToast('🎉 Cảm ơn bạn đã đăng ký nhận thông tin từ TANPOLO!', 'success');
+    showToast('Cảm ơn bạn đã đăng ký nhận thông tin từ TANPOLO!', 'success');
     setEmail('');
   };
 

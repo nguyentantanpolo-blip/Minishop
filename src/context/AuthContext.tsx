@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = (account: string, pass: string): boolean => {
     if (!account.trim() || !pass.trim()) {
-      showToast('⚠️ Vui lòng nhập đầy đủ thông tin đăng nhập!', 'warning');
+      showToast('Vui lòng nhập đầy đủ thông tin đăng nhập!', 'warning');
       return false;
     }
 
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     saveUser(newUser);
-    showToast(`🎉 Đăng nhập thành công! Chào mừng ${newUser.name}`, 'success');
+    showToast(`Đăng nhập thành công! Chào mừng ${newUser.name}`, 'success');
     return true;
   };
 
@@ -65,12 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       : { name: 'Nguyễn Văn A', email: 'user@minishop.vn', role: 'user' };
 
     saveUser(newUser);
-    showToast(`⚡ Đăng nhập nhanh với vai trò: ${role === 'admin' ? 'Quản Trị Viên (Admin)' : 'Khách Hàng'}`, 'success');
+    showToast(`Đăng nhập nhanh với vai trò: ${role === 'admin' ? 'Quản Trị Viên (Admin)' : 'Khách Hàng'}`, 'success');
   };
 
   const register = (name: string, email: string, pass: string): boolean => {
     if (!name.trim() || !email.trim() || !pass.trim()) {
-      showToast('⚠️ Vui lòng điền đầy đủ các thông tin bắt buộc!', 'warning');
+      showToast('Vui lòng điền đầy đủ các thông tin bắt buộc!', 'warning');
       return false;
     }
 
@@ -81,13 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     saveUser(newUser);
-    showToast('🎉 Đăng ký tài khoản thành công!', 'success');
+    showToast('Đăng ký tài khoản thành công!', 'success');
     return true;
   };
 
   const logout = () => {
     saveUser(null);
-    showToast('👋 Đã đăng xuất khỏi tài khoản.', 'info');
+    showToast('Đã đăng xuất khỏi tài khoản.', 'info');
   };
 
   return (

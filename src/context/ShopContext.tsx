@@ -845,9 +845,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         const synced = products.map((p) => (p.id === newId ? created : p));
         saveProductsToStorage(synced.length ? synced : [created, ...products]);
       }
-      showToast(`✅ Đã thêm sản phẩm "${newProduct.name}" vào Database!`, 'success');
+      showToast(`Đã thêm sản phẩm "${newProduct.name}" vào Database!`, 'success');
     } catch (err: any) {
-      showToast(`✅ Đã lưu sản phẩm "${newProduct.name}"!`, 'success');
+      showToast(`Đã lưu sản phẩm "${newProduct.name}"!`, 'success');
     }
   };
 
@@ -857,9 +857,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.updateProduct(id, productData);
-      showToast(`✅ Đã cập nhật sản phẩm "${productData.name || id}" trên Database!`, 'success');
+      showToast(`Đã cập nhật sản phẩm "${productData.name || id}" trên Database!`, 'success');
     } catch (err: any) {
-      showToast(`✅ Đã cập nhật sản phẩm "${productData.name || id}"!`, 'success');
+      showToast(`Đã cập nhật sản phẩm "${productData.name || id}"!`, 'success');
     }
   };
 
@@ -870,15 +870,15 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.deleteProduct(id);
-      showToast(`🗑️ Đã xóa sản phẩm "${p?.name || id}" khỏi Database!`, 'info');
+      showToast(`Đã xóa sản phẩm "${p?.name || id}" khỏi Database!`, 'info');
     } catch (err: any) {
-      showToast(`🗑️ Đã xóa sản phẩm "${p?.name || id}"!`, 'info');
+      showToast(`Đã xóa sản phẩm "${p?.name || id}"!`, 'info');
     }
   };
 
   const resetProducts = () => {
     saveProductsToStorage(INITIAL_PRODUCTS);
-    showToast('🔄 Đã khôi phục dữ liệu sản phẩm mặc định!', 'info');
+    showToast('Đã khôi phục dữ liệu sản phẩm mặc định!', 'info');
   };
 
   const adjustStock = async (
@@ -907,10 +907,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.adjustStock(productId, payload);
-      showToast(`📦 Đã cập nhật tồn kho "${prod.name}" (${currentQty} ➔ ${targetQty})!`, 'success');
+      showToast(`Đã cập nhật tồn kho "${prod.name}" (${currentQty} → ${targetQty})!`, 'success');
       refreshData();
     } catch (err: any) {
-      showToast(`📦 Đã điều chỉnh tồn kho "${prod.name}"!`, 'info');
+      showToast(`Đã điều chỉnh tồn kho "${prod.name}"!`, 'info');
     }
   };
 
@@ -923,9 +923,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.createCategory(catData);
-      showToast(`✅ Đã thêm danh mục "${catData.name}" vào Database!`, 'success');
+      showToast(`Đã thêm danh mục "${catData.name}" vào Database!`, 'success');
     } catch (err: any) {
-      showToast(`✅ Đã thêm danh mục "${catData.name}"!`, 'success');
+      showToast(`Đã thêm danh mục "${catData.name}"!`, 'success');
     }
   };
 
@@ -942,9 +942,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.updateCategory(id, catData);
-      showToast(`✅ Đã cập nhật danh mục "${catData.name || id}" trên Database!`, 'success');
+      showToast(`Đã cập nhật danh mục "${catData.name || id}" trên Database!`, 'success');
     } catch (err: any) {
-      showToast(`✅ Đã cập nhật danh mục "${catData.name || id}"!`, 'success');
+      showToast(`Đã cập nhật danh mục "${catData.name || id}"!`, 'success');
     }
   };
 
@@ -953,7 +953,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     const prodsInCat = products.filter((p) => p.category === id);
 
     if (prodsInCat.length > 0) {
-      showToast(`⚠️ Không thể xóa: Có ${prodsInCat.length} sản phẩm thuộc danh mục "${cat?.name}".`, 'warning');
+      showToast(`Không thể xóa: Có ${prodsInCat.length} sản phẩm thuộc danh mục "${cat?.name}".`, 'warning');
       return;
     }
 
@@ -962,9 +962,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.deleteCategory(id);
-      showToast(`🗑️ Đã xóa danh mục "${cat?.name || id}" khỏi Database!`, 'info');
+      showToast(`Đã xóa danh mục "${cat?.name || id}" khỏi Database!`, 'info');
     } catch (err: any) {
-      showToast(`🗑️ Đã xóa danh mục "${cat?.name || id}"!`, 'info');
+      showToast(`Đã xóa danh mục "${cat?.name || id}"!`, 'info');
     }
   };
 
@@ -1055,9 +1055,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.updateOrderStatus(orderId, status);
-      showToast(`✅ Đã cập nhật đơn ${orderId} trên Database: ${statusTextMap[status]}`, 'success');
+      showToast(`Đã cập nhật đơn ${orderId} trên Database: ${statusTextMap[status]}`, 'success');
     } catch (err) {
-      showToast(`✅ Đã cập nhật đơn ${orderId} sang: ${statusTextMap[status]}`, 'success');
+      showToast(`Đã cập nhật đơn ${orderId} sang: ${statusTextMap[status]}`, 'success');
     }
   };
 
@@ -1067,9 +1067,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.updateOrder(orderId, orderData);
-      showToast(`✅ Đã cập nhật thông tin đơn hàng ${orderId} trên Database!`, 'success');
+      showToast(`Đã cập nhật thông tin đơn hàng ${orderId} trên Database!`, 'success');
     } catch (err) {
-      showToast(`✅ Đã cập nhật thông tin đơn hàng ${orderId}!`, 'success');
+      showToast(`Đã cập nhật thông tin đơn hàng ${orderId}!`, 'success');
     }
   };
 
@@ -1079,9 +1079,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.deleteOrder(orderId);
-      showToast(`🗑️ Đã xóa đơn hàng ${orderId} khỏi Database!`, 'info');
+      showToast(`Đã xóa đơn hàng ${orderId} khỏi Database!`, 'info');
     } catch (err) {
-      showToast(`🗑️ Đã xóa đơn hàng ${orderId}!`, 'info');
+      showToast(`Đã xóa đơn hàng ${orderId}!`, 'info');
     }
   };
 
@@ -1107,9 +1107,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.createCustomer(newCustomer);
-      showToast(`✅ Đã thêm khách hàng "${newCustomer.name}" vào Database!`, 'success');
+      showToast(`Đã thêm khách hàng "${newCustomer.name}" vào Database!`, 'success');
     } catch (err: any) {
-      showToast(`✅ Đã thêm khách hàng "${newCustomer.name}"!`, 'success');
+      showToast(`Đã thêm khách hàng "${newCustomer.name}"!`, 'success');
     }
   };
 
@@ -1119,9 +1119,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.updateCustomer(id, customerData);
-      showToast(`✅ Đã cập nhật khách hàng "${customerData.name || id}" trên Database!`, 'success');
+      showToast(`Đã cập nhật khách hàng "${customerData.name || id}" trên Database!`, 'success');
     } catch (err: any) {
-      showToast(`✅ Đã cập nhật thông tin khách hàng!`, 'success');
+      showToast(`Đã cập nhật thông tin khách hàng!`, 'success');
     }
   };
 
@@ -1132,9 +1132,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     try {
       await api.deleteCustomer(id);
-      showToast(`🗑️ Đã xóa khách hàng "${c?.name || id}" khỏi Database!`, 'info');
+      showToast(`Đã xóa khách hàng "${c?.name || id}" khỏi Database!`, 'info');
     } catch (err: any) {
-      showToast(`🗑️ Đã xóa khách hàng "${c?.name || id}"!`, 'info');
+      showToast(`Đã xóa khách hàng "${c?.name || id}"!`, 'info');
     }
   };
 

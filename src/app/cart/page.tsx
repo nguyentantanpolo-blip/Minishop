@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useShop } from '@/context/ShopContext';
+import { IconSparkles } from '@/components/icons';
 
 export default function CartPage() {
   const router = useRouter();
@@ -157,7 +158,8 @@ export default function CartPage() {
             </div>
           ) : (
             <div className="shipping-hint-box text-green" style={{ backgroundColor: 'var(--primary-light)' }}>
-              🎉 Đơn hàng của bạn đủ điều kiện <strong>Freeship toàn quốc</strong>!
+              <IconSparkles size={14} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
+              Đơn hàng của bạn đủ điều kiện <strong>Freeship toàn quốc</strong>!
             </div>
           )}
 

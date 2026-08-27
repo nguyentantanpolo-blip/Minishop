@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { IconDot } from '@/components/icons';
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
@@ -69,11 +70,13 @@ export default function ProductCard({ product }: { product: Product }) {
               fontWeight: 700,
             }}
           >
-            {isOutOfStock
-              ? '🔴 Hết hàng'
-              : isLowStock
-              ? `⚡ Chỉ còn ${stockQty} cái`
-              : `🟢 Còn ${stockQty} SP`}
+            {isOutOfStock ? (
+              <><IconDot size={10} style={{ color: '#dc2626', verticalAlign: 'middle' }} /> Hết hàng</>
+            ) : isLowStock ? (
+              <><IconDot size={10} style={{ color: '#f59e0b', verticalAlign: 'middle' }} /> Chỉ còn {stockQty} cái</>
+            ) : (
+              <><IconDot size={10} style={{ color: '#16a34a', verticalAlign: 'middle' }} /> Còn {stockQty} SP</>
+            )}
           </span>
         </div>
         <div className="card-btn-group">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useWishlist } from '@/context/WishlistContext';
 import { useShop } from '@/context/ShopContext';
 import ProductCard from '@/components/ProductCard';
+import { IconHeart } from '@/components/icons';
 
 export default function WishlistPage() {
   const { wishlist } = useWishlist();
@@ -23,7 +24,7 @@ export default function WishlistPage() {
 
       <div className="products-toolbar">
         <div>
-          <h1 className="products-page-title">Sản phẩm yêu thích ❤️</h1>
+          <h1 className="products-page-title">Sản phẩm yêu thích <IconHeart size={20} style={{ color: '#e11d48', verticalAlign: 'middle' }} /></h1>
           <p className="products-count">Hiển thị {wishlistedProducts.length} sản phẩm đã lưu</p>
         </div>
         <Link href="/products" className="section-link">

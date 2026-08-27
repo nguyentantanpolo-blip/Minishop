@@ -20,63 +20,38 @@ const readFileAsDataUrl = (file: File): Promise<string> => {
   });
 };
 
-// Inline SVG icons (no emoji), inherit color via currentColor
-type IconProps = { size?: number };
-
-const IconRefresh = ({ size = 14 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M21 12a9 9 0 1 1-2.64-6.36" />
-    <path d="M21 3v6h-6" />
-  </svg>
-);
-
-const IconTrash = ({ size = 14 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M3 6h18" />
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    <line x1="10" y1="11" x2="10" y2="17" />
-    <line x1="14" y1="11" x2="14" y2="17" />
-  </svg>
-);
-
-const IconUpload = ({ size = 22 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <path d="M7 9l5-5 5 5" />
-    <line x1="12" y1="4" x2="12" y2="15" />
-  </svg>
-);
-
-const IconPlus = ({ size = 14 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <line x1="12" y1="5" x2="12" y2="19" />
-    <line x1="5" y1="12" x2="19" y2="12" />
-  </svg>
-);
-
-const IconSave = ({ size = 14 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-    <path d="M17 21v-8H7v8" />
-    <path d="M7 3v5h8" />
-  </svg>
-);
-
-const IconImage = ({ size = 16 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <circle cx="8.5" cy="8.5" r="1.5" />
-    <path d="M21 15l-5-5L5 21" />
-  </svg>
-);
-
-const IconEdit = ({ size = 14 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-    <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z" />
-  </svg>
-);
+import {
+  IconBarChart,
+  IconBriefcase,
+  IconClipboard,
+  IconDot,
+  IconEye,
+  IconFolder,
+  IconImage,
+  IconKey,
+  IconLock,
+  IconMail,
+  IconMapPin,
+  IconMinus,
+  IconPackage,
+  IconPencil,
+  IconPhone,
+  IconPlus,
+  IconPrinter,
+  IconRefresh,
+  IconRocket,
+  IconSave,
+  IconSettings,
+  IconShield,
+  IconShoppingBag,
+  IconTarget,
+  IconTrash,
+  IconUpload,
+  IconUser,
+  IconUsers,
+  IconWarning,
+  IconZap,
+} from '@/components/icons';
 
 export default function AdminPage() {
   const {
@@ -267,7 +242,9 @@ export default function AdminPage() {
           textAlign: 'center',
           boxShadow: 'var(--shadow-md)',
         }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔒</div>
+          <div style={{ marginBottom: '16px', color: 'var(--text-muted)' }}>
+            <IconLock size={48} />
+          </div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '12px', color: 'var(--text-dark)' }}>
             Khu Vực Quản Trị Hệ Thống (Admin Only)
           </h2>
@@ -283,7 +260,7 @@ export default function AdminPage() {
               onClick={() => quickLogin('admin')}
               style={{ width: '100%', justifyContent: 'center', height: '42px', fontSize: '0.9rem' }}
             >
-              ⚡ Đăng nhập nhanh quyền Quản Trị Viên
+              <IconZap size={14} /> Đăng nhập nhanh quyền Quản Trị Viên
             </button>
 
             <Link
@@ -750,7 +727,7 @@ export default function AdminPage() {
       <div className="admin-header-bar">
         <div className="admin-title-area">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '1.8rem' }}>⚙️</span>
+            <span style={{ fontSize: '1.8rem', color: 'var(--primary-color)' }}><IconSettings size={28} /></span>
             <div>
               <h1>Bảng Quản Trị Hệ Thống MiniShop</h1>
               <p>
@@ -775,7 +752,7 @@ export default function AdminPage() {
             className="btn-admin-reset"
             title="Đồng bộ dữ liệu mới nhất từ Database"
           >
-            🔄 Đồng bộ DB
+            <IconRefresh size={14} /> Đồng bộ DB
           </button>
           <button
             onClick={() => logout()}
@@ -793,14 +770,14 @@ export default function AdminPage() {
           className={`admin-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
           onClick={() => setActiveTab('overview')}
         >
-          <span>📊 Tổng quan & Báo cáo</span>
+          <span><IconBarChart size={14} /> Tổng quan & Báo cáo</span>
         </button>
 
         <button
           className={`admin-tab-btn ${activeTab === 'products' ? 'active' : ''}`}
           onClick={() => setActiveTab('products')}
         >
-          <span>👞 Sản phẩm</span>
+          <span><IconShoppingBag size={14} /> Sản phẩm</span>
           <span className="admin-tab-badge">{products.length}</span>
         </button>
 
@@ -808,7 +785,7 @@ export default function AdminPage() {
           className={`admin-tab-btn ${activeTab === 'categories' ? 'active' : ''}`}
           onClick={() => setActiveTab('categories')}
         >
-          <span>📁 Danh mục</span>
+          <span><IconFolder size={14} /> Danh mục</span>
           <span className="admin-tab-badge">{categories.length}</span>
         </button>
 
@@ -816,12 +793,12 @@ export default function AdminPage() {
           className={`admin-tab-btn ${activeTab === 'inventory' ? 'active' : ''}`}
           onClick={() => setActiveTab('inventory')}
         >
-          <span>📊 Quản lý tồn kho</span>
+          <span><IconBarChart size={14} /> Quản lý tồn kho</span>
           <span
             className="admin-tab-badge"
             style={lowStockProducts.length > 0 ? { background: '#f59e0b', color: '#fff' } : {}}
           >
-            {lowStockProducts.length > 0 ? `⚠️ ${lowStockProducts.length}` : `${totalInventoryUnits} SP`}
+            {lowStockProducts.length > 0 ? `${lowStockProducts.length}` : `${totalInventoryUnits} SP`}
           </span>
         </button>
 
@@ -829,7 +806,7 @@ export default function AdminPage() {
           className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
           onClick={() => setActiveTab('orders')}
         >
-          <span>📦 Đơn hàng</span>
+          <span><IconPackage size={14} /> Đơn hàng</span>
           <span className="admin-tab-badge">{orders.length}</span>
         </button>
 
@@ -837,7 +814,7 @@ export default function AdminPage() {
           className={`admin-tab-btn ${activeTab === 'customers' ? 'active' : ''}`}
           onClick={() => setActiveTab('customers')}
         >
-          <span>👥 Khách hàng</span>
+          <span><IconUsers size={14} /> Khách hàng</span>
           <span className="admin-tab-badge">{customers.length}</span>
         </button>
       </div>
@@ -894,7 +871,7 @@ export default function AdminPage() {
                 <div className="stat-label">Sản phẩm & Tồn kho</div>
                 <div className="stat-value">{products.length} SP</div>
                 <div style={{ fontSize: '0.75rem', color: outOfStockProducts.length > 0 ? '#ef4444' : '#16a34a', fontWeight: 600 }}>
-                  {outOfStockProducts.length > 0 ? `⚠️ ${outOfStockProducts.length} SP hết hàng` : '✅ Tất cả còn hàng'}
+                  {outOfStockProducts.length > 0 ? `${outOfStockProducts.length} SP hết hàng` : 'Tất cả còn hàng'}
                 </div>
               </div>
             </div>
@@ -923,7 +900,7 @@ export default function AdminPage() {
             {/* Category Breakdown Card */}
             <div className="admin-table-card" style={{ marginBottom: 0 }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '16px', color: 'var(--text-dark)' }}>
-                📁 Phân bố sản phẩm theo danh mục
+                <IconFolder size={16} /> Phân bố sản phẩm theo danh mục
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {categories.map((c) => {
@@ -947,7 +924,7 @@ export default function AdminPage() {
             {/* Quick Actions Card */}
             <div className="admin-table-card" style={{ marginBottom: 0 }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '16px', color: 'var(--text-dark)' }}>
-                ⚡ Lối tắt thao tác nhanh
+                <IconZap size={16} /> Lối tắt thao tác nhanh
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <button
@@ -955,35 +932,35 @@ export default function AdminPage() {
                   className="btn-admin-add"
                   style={{ justifyContent: 'center', height: '44px', borderRadius: '10px' }}
                 >
-                  ➕ Thêm sản phẩm
+                  <IconPlus size={14} /> Thêm sản phẩm
                 </button>
                 <button
                   onClick={() => { setActiveTab('inventory'); }}
                   className="btn-admin-add"
                   style={{ justifyContent: 'center', height: '44px', borderRadius: '10px', background: '#d97706' }}
                 >
-                  📊 Quản lý tồn kho
+                  <IconBarChart size={14} /> Quản lý tồn kho
                 </button>
                 <button
                   onClick={() => { setActiveTab('orders'); handleOpenManualOrderModal(); }}
                   className="btn-admin-add"
                   style={{ justifyContent: 'center', height: '44px', borderRadius: '10px', background: '#059669' }}
                 >
-                  📦 Tạo đơn thủ công
+                  <IconPackage size={14} /> Tạo đơn thủ công
                 </button>
                 <button
                   onClick={() => { setActiveTab('customers'); handleOpenAddCustomer(); }}
                   className="btn-admin-add"
                   style={{ justifyContent: 'center', height: '44px', borderRadius: '10px', background: '#8b5cf6' }}
                 >
-                  👥 Thêm khách hàng
+                  <IconUsers size={14} /> Thêm khách hàng
                 </button>
               </div>
 
               {lowStockProducts.length > 0 && (
                 <div style={{ marginTop: '16px', padding: '12px', background: '#fffbeb', borderRadius: '10px', border: '1px solid #fde68a', fontSize: '0.825rem' }}>
                   <div style={{ fontWeight: 700, marginBottom: '4px', color: '#b45309' }}>
-                    ⚠️ Cảnh báo tồn kho: Có {lowStockProducts.length} sản phẩm sắp hết hàng
+                    <IconWarning size={14} /> Cảnh báo tồn kho: Có {lowStockProducts.length} sản phẩm sắp hết hàng
                   </div>
                   <div style={{ color: '#92400e', marginBottom: '8px' }}>
                     {lowStockProducts.slice(0, 2).map(p => `${p.name} (${p.stockQuantity || 0} cái)`).join(', ')}...
@@ -998,7 +975,7 @@ export default function AdminPage() {
               )}
 
               <div style={{ marginTop: '16px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.825rem' }}>
-                <div style={{ fontWeight: 700, marginBottom: '4px', color: '#0f172a' }}>🛡️ Trạng thái cơ sở dữ liệu Supabase</div>
+                <div style={{ fontWeight: 700, marginBottom: '4px', color: '#0f172a' }}><IconShield size={14} /> Trạng thái cơ sở dữ liệu Supabase</div>
                 <div style={{ color: '#64748b' }}>
                   PostgreSQL Session Pooler v16 | RLS Policies Active | IPv4 Supported | Đồng bộ tự động thời gian thực.
                 </div>
@@ -1010,7 +987,7 @@ export default function AdminPage() {
           <div className="admin-table-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-dark)' }}>
-                📦 Đơn hàng gần đây
+                <IconPackage size={16} /> Đơn hàng gần đây
               </h3>
               <button
                 onClick={() => setActiveTab('orders')}
@@ -1050,7 +1027,7 @@ export default function AdminPage() {
                         title="Xem chi tiết"
                         onClick={() => setViewingOrder(order)}
                       >
-                        👁️
+                        <IconEye size={14} />
                       </button>
                     </td>
                   </tr>
@@ -1108,10 +1085,10 @@ export default function AdminPage() {
 
             <div className="admin-toolbar-right">
               <button className="btn-admin-add" onClick={handleOpenAddProduct}>
-                <span>➕ Thêm sản phẩm mới</span>
+                <span><IconPlus size={14} /> Thêm sản phẩm mới</span>
               </button>
               <button className="btn-admin-reset" onClick={resetProducts} title="Khôi phục 19 sản phẩm đồ da chuẩn">
-                🔄 Dữ liệu mẫu
+                <IconRefresh size={14} /> Dữ liệu mẫu
               </button>
             </div>
           </div>
@@ -1181,14 +1158,14 @@ export default function AdminPage() {
                           title="Nhân bản sản phẩm"
                           onClick={() => handleCloneProduct(p)}
                         >
-                          📋
+                          <IconClipboard size={14} />
                         </button>
                         <button
                           className="btn-action-sm"
                           title="Chỉnh sửa sản phẩm"
                           onClick={() => handleOpenEditProduct(p)}
                         >
-                          ✏️
+                          <IconPencil size={14} />
                         </button>
                         <button
                           className="btn-action-sm"
@@ -1200,7 +1177,7 @@ export default function AdminPage() {
                           }}
                           style={{ color: '#ef4444' }}
                         >
-                          🗑️
+                          <IconTrash size={14} />
                         </button>
                       </div>
                     </td>
@@ -1236,7 +1213,7 @@ export default function AdminPage() {
 
             <div className="admin-toolbar-right">
               <button className="btn-admin-add" onClick={handleOpenAddCategory}>
-                <span>📁 Thêm danh mục mới</span>
+                <span><IconFolder size={14} /> Thêm danh mục mới</span>
               </button>
             </div>
           </div>
@@ -1293,7 +1270,7 @@ export default function AdminPage() {
                           cursor: 'pointer',
                         }}
                       >
-                        ✏️ Chỉnh sửa
+                        <IconPencil size={14} /> Chỉnh sửa
                       </button>
                       <button
                         onClick={() => {
@@ -1312,7 +1289,7 @@ export default function AdminPage() {
                           cursor: 'pointer',
                         }}
                       >
-                        🗑️ Xóa
+                        <IconTrash size={14} /> Xóa
                       </button>
                     </div>
                   </div>
@@ -1445,9 +1422,9 @@ export default function AdminPage() {
                 onChange={(e) => setInventoryStatusFilter(e.target.value as any)}
               >
                 <option value="all">Tất cả trạng thái kho</option>
-                <option value="in_stock">🟢 Còn hàng dồi dào (&gt; 5 chiếc)</option>
-                <option value="low_stock">⚡ Sắp hết hàng (1 - 5 chiếc)</option>
-                <option value="out_of_stock">🔴 Đã hết hàng (0 chiếc)</option>
+                <option value="in_stock"><IconDot size={10} style={{ color: '#16a34a' }} /> Còn hàng dồi dào (&gt; 5 chiếc)</option>
+                <option value="low_stock"><IconDot size={10} style={{ color: '#f59e0b' }} /> Sắp hết hàng (1 - 5 chiếc)</option>
+                <option value="out_of_stock"><IconDot size={10} style={{ color: '#dc2626' }} /> Đã hết hàng (0 chiếc)</option>
               </select>
 
               <select
@@ -1470,7 +1447,7 @@ export default function AdminPage() {
                   if (products[0]) handleOpenAdjustModal(products[0], 'add');
                 }}
               >
-                <span>📦 Nhập kho / Điều chỉnh</span>
+                <span><IconPackage size={14} /> Nhập kho / Điều chỉnh</span>
               </button>
             </div>
           </div>
@@ -1694,7 +1671,7 @@ export default function AdminPage() {
                           }}
                           onClick={() => handleOpenAdjustModal(p, 'set')}
                         >
-                          🛠️ Điều chỉnh
+                          <IconSettings size={14} /> Điều chỉnh
                         </button>
                       </td>
                     </tr>
@@ -1742,7 +1719,7 @@ export default function AdminPage() {
 
             <div className="admin-toolbar-right">
               <button className="btn-admin-add" onClick={handleOpenManualOrderModal}>
-                <span>📦 Tạo đơn hàng thủ công</span>
+                <span><IconPackage size={14} /> Tạo đơn hàng thủ công</span>
               </button>
             </div>
           </div>
@@ -1770,7 +1747,7 @@ export default function AdminPage() {
                     </td>
                     <td>
                       <div style={{ fontWeight: 600, color: 'var(--text-dark)' }}>{order.customer}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>📞 {order.phone}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}><IconPhone size={12} /> {order.phone}</div>
                     </td>
                     <td>
                       <div style={{ fontSize: '0.825rem', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={order.address}>
@@ -1795,10 +1772,10 @@ export default function AdminPage() {
                         value={order.status}
                         onChange={(e) => updateOrderStatus(order.id, e.target.value as Order['status'])}
                       >
-                        <option value="pending">⏳ Đang xử lý</option>
-                        <option value="shipping">🚚 Đang giao hàng</option>
-                        <option value="completed">✅ Giao thành công</option>
-                        <option value="cancelled">❌ Đã hủy đơn</option>
+                        <option value="pending">Đang xử lý</option>
+                        <option value="shipping">Đang giao hàng</option>
+                        <option value="completed">Giao thành công</option>
+                        <option value="cancelled">Đã hủy đơn</option>
                       </select>
                     </td>
                     <td style={{ textAlign: 'right' }}>
@@ -1808,14 +1785,14 @@ export default function AdminPage() {
                           title="Xem chi tiết đơn"
                           onClick={() => setViewingOrder(order)}
                         >
-                          👁️
+                          <IconEye size={14} />
                         </button>
                         <button
                           className="btn-action-sm"
                           title="Sửa thông tin đơn"
                           onClick={() => handleOpenEditOrder(order)}
                         >
-                          ✏️
+                          <IconPencil size={14} />
                         </button>
                         <button
                           className="btn-action-sm"
@@ -1827,7 +1804,7 @@ export default function AdminPage() {
                           }}
                           style={{ color: '#ef4444' }}
                         >
-                          🗑️
+                          <IconTrash size={14} />
                         </button>
                       </div>
                     </td>
@@ -1864,7 +1841,7 @@ export default function AdminPage() {
 
             <div className="admin-toolbar-right">
               <button className="btn-admin-add" onClick={handleOpenAddCustomer}>
-                <span>👥 Thêm khách hàng mới</span>
+                <span><IconUsers size={14} /> Thêm khách hàng mới</span>
               </button>
             </div>
           </div>
@@ -1910,8 +1887,8 @@ export default function AdminPage() {
                       </div>
                     </td>
                     <td>
-                      <div style={{ fontSize: '0.825rem' }}>📞 {c.phone || 'Chưa có SĐT'}</div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>✉️ {c.email || 'Chưa có Email'}</div>
+                      <div style={{ fontSize: '0.825rem' }}><IconPhone size={12} /> {c.phone || 'Chưa có SĐT'}</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}><IconMail size={12} /> {c.email || 'Chưa có Email'}</div>
                     </td>
                     <td>
                       <div style={{ fontSize: '0.825rem', maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={c.address}>
@@ -1927,7 +1904,7 @@ export default function AdminPage() {
                         background: c.role === 'admin' ? '#f3e8ff' : '#f1f5f9',
                         color: c.role === 'admin' ? '#7c3aed' : '#334155',
                       }}>
-                        {c.role === 'admin' ? '🔑 Quản trị viên' : c.role === 'staff' ? '👔 Nhân viên' : '👤 Khách hàng'}
+                        {c.role === 'admin' ? (<><IconKey size={12} /> Quản trị viên</>) : c.role === 'staff' ? (<><IconBriefcase size={12} /> Nhân viên</>) : (<><IconUser size={12} /> Khách hàng</>)}
                       </span>
                     </td>
                     <td>
@@ -1945,7 +1922,7 @@ export default function AdminPage() {
                           title="Sửa thông tin khách hàng"
                           onClick={() => handleOpenEditCustomer(c)}
                         >
-                          ✏️
+                          <IconPencil size={14} />
                         </button>
                         <button
                           className="btn-action-sm"
@@ -1957,7 +1934,7 @@ export default function AdminPage() {
                           }}
                           style={{ color: '#ef4444' }}
                         >
-                          🗑️
+                          <IconTrash size={14} />
                         </button>
                       </div>
                     </td>
@@ -2524,8 +2501,8 @@ export default function AdminPage() {
             <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px', marginBottom: '16px', fontSize: '0.85rem' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 <div><strong>Khách hàng:</strong> {viewingOrder.customer}</div>
-                <div><strong>Điện thoại:</strong> 📞 {viewingOrder.phone}</div>
-                <div style={{ gridColumn: 'span 2' }}><strong>Địa chỉ nhận:</strong> 📍 {viewingOrder.address}</div>
+                <div><strong>Điện thoại:</strong> <IconPhone size={12} /> {viewingOrder.phone}</div>
+                <div style={{ gridColumn: 'span 2' }}><strong>Địa chỉ nhận:</strong> <IconMapPin size={12} /> {viewingOrder.address}</div>
                 {viewingOrder.notes && (
                   <div style={{ gridColumn: 'span 2', color: '#b45309' }}><strong>Ghi chú:</strong> {viewingOrder.notes}</div>
                 )}
@@ -2536,7 +2513,7 @@ export default function AdminPage() {
 
             {/* Items List */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '10px' }}>📦 Sản phẩm trong đơn</div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '10px' }}><IconPackage size={14} /> Sản phẩm trong đơn</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {viewingOrder.items?.map((item, idx) => (
                   <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
@@ -2574,7 +2551,7 @@ export default function AdminPage() {
                 onClick={() => handlePrintOrder(viewingOrder)}
                 className="btn-admin-reset"
               >
-                🖨️ In hóa đơn
+                <IconPrinter size={14} /> In hóa đơn
               </button>
               <button
                 onClick={() => setViewingOrder(null)}
@@ -2595,7 +2572,7 @@ export default function AdminPage() {
           <div className="modal-admin-card" style={{ maxWidth: '520px', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                ✏️ Cập Nhật Đơn Hàng {editingOrder.id}
+                <IconPencil size={16} /> Cập Nhật Đơn Hàng {editingOrder.id}
               </h2>
               <button
                 type="button"
@@ -2657,10 +2634,10 @@ export default function AdminPage() {
                   value={editOrderStatus}
                   onChange={(e) => setEditOrderStatus(e.target.value as Order['status'])}
                 >
-                  <option value="pending">⏳ Đang xử lý</option>
-                  <option value="shipping">🚚 Đang giao hàng</option>
-                  <option value="completed">✅ Giao thành công</option>
-                  <option value="cancelled">❌ Đã hủy đơn</option>
+                  <option value="pending">Đang xử lý</option>
+                  <option value="shipping">Đang giao hàng</option>
+                  <option value="completed">Giao thành công</option>
+                  <option value="cancelled">Đã hủy đơn</option>
                 </select>
               </div>
 
@@ -2673,7 +2650,7 @@ export default function AdminPage() {
                   Hủy bỏ
                 </button>
                 <button type="submit" className="btn-admin-add">
-                  💾 Lưu thay đổi
+                  <IconSave size={14} /> Lưu thay đổi
                 </button>
               </div>
             </form>
@@ -2689,7 +2666,7 @@ export default function AdminPage() {
           <div className="modal-admin-card" style={{ maxWidth: '640px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                📦 Tạo Đơn Hàng Mới (Thủ Công)
+                <IconPackage size={16} /> Tạo Đơn Hàng Mới (Thủ Công)
               </h2>
               <button
                 type="button"
@@ -2838,7 +2815,7 @@ export default function AdminPage() {
                   disabled={manualCartItems.length === 0}
                   className="btn-admin-add"
                 >
-                  🚀 Tạo và lưu đơn hàng
+                  <IconRocket size={14} /> Tạo và lưu đơn hàng
                 </button>
               </div>
             </form>
@@ -2855,7 +2832,7 @@ export default function AdminPage() {
           <div className="modal-admin-card" style={{ maxWidth: '520px', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                {editingCustomer ? '✏️ Chỉnh Sửa Khách Hàng' : '👥 Thêm Khách Hàng Mới'}
+                {editingCustomer ? (<><IconPencil size={16} /> Chỉnh Sửa Khách Hàng</>) : (<><IconUsers size={16} /> Thêm Khách Hàng Mới</>)}
               </h2>
               <button
                 type="button"
@@ -2920,9 +2897,9 @@ export default function AdminPage() {
                   value={custRole}
                   onChange={(e) => setCustRole(e.target.value as any)}
                 >
-                  <option value="customer">👤 Khách hàng (Customer)</option>
-                  <option value="staff">👔 Nhân viên (Staff)</option>
-                  <option value="admin">🔑 Quản trị viên (Admin)</option>
+                  <option value="customer">Khách hàng (Customer)</option>
+                  <option value="staff">Nhân viên (Staff)</option>
+                  <option value="admin">Quản trị viên (Admin)</option>
                 </select>
               </div>
 
@@ -2946,7 +2923,7 @@ export default function AdminPage() {
                   Hủy bỏ
                 </button>
                 <button type="submit" className="btn-admin-add">
-                  💾 {editingCustomer ? 'Cập nhật khách hàng' : 'Lưu khách hàng mới'}
+                  <IconSave size={14} /> {editingCustomer ? 'Cập nhật khách hàng' : 'Lưu khách hàng mới'}
                 </button>
               </div>
             </form>
@@ -2962,7 +2939,7 @@ export default function AdminPage() {
           <div className="modal-admin-card" style={{ maxWidth: '520px', width: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                📦 Điều Chỉnh Tồn Kho Sản Phẩm
+                <IconPackage size={16} /> Điều Chỉnh Tồn Kho Sản Phẩm
               </h2>
               <button
                 type="button"
@@ -3009,7 +2986,7 @@ export default function AdminPage() {
                       cursor: 'pointer',
                     }}
                   >
-                    ➕ Nhập thêm
+                    <IconPlus size={14} /> Nhập thêm
                   </button>
 
                   <button
@@ -3026,7 +3003,7 @@ export default function AdminPage() {
                       cursor: 'pointer',
                     }}
                   >
-                    ➖ Xuất bớt
+                    <IconMinus size={14} /> Xuất bớt
                   </button>
 
                   <button
@@ -3043,7 +3020,7 @@ export default function AdminPage() {
                       cursor: 'pointer',
                     }}
                   >
-                    🎯 Đặt lại tồn
+                    <IconTarget size={14} /> Đặt lại tồn
                   </button>
                 </div>
               </div>
@@ -3094,12 +3071,12 @@ export default function AdminPage() {
                   value={adjustReason}
                   onChange={(e) => setAdjustReason(e.target.value)}
                 >
-                  <option value="Nhập hàng từ xưởng sản xuất">🏭 Nhập hàng từ xưởng sản xuất</option>
-                  <option value="Kiểm kê kho định kỳ">📋 Kiểm kê kho định kỳ</option>
-                  <option value="Xuất hàng hỏng / lỗi tiêu hủy">⚠️ Xuất hàng hỏng / lỗi tiêu hủy</option>
-                  <option value="Khách trả hàng / hoàn tồn">🔄 Khách trả hàng / hoàn tồn</option>
-                  <option value="Xuất bán buôn / chuyển kho">🚚 Xuất bán buôn / chuyển kho</option>
-                  <option value="Khác">✏️ Khác (Ghi chú tự do)</option>
+                  <option value="Nhập hàng từ xưởng sản xuất">Nhập hàng từ xưởng sản xuất</option>
+                  <option value="Kiểm kê kho định kỳ">Kiểm kê kho định kỳ</option>
+                  <option value="Xuất hàng hỏng / lỗi tiêu hủy">Xuất hàng hỏng / lỗi tiêu hủy</option>
+                  <option value="Khách trả hàng / hoàn tồn">Khách trả hàng / hoàn tồn</option>
+                  <option value="Xuất bán buôn / chuyển kho">Xuất bán buôn / chuyển kho</option>
+                  <option value="Khác">Khác (Ghi chú tự do)</option>
                 </select>
               </div>
 
@@ -3125,7 +3102,7 @@ export default function AdminPage() {
                   Hủy bỏ
                 </button>
                 <button type="submit" className="btn-admin-add">
-                  💾 Lưu & Cập nhật tồn kho
+                  <IconSave size={14} /> Lưu & Cập nhật tồn kho
                 </button>
               </div>
             </form>

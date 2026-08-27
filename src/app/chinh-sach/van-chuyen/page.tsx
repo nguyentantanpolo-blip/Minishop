@@ -1,3 +1,5 @@
+import { IconWarning } from '@/components/icons';
+
 export default function VanChuyenPage() {
   return (
     <div className="policy-page-container">
@@ -137,7 +139,7 @@ export default function VanChuyenPage() {
               <li>Khách hàng không có mặt để nhận hàng (hẹn lại lần 2)</li>
             </ul>
             <p className="shipping-note">
-              ⚠️ Đơn hàng sẽ được hoàn về kho nếu giao không thành công sau 2 lần. Khách hàng vui lòng liên hệ để sắp xếp lại.
+              <IconWarning size={14} style={{ verticalAlign: 'middle' }} /> Đơn hàng sẽ được hoàn về kho nếu giao không thành công sau 2 lần. Khách hàng vui lòng liên hệ để sắp xếp lại.
             </p>
           </section>
 

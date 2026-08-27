@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { IconLightbulb, IconUser, IconKey } from '@/components/icons';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -51,21 +52,27 @@ export default function LoginPage() {
 
           {/* Quick 1-Click Test Box */}
           <div className="quick-test-box">
-            <div className="quick-test-title">💡 Đăng nhập thử nhanh (1 Click)</div>
+            <div className="quick-test-title"><IconLightbulb size={16} style={{ verticalAlign: 'middle' }} /> Đăng nhập thử nhanh (1 Click)</div>
             <div className="quick-test-btns">
               <button
                 type="button"
                 className="btn-test btn-test-user"
                 onClick={() => handleQuick('user')}
               >
-                👤 Khách hàng
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <IconUser size={16} />
+                  Khách hàng
+                </span>
               </button>
               <button
                 type="button"
                 className="btn-test btn-test-admin"
                 onClick={() => handleQuick('admin')}
               >
-                🔑 Quản trị viên
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <IconKey size={16} />
+                  Quản trị viên
+                </span>
               </button>
             </div>
           </div>

@@ -64,7 +64,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     saveCartToStorage(updated);
-    showToast(`✅ Đã thêm ${qty}x "${product.name}" vào giỏ hàng!`, 'success');
+    showToast(`Đã thêm ${qty}x "${product.name}" vào giỏ hàng!`, 'success');
   };
 
   const removeFromCart = (productId: string) => {
@@ -72,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const updated = cart.filter((i) => i.id !== productId);
     saveCartToStorage(updated);
     if (item) {
-      showToast(`🗑️ Đã xóa "${item.name}" khỏi giỏ hàng.`, 'info');
+      showToast(`Đã xóa "${item.name}" khỏi giỏ hàng.`, 'info');
     }
   };
 

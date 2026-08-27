@@ -21,7 +21,7 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      showToast('❌ Mật khẩu xác nhận không khớp, vui lòng kiểm tra lại!', 'error');
+      showToast('Mật khẩu xác nhận không khớp, vui lòng kiểm tra lại!', 'error');
       return;
     }
 

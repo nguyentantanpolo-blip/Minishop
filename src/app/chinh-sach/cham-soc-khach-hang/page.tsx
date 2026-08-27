@@ -105,7 +105,7 @@ export default function ChamSocKhachHangPage() {
               </div>
             </div>
             <p className="policy-note">
-              ⏱️ <strong>Thời gian xử lý:</strong> Tối đa 3-5 ngày làm việc tùy mức độ phức tạp
+              <strong>Thời gian xử lý:</strong> Tối đa 3-5 ngày làm việc tùy mức độ phức tạp
             </p>
           </section>
 

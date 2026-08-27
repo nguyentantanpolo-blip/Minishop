@@ -7,6 +7,7 @@ import { useShop } from '@/context/ShopContext';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import ProductCard from '@/components/ProductCard';
+import { IconStar, IconDot } from '@/components/icons';
 
 export default function ProductDetailPage({
   params,
@@ -96,7 +97,13 @@ export default function ProductDetailPage({
           <h1 className="detail-product-title">{product.name}</h1>
 
           <div className="detail-rating-row">
-            <div className="stars-gold">★★★★★</div>
+            <div className="stars-gold">
+              <IconStar size={14} style={{ color: '#f59e0b' }} />
+              <IconStar size={14} style={{ color: '#f59e0b' }} />
+              <IconStar size={14} style={{ color: '#f59e0b' }} />
+              <IconStar size={14} style={{ color: '#f59e0b' }} />
+              <IconStar size={14} style={{ color: '#f59e0b' }} />
+            </div>
             <span className="rating-number">4.9 / 5</span>
             <span className="rating-divider">•</span>
             <span className="reviews-link">36 đánh giá & đã bán 180+</span>
@@ -135,11 +142,11 @@ export default function ProductDetailPage({
                 marginBottom: '16px',
               }}>
                 {isOutOfStock ? (
-                  <><span>🔴</span><span>Sản phẩm này tạm thời hết hàng</span></>
+                  <><IconDot size={10} style={{ color: '#dc2626' }} /><span>Sản phẩm này tạm thời hết hàng</span></>
                 ) : isLowStock ? (
-                  <><span>⚡</span><span>Chỉ còn lại {stockQty} sản phẩm trong kho - Đặt ngay!</span></>
+                  <><IconDot size={10} style={{ color: '#f59e0b' }} /><span>Chỉ còn lại {stockQty} sản phẩm trong kho - Đặt ngay!</span></>
                 ) : (
-                  <><span>🟢</span><span>Còn {stockQty} sản phẩm trong kho (Sẵn sàng giao ngay)</span></>
+                  <><IconDot size={10} style={{ color: '#16a34a' }} /><span>Còn {stockQty} sản phẩm trong kho (Sẵn sàng giao ngay)</span></>
                 )}
               </div>
             );

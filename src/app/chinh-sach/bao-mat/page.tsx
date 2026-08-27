@@ -1,3 +1,5 @@
+import { IconWarning } from '@/components/icons';
+
 export default function BaoMatPage() {
   return (
     <div className="policy-page-container">
@@ -90,7 +92,7 @@ export default function BaoMatPage() {
               <li>Đối tác kinh doanh với sự đồng ý rõ ràng của khách hàng</li>
             </ul>
             <p className="policy-note">
-              ⚠️ Các bên thứ ba này được yêu cầu tuân thủ nghiêm ngặt chính sách bảo mật tương tự
+              <IconWarning size={14} style={{ verticalAlign: 'middle' }} /> Các bên thứ ba này được yêu cầu tuân thủ nghiêm ngặt chính sách bảo mật tương tự
             </p>
           </section>
 

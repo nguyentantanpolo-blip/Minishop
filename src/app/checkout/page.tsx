@@ -8,6 +8,7 @@ import { useShop } from '@/context/ShopContext';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { Order } from '@/types';
+import { IconSparkles } from '@/components/icons';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function CheckoutPage() {
     e.preventDefault();
 
     if (!fullname.trim() || !phone.trim() || !address.trim()) {
-      showToast('⚠️ Vui lòng điền đầy đủ Họ tên, Số điện thoại và Địa chỉ!', 'warning');
+      showToast('Vui lòng điền đầy đủ Họ tên, Số điện thoại và Địa chỉ!', 'warning');
       return;
     }
 
@@ -275,7 +276,7 @@ export default function CheckoutPage() {
               </svg>
             </div>
 
-            <h2 className="modal-title">Đặt hàng thành công! 🎉</h2>
+            <h2 className="modal-title">Đặt hàng thành công! <IconSparkles size={18} style={{ verticalAlign: 'middle' }} /></h2>
             <div className="modal-order-id-badge">{createdOrder.id}</div>
 
             <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '20px' }}>

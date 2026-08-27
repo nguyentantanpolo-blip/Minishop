@@ -43,10 +43,10 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     let updated: string[];
     if (isWishlisted(product.id)) {
       updated = wishlist.filter((id) => id !== product.id);
-      showToast(`💔 Đã bỏ "${product.name}" khỏi danh sách yêu thích.`, 'info');
+      showToast(`Đã bỏ "${product.name}" khỏi danh sách yêu thích.`, 'info');
     } else {
       updated = [...wishlist, product.id];
-      showToast(`❤️ Đã lưu "${product.name}" vào danh sách yêu thích!`, 'success');
+      showToast(`Đã lưu "${product.name}" vào danh sách yêu thích!`, 'success');
     }
     saveWishlistToStorage(updated);
   };

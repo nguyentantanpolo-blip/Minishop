@@ -1,3 +1,5 @@
+import { IconZap } from '@/components/icons';
+
 export default function ThanhToanPage() {
   return (
     <div className="policy-page-container">
@@ -66,7 +68,7 @@ export default function ThanhToanPage() {
               </div>
             </div>
             <p className="payment-note">
-              ⚡ <strong>Ưu đãi:</strong> Giảm ngay <strong>20.000đ</strong> cho đơn hàng thanh toán trước
+              <IconZap size={14} style={{ verticalAlign: 'middle' }} /> <strong>Ưu đãi:</strong> Giảm ngay <strong>20.000đ</strong> cho đơn hàng thanh toán trước
             </p>
             <ul className="policy-list">
               <li>Chuyển khoản trước khi nhận hàng</li>
