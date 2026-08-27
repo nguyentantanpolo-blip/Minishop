@@ -3,7 +3,7 @@ export default function ThanhToanPage() {
     <div className="policy-page-container">
       <div className="policy-hero">
         <div className="container">
-          <h1 className="policy-title">Chính Sách Thanh Toán</h1>
+          <h1 className="policy-title">Thanh Toán</h1>
           <p className="policy-subtitle">Đa dạng phương thức thanh toán tiện lợi và an toàn</p>
         </div>
       </div>
@@ -14,21 +14,21 @@ export default function ThanhToanPage() {
             <h2>1. Các Phương Thức Thanh Toán</h2>
             <div className="policy-grid">
               <div className="policy-card">
-                <div className="policy-card-icon">💵</div>
+                <span className="policy-card-label">Phổ Biến Nhất</span>
                 <h3>Tiền Mặt (COD)</h3>
-                <p className="policy-highlight">Phổ biến nhất</p>
+                <p className="policy-highlight">MIỄN PHÍ</p>
                 <p>Thanh toán khi nhận hàng tại nhà hoặc tại cửa hàng</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">🏦</div>
+                <span className="policy-card-label">Ưu Đãi -20K</span>
                 <h3>Chuyển Khoản</h3>
-                <p className="policy-highlight">Ưu đãi -20k</p>
+                <p className="policy-highlight">GIẢM GIÁ</p>
                 <p>Chuyển khoản qua ngân hàng hoặc ví điện tử</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">💳</div>
+                <span className="policy-card-label">Tại Cửa Hàng</span>
                 <h3>Quẹt Thẻ</h3>
-                <p className="policy-highlight">Tại cửa hàng</p>
+                <p className="policy-highlight">AN TOÀN</p>
                 <p>Visa, Mastercard, thẻ ATM nội địa</p>
               </div>
             </div>
@@ -80,15 +80,15 @@ export default function ThanhToanPage() {
             <h2>4. Thanh Toán Qua Ví Điện Tử</h2>
             <div className="ewallet-grid">
               <div className="ewallet-item">
-                <div className="ewallet-icon momo-bg">Momo</div>
+                <div className="ewallet-icon">MOMO</div>
                 <p>098 844 48 06</p>
               </div>
               <div className="ewallet-item">
-                <div className="ewallet-icon zalopay-bg">ZaloPay</div>
+                <div className="ewallet-icon">ZALOPAY</div>
                 <p>098 844 48 06</p>
               </div>
               <div className="ewallet-item">
-                <div className="ewallet-icon vnpay-bg">VNPay</div>
+                <div className="ewallet-icon">VNPAY</div>
                 <p>Quét mã QR</p>
               </div>
             </div>
@@ -119,10 +119,10 @@ export default function ThanhToanPage() {
             <p>Liên hệ TANPOLO để được tư vấn chi tiết</p>
             <div className="policy-contact-actions">
               <a href="tel:0988444806" className="policy-btn policy-btn-primary">
-                📞 Gọi Hotline
+                Gọi Hotline
               </a>
               <a href="https://zalo.me/0988444806" target="_blank" rel="noopener noreferrer" className="policy-btn policy-btn-secondary">
-                💬 Chat Zalo
+                Chat Zalo
               </a>
             </div>
           </section>

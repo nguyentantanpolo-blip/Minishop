@@ -3,7 +3,7 @@ export default function DoiTraHangPage() {
     <div className="policy-page-container">
       <div className="policy-hero">
         <div className="container">
-          <h1 className="policy-title">Chính Sách Đổi Trả Hàng</h1>
+          <h1 className="policy-title">Đổi Trả Hàng</h1>
           <p className="policy-subtitle">Mua sắm an tâm với chính sách đổi trả linh hoạt từ TANPOLO</p>
         </div>
       </div>
@@ -14,21 +14,21 @@ export default function DoiTraHangPage() {
             <h2>1. Điều Kiện Đổi Trả</h2>
             <div className="policy-grid">
               <div className="policy-card">
-                <div className="policy-card-icon">📅</div>
-                <h3>Thời Gian</h3>
-                <p className="policy-highlight">7 ngày</p>
-                <p>Kể từ ngày nhận hàng (tính theo dấu bưu điện hoặc ngày giao hàng)</p>
+                <span className="policy-card-label">Thời Gian</span>
+                <h3>Kể Từ Ngày Nhận Hàng</h3>
+                <p className="policy-highlight">7 NGÀY</p>
+                <p>Tính theo dấu bưu điện hoặc ngày giao hàng</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">✨</div>
-                <h3>Tình Trạng</h3>
-                <p className="policy-highlight">Như mới</p>
-                <p>Còn nguyên tem, nhãn mác, chưa qua sử dụng, không dơ bẩn</p>
+                <span className="policy-card-label">Tình Trạng</span>
+                <h3>Chưa Qua Sử Dụng</h3>
+                <p className="policy-highlight">NHƯ MỚI</p>
+                <p>Còn nguyên tem, nhãn mác, không dơ bẩn</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">📦</div>
-                <h3>Hóa Đơn</h3>
-                <p className="policy-highlight">Bắt buộc</p>
+                <span className="policy-card-label">Hóa Đơn</span>
+                <h3>Xuất Trình Đầy Đủ</h3>
+                <p className="policy-highlight">BẮT BUỘC</p>
                 <p>Xuất trình hóa đơn hoặc phiếu bảo hành kèm sản phẩm</p>
               </div>
             </div>
@@ -106,10 +106,10 @@ export default function DoiTraHangPage() {
             <p>Liên hệ ngay với TANPOLO để được hỗ trợ nhanh chóng</p>
             <div className="policy-contact-actions">
               <a href="tel:0988444806" className="policy-btn policy-btn-primary">
-                📞 Gọi Hotline
+                Gọi Hotline
               </a>
               <a href="https://zalo.me/0988444806" target="_blank" rel="noopener noreferrer" className="policy-btn policy-btn-secondary">
-                💬 Chat Zalo
+                Chat Zalo
               </a>
             </div>
           </section>

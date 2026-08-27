@@ -3,7 +3,7 @@ export default function BaoMatPage() {
     <div className="policy-page-container">
       <div className="policy-hero">
         <div className="container">
-          <h1 className="policy-title">Chính Sách Bảo Mật</h1>
+          <h1 className="policy-title">Bảo Mật</h1>
           <p className="policy-subtitle">Cam kết bảo vệ thông tin cá nhân của khách hàng</p>
         </div>
       </div>
@@ -27,8 +27,8 @@ export default function BaoMatPage() {
             <h2>2. Phạm Vi Thu Thập Thông Tin</h2>
             <div className="policy-grid">
               <div className="policy-card">
-                <div className="policy-card-icon">👤</div>
-                <h3>Thông Tin Cá Nhân</h3>
+                <span className="policy-card-label">Thông Tin Cá Nhân</span>
+                <h3>Dữ Liệu Khách Hàng</h3>
                 <ul>
                   <li>Họ và tên</li>
                   <li>Số điện thoại</li>
@@ -37,8 +37,8 @@ export default function BaoMatPage() {
                 </ul>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">🛒</div>
-                <h3>Thông Tin Giao Dịch</h3>
+                <span className="policy-card-label">Thông Tin Giao Dịch</span>
+                <h3>Lịch Sử Mua Hàng</h3>
                 <ul>
                   <li>Lịch sử mua hàng</li>
                   <li>Phương thức thanh toán</li>
@@ -47,8 +47,8 @@ export default function BaoMatPage() {
                 </ul>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">📊</div>
-                <h3>Thông Tin Kỹ Thuật</h3>
+                <span className="policy-card-label">Thông Tin Kỹ Thuật</span>
+                <h3>Dữ Liệu Truy Cập</h3>
                 <ul>
                   <li>Địa chỉ IP</li>
                   <li>Loại trình duyệt</li>
@@ -98,19 +98,19 @@ export default function BaoMatPage() {
             <h2>6. Quyền Của Khách Hàng</h2>
             <div className="rights-grid">
               <div className="right-item">
-                <h3>✅ Quyền Truy Cập</h3>
+                <h3>Quyền Truy Cập</h3>
                 <p>Yêu cầu xem thông tin cá nhân TANPOLO đang lưu trữ</p>
               </div>
               <div className="right-item">
-                <h3>✏️ Quyền Chỉnh Sửa</h3>
+                <h3>Quyền Chỉnh Sửa</h3>
                 <p>Cập nhật, sửa đổi thông tin cá nhân bất kỳ lúc nào</p>
               </div>
               <div className="right-item">
-                <h3>🗑️ Quyền Xóa</h3>
+                <h3>Quyền Xóa</h3>
                 <p>Yêu cầu xóa hoàn toàn thông tin khỏi hệ thống</p>
               </div>
               <div className="right-item">
-                <h3>🚫 Quyền Từ Chối</h3>
+                <h3>Quyền Từ Chối</h3>
                 <p>Từ chối nhận email marketing, tin khuyến mãi</p>
               </div>
             </div>
@@ -144,9 +144,9 @@ export default function BaoMatPage() {
             <p>Nếu có bất kỳ thắc mắc hoặc khiếu nại về bảo mật thông tin, vui lòng liên hệ:</p>
             <div className="contact-security-box">
               <p><strong>Bộ phận Bảo Mật - TANPOLO</strong></p>
-              <p>📧 Email: <a href="mailto:tanpolo.shoes@gmail.com">tanpolo.shoes@gmail.com</a></p>
-              <p>📞 Hotline: <a href="tel:0988444806">098 844 48 06</a></p>
-              <p>🏢 Địa chỉ: 985/71/5 Hương Lộ 2, Phường Bình Trị Đông, TP.HCM</p>
+              <p>Email: <a href="mailto:tanpolo.shoes@gmail.com">tanpolo.shoes@gmail.com</a></p>
+              <p>Hotline: <a href="tel:0988444806">098 844 48 06</a></p>
+              <p>Địa chỉ: 985/71/5 Hương Lộ 2, Phường Bình Trị Đông, TP.HCM</p>
             </div>
             <p className="policy-note">
               Chúng tôi cam kết phản hồi mọi yêu cầu trong vòng <strong>24 giờ làm việc</strong>
@@ -158,10 +158,10 @@ export default function BaoMatPage() {
             <p>Liên hệ TANPOLO để được giải đáp thắc mắc về bảo mật</p>
             <div className="policy-contact-actions">
               <a href="tel:0988444806" className="policy-btn policy-btn-primary">
-                📞 Gọi Hotline
+                Gọi Hotline
               </a>
               <a href="mailto:tanpolo.shoes@gmail.com" className="policy-btn policy-btn-secondary">
-                ✉️ Gửi Email
+                Gửi Email
               </a>
             </div>
           </section>
