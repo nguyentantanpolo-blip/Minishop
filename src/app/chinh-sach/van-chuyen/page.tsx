@@ -3,7 +3,7 @@ export default function VanChuyenPage() {
     <div className="policy-page-container">
       <div className="policy-hero">
         <div className="container">
-          <h1 className="policy-title">Chính Sách Vận Chuyển</h1>
+          <h1 className="policy-title">Vận Chuyển</h1>
           <p className="policy-subtitle">Giao hàng nhanh chóng, an toàn trên toàn quốc</p>
         </div>
       </div>
@@ -14,21 +14,21 @@ export default function VanChuyenPage() {
             <h2>1. Khu Vực Giao Hàng</h2>
             <div className="policy-grid">
               <div className="policy-card">
-                <div className="policy-card-icon">🏙️</div>
-                <h3>Nội Thành TP.HCM</h3>
-                <p className="policy-highlight">1-2 ngày</p>
+                <span className="policy-card-label">Nội Thành TP.HCM</span>
+                <h3>Giao Trong Ngày</h3>
+                <p className="policy-highlight">1-2 NGÀY</p>
                 <p>Giao hàng nhanh trong ngày hoặc ngày hôm sau</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">🌆</div>
-                <h3>Các Tỉnh Lân Cận</h3>
-                <p className="policy-highlight">2-3 ngày</p>
-                <p>Bình Dương, Đồng Nai, Long An, Vũng Tàu...</p>
+                <span className="policy-card-label">Tỉnh Lân Cận</span>
+                <h3>Giao Nhanh</h3>
+                <p className="policy-highlight">2-3 NGÀY</p>
+                <p>Bình Dương, Đồng Nai, Long An, Vũng Tàu</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">🗺️</div>
-                <h3>Toàn Quốc</h3>
-                <p className="policy-highlight">3-7 ngày</p>
+                <span className="policy-card-label">Toàn Quốc</span>
+                <h3>Giao Tiêu Chuẩn</h3>
+                <p className="policy-highlight">3-7 NGÀY</p>
                 <p>Miền Bắc, Miền Trung và các tỉnh miền Tây</p>
               </div>
             </div>
@@ -60,19 +60,19 @@ export default function VanChuyenPage() {
             <h2>3. Đơn Vị Vận Chuyển</h2>
             <div className="shipping-partners">
               <div className="partner-item">
-                <div className="partner-logo ghn-logo">GHN</div>
+                <div className="partner-logo">GHN</div>
                 <p>Giao Hàng Nhanh</p>
               </div>
               <div className="partner-item">
-                <div className="partner-logo ghtk-logo">GHTK</div>
+                <div className="partner-logo">GHTK</div>
                 <p>Giao Hàng Tiết Kiệm</p>
               </div>
               <div className="partner-item">
-                <div className="partner-logo jt-logo">J&T</div>
+                <div className="partner-logo">J&T</div>
                 <p>J&T Express</p>
               </div>
               <div className="partner-item">
-                <div className="partner-logo vtp-logo">VTP</div>
+                <div className="partner-logo">VTP</div>
                 <p>Viettel Post</p>
               </div>
             </div>
@@ -146,10 +146,10 @@ export default function VanChuyenPage() {
             <p>Liên hệ TANPOLO để được tư vấn và hỗ trợ giao hàng</p>
             <div className="policy-contact-actions">
               <a href="tel:0988444806" className="policy-btn policy-btn-primary">
-                📞 Gọi Hotline
+                Gọi Hotline
               </a>
               <a href="https://zalo.me/0988444806" target="_blank" rel="noopener noreferrer" className="policy-btn policy-btn-secondary">
-                💬 Chat Zalo
+                Chat Zalo
               </a>
             </div>
           </section>

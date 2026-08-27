@@ -3,7 +3,7 @@ export default function BaoHanhPage() {
     <div className="policy-page-container">
       <div className="policy-hero">
         <div className="container">
-          <h1 className="policy-title">Chính Sách Bảo Hành</h1>
+          <h1 className="policy-title">Bảo Hành</h1>
           <p className="policy-subtitle">Cam kết chất lượng và trách nhiệm với sản phẩm TANPOLO</p>
         </div>
       </div>
@@ -14,21 +14,21 @@ export default function BaoHanhPage() {
             <h2>1. Thời Gian Bảo Hành</h2>
             <div className="policy-grid">
               <div className="policy-card">
-                <div className="policy-card-icon">👞</div>
-                <h3>Giày Da Cao Cấp</h3>
-                <p className="policy-highlight">12 tháng</p>
-                <p>Bảo hành toàn diện về chất liệu da, đường may, đế giày</p>
+                <span className="policy-card-label">Giày Da Cao Cấp</span>
+                <h3>Bảo Hành Toàn Diện</h3>
+                <p className="policy-highlight">12 THÁNG</p>
+                <p>Bảo hành về chất liệu da, đường may, đế giày</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">🥾</div>
-                <h3>Giày Thể Thao & Sneaker</h3>
-                <p className="policy-highlight">6 tháng</p>
+                <span className="policy-card-label">Giày Thể Thao</span>
+                <h3>Bảo Hành Tiêu Chuẩn</h3>
+                <p className="policy-highlight">6 THÁNG</p>
                 <p>Bảo hành keo dán, đế giày, chất liệu vải canvas</p>
               </div>
               <div className="policy-card">
-                <div className="policy-card-icon">🩴</div>
-                <h3>Dép & Sandal</h3>
-                <p className="policy-highlight">3 tháng</p>
+                <span className="policy-card-label">Dép & Sandal</span>
+                <h3>Bảo Hành Cơ Bản</h3>
+                <p className="policy-highlight">3 THÁNG</p>
                 <p>Bảo hành quai dép, đế chống trượt</p>
               </div>
             </div>
@@ -87,10 +87,10 @@ export default function BaoHanhPage() {
             <p>Đội ngũ TANPOLO luôn sẵn sàng hỗ trợ bạn</p>
             <div className="policy-contact-actions">
               <a href="tel:0988444806" className="policy-btn policy-btn-primary">
-                📞 Gọi Hotline
+                Gọi Hotline
               </a>
               <a href="mailto:tanpolo.shoes@gmail.com" className="policy-btn policy-btn-secondary">
-                ✉️ Gửi Email
+                Gửi Email
               </a>
             </div>
           </section>
