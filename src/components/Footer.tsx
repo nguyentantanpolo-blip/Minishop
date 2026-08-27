@@ -271,7 +271,7 @@ export default function Footer() {
 
         {/* Footer Bottom Divider */}
         <div className="footer-bottom-bar">
-          <div>© {new Date().getFullYear()} TANPOLO - Công ty TNHH Giày Nhật Huy. All rights reserved.</div>
+          <div suppressHydrationWarning>© {new Date().getFullYear()} TANPOLO - Công ty TNHH Giày Nhật Huy. All rights reserved.</div>
           <div className="footer-bottom-links">
             <Link href="/admin">Quản trị viên</Link>
             <span>•</span>
