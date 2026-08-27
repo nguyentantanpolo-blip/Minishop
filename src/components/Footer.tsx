@@ -105,12 +105,8 @@ export default function Footer() {
                 title="Gửi Email cho Tanpolo"
               >
                 <div className="social-icon-box email-box">
-                  <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M45 16.2V37C45 39.2 43.2 41 41 41H36V23.7L24 32.7L12 23.7V41H7C4.8 41 3 39.2 3 37V16.2C3 13.6 5.9 12 8.1 13.6L24 25.5L39.9 13.6C42.1 12 45 13.6 45 16.2Z" fill="#EA4335" />
-                    <path d="M3 16.2V37C3 39.2 4.8 41 7 41H12V23.7L3 17" fill="#4285F4" />
-                    <path d="M45 16.2V37C45 39.2 43.2 41 41 41H36V23.7L45 17" fill="#34A853" />
-                    <path d="M36 10.7V23.7L45 17V16.2C45 13.6 42.1 12 39.9 13.6L36 16.5" fill="#FBBC05" />
-                    <path d="M12 10.7V23.7L3 17V16.2C3 13.6 5.9 12 8.1 13.6L12 16.5" fill="#C5221F" />
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                   </svg>
                 </div>
                 <span className="social-channel-label">Email</span>
