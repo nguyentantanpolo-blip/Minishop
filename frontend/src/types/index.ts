@@ -4,6 +4,14 @@ export interface ProductSpecs {
   dimensions?: string;
   weight?: string;
   origin?: string;
+  gallery?: string[];
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  image?: string;
 }
 
 export interface Product {
@@ -14,11 +22,12 @@ export interface Product {
   discount?: string;
   priceValue: number;
   desc: string;
-  category: 'noithat' | 'trangtri' | 'den' | 'luutru' | 'phongngu' | string;
+  category: 'giay-tay' | 'giay-luoi' | 'dep-da' | 'vi-da' | 'that-lung' | string;
   categoryName: string;
   image: string;
   badge?: string;
   stock: string;
+  stockQuantity: number;
   specs?: ProductSpecs;
 }
 
@@ -53,6 +62,40 @@ export interface UserSession {
   name: string;
   email: string;
   role: 'user' | 'admin';
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  role?: 'customer' | 'admin' | 'staff';
+  notes?: string;
+  totalOrders?: number;
+  totalSpent?: number;
+  createdAt?: string;
+}
+
+export interface DashboardStats {
+  totalRevenue: number;
+  completedRevenue: number;
+  totalOrders: number;
+  completedOrdersCount: number;
+  pendingOrdersCount: number;
+  shippingOrdersCount: number;
+  cancelledOrdersCount: number;
+  totalProducts: number;
+  inStockCount: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  totalInventoryUnits: number;
+  totalInventoryValue: number;
+  totalCategories: number;
+  totalCustomers: number;
+  categoryStats: { id: string; name: string; productCount: number }[];
+  topSelling: { name: string; quantity: number; revenue: number; image?: string }[];
+  recentOrders: Order[];
 }
 
 export interface ToastMessage {

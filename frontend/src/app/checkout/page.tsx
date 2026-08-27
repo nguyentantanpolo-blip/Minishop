@@ -46,7 +46,7 @@ export default function CheckoutPage() {
     );
   }
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!fullname.trim() || !phone.trim() || !address.trim()) {
@@ -54,7 +54,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    const newOrder = placeOrder({
+    const newOrder = await placeOrder({
       customer: fullname.trim(),
       phone: phone.trim(),
       address: address.trim(),

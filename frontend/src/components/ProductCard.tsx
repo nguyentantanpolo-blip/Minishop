@@ -11,8 +11,12 @@ export default function ProductCard({ product }: { product: Product }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const wishlisted = isWishlisted(product.id);
 
+  const stockQty = product.stockQuantity !== undefined ? product.stockQuantity : 50;
+  const isOutOfStock = stockQty === 0 || product.stock === 'Hết hàng';
+  const isLowStock = !isOutOfStock && stockQty <= 5;
+
   return (
-    <div className="product-card">
+    <div className={`product-card ${isOutOfStock ? 'card-out-of-stock' : ''}`}>
       <div className="product-img-wrapper">
         {/* Wishlist Heart Button */}
         <button
@@ -31,11 +35,19 @@ export default function ProductCard({ product }: { product: Product }) {
         </button>
 
         {/* Badge */}
-        {product.badge && (
+        {isOutOfStock ? (
+          <span className="product-badge" style={{ background: '#ef4444', color: '#fff' }}>
+            Hết hàng
+          </span>
+        ) : isLowStock ? (
+          <span className="product-badge" style={{ background: '#f59e0b', color: '#fff' }}>
+            Chỉ còn {stockQty} SP
+          </span>
+        ) : product.badge ? (
           <span className={`product-badge ${product.badge.includes('%') ? 'badge-discount' : 'badge-new'}`}>
             {product.badge}
           </span>
-        )}
+        ) : null}
 
         <Link href={`/products/${product.id}`}>
           <img src={product.image} alt={product.name} loading="lazy" />
@@ -49,15 +61,33 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="product-price">{product.price}</div>
         <p className="product-desc">{product.desc}</p>
         <div className="product-footer-meta">
-          <span className="stock-tag">{product.stock || 'Còn hàng'}</span>
+          <span
+            className="stock-tag"
+            style={{
+              background: isOutOfStock ? '#fee2e2' : isLowStock ? '#fef3c7' : '#dcfce7',
+              color: isOutOfStock ? '#dc2626' : isLowStock ? '#b45309' : '#15803d',
+              fontWeight: 700,
+            }}
+          >
+            {isOutOfStock
+              ? '🔴 Hết hàng'
+              : isLowStock
+              ? `⚡ Chỉ còn ${stockQty} cái`
+              : `🟢 Còn ${stockQty} SP`}
+          </span>
         </div>
         <div className="card-btn-group">
           <button
             type="button"
+            disabled={isOutOfStock}
             className="btn-card-action btn-add-cart-quick"
+            style={{
+              opacity: isOutOfStock ? 0.5 : 1,
+              cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+            }}
             onClick={(e) => {
               e.preventDefault();
-              addToCart(product, 1);
+              if (!isOutOfStock) addToCart(product, 1);
             }}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
@@ -65,7 +95,7 @@ export default function ProductCard({ product }: { product: Product }) {
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
-            <span>+ Giỏ hàng</span>
+            <span>{isOutOfStock ? 'Tạm hết' : '+ Giỏ hàng'}</span>
           </button>
           <Link href={`/products/${product.id}`} className="btn-card-action">
             <span>Chi tiết →</span>

@@ -20,11 +20,16 @@ export default function ProductDetailPage({
 
   const product = products.find((p) => p.id === id) || products[0];
   const [quantity, setQuantity] = useState(1);
-  const [activeImg, setActiveImg] = useState(product?.image || '/assets/images/binh-gom-decor.jpg');
+  const [activeImg, setActiveImg] = useState<string | null>(null);
 
   if (!product) {
     return notFound();
   }
+
+  const currentImage = activeImg || product.image;
+  const galleryImages = (product.specs?.gallery && product.specs.gallery.length > 0)
+    ? product.specs.gallery
+    : [product.image];
 
   const wishlisted = isWishlisted(product.id);
   const relatedProducts = products
@@ -51,22 +56,33 @@ export default function ProductDetailPage({
         {/* Gallery */}
         <div className="detail-gallery">
           <div className="detail-thumbs">
-            <div
-              className={`thumb-item ${activeImg === product.image ? 'active' : ''}`}
-              onClick={() => setActiveImg(product.image)}
-            >
-              <img src={product.image} alt={product.name} />
-            </div>
-            <div
-              className="thumb-item"
-              onClick={() => setActiveImg(product.image)}
-            >
-              <img src={product.image} alt={`${product.name} Góc 2`} />
-            </div>
+            {galleryImages.map((imgUrl, index) => (
+              <div
+                key={index}
+                className={`thumb-item ${currentImage === imgUrl ? 'active' : ''}`}
+                onClick={() => setActiveImg(imgUrl)}
+                title={`Góc chụp ${index + 1}`}
+              >
+                <img
+                  src={imgUrl}
+                  alt={`${product.name} - Góc ${index + 1}`}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = product.image;
+                  }}
+                />
+              </div>
+            ))}
           </div>
 
           <div className="detail-main-img-wrapper">
-            <img src={activeImg || product.image} alt={product.name} />
+            <img
+              src={currentImage}
+              alt={product.name}
+              style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/assets/images/products/bo4-1.jpg';
+              }}
+            />
           </div>
         </div>
 
@@ -74,7 +90,7 @@ export default function ProductDetailPage({
         <div className="detail-summary">
           <div className="detail-tags">
             <span className="stock-badge-green">● {product.stock || 'Còn hàng'}</span>
-            <span className="category-tag-subtle">{product.categoryName || 'Sản phẩm'}</span>
+            <span className="category-tag-subtle">{product.categoryName || 'Đồ da cao cấp'}</span>
           </div>
 
           <h1 className="detail-product-title">{product.name}</h1>
@@ -83,7 +99,7 @@ export default function ProductDetailPage({
             <div className="stars-gold">★★★★★</div>
             <span className="rating-number">4.9 / 5</span>
             <span className="rating-divider">•</span>
-            <span className="reviews-link">28 đánh giá từ khách hàng</span>
+            <span className="reviews-link">36 đánh giá & đã bán 180+</span>
           </div>
 
           <div className="detail-price-box">
@@ -98,12 +114,63 @@ export default function ProductDetailPage({
 
           <p className="detail-short-desc">{product.desc}</p>
 
-          {/* Specs if available */}
+          {/* Stock Status Badge */}
+          {(() => {
+            const stockQty = product.stockQuantity !== undefined ? product.stockQuantity : 50;
+            const isOutOfStock = stockQty === 0 || product.stock === 'Hết hàng';
+            const isLowStock = !isOutOfStock && stockQty <= 5;
+
+            return (
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 14px',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                fontWeight: 700,
+                background: isOutOfStock ? '#fee2e2' : isLowStock ? '#fef3c7' : '#dcfce7',
+                color: isOutOfStock ? '#dc2626' : isLowStock ? '#b45309' : '#15803d',
+                border: `1px solid ${isOutOfStock ? '#fca5a5' : isLowStock ? '#fde68a' : '#86efac'}`,
+                marginBottom: '16px',
+              }}>
+                {isOutOfStock ? (
+                  <><span>🔴</span><span>Sản phẩm này tạm thời hết hàng</span></>
+                ) : isLowStock ? (
+                  <><span>⚡</span><span>Chỉ còn lại {stockQty} sản phẩm trong kho - Đặt ngay!</span></>
+                ) : (
+                  <><span>🟢</span><span>Còn {stockQty} sản phẩm trong kho (Sẵn sàng giao ngay)</span></>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Specs */}
           {product.specs && (
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {product.specs.material && <div><strong>Chất liệu:</strong> {product.specs.material}</div>}
-              {product.specs.dimensions && <div><strong>Kích thước:</strong> {product.specs.dimensions}</div>}
-              {product.specs.origin && <div><strong>Xuất xứ:</strong> {product.specs.origin}</div>}
+            <div style={{
+              fontSize: '0.9rem',
+              color: 'var(--text-color)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              padding: '16px',
+              background: 'var(--bg-subtle)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              margin: '8px 0 16px 0'
+            }}>
+              {product.specs.material && (
+                <div><strong>Chất liệu da:</strong> {product.specs.material}</div>
+              )}
+              {product.specs.color && (
+                <div><strong>Màu sắc:</strong> {product.specs.color}</div>
+              )}
+              {product.specs.dimensions && (
+                <div><strong>Kích thước / Size:</strong> {product.specs.dimensions}</div>
+              )}
+              {product.specs.origin && (
+                <div><strong>Thương hiệu & Xuất xứ:</strong> {product.specs.origin}</div>
+              )}
             </div>
           )}
 
@@ -133,15 +200,24 @@ export default function ProductDetailPage({
             <div className="detail-btns-row">
               <button
                 type="button"
+                disabled={product.stockQuantity === 0 || product.stock === 'Hết hàng'}
                 className="btn-detail-add-cart"
-                onClick={() => addToCart(product, quantity)}
+                style={{
+                  opacity: (product.stockQuantity === 0 || product.stock === 'Hết hàng') ? 0.5 : 1,
+                  cursor: (product.stockQuantity === 0 || product.stock === 'Hết hàng') ? 'not-allowed' : 'pointer',
+                }}
+                onClick={() => {
+                  if (product.stockQuantity !== 0 && product.stock !== 'Hết hàng') {
+                    addToCart(product, quantity);
+                  }
+                }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                   <line x1="3" y1="6" x2="21" y2="6"></line>
                   <path d="M16 10a4 4 0 0 1-8 0"></path>
                 </svg>
-                <span>Thêm vào giỏ hàng</span>
+                <span>{(product.stockQuantity === 0 || product.stock === 'Hết hàng') ? 'Tạm hết hàng' : 'Thêm vào giỏ hàng'}</span>
               </button>
 
               <button
@@ -174,7 +250,7 @@ export default function ProductDetailPage({
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 <polyline points="9 12 11 14 15 10"></polyline>
               </svg>
-              <span>Đổi trả miễn phí trong vòng 7 ngày nếu lỗi sản xuất</span>
+              <span>Cam kết 100% da bò thật - Đổi trả miễn phí 7 ngày</span>
             </div>
 
             <div className="policy-item">
@@ -182,7 +258,7 @@ export default function ProductDetailPage({
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 14 14"></polyline>
               </svg>
-              <span>Bảo hành chính hãng 12 tháng tại hệ thống Mini Shop</span>
+              <span>Bảo hành chính hãng 12 tháng tại hệ thống Tanpolo</span>
             </div>
           </div>
         </div>
@@ -191,9 +267,9 @@ export default function ProductDetailPage({
       {/* Related Products */}
       <section style={{ paddingBottom: '60px' }}>
         <div className="section-header">
-          <h2 className="section-title">Sản Phẩm Tương Tự</h2>
+          <h2 className="section-title">Sản Phẩm Cùng Danh Mục</h2>
           <Link href="/products" className="section-link">
-            <span>Xem tất cả</span>
+            <span>Xem tất cả ({products.length})</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>

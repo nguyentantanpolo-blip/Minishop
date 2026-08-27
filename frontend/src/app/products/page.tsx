@@ -26,10 +26,10 @@ function ProductsContent() {
   const filtered = products.filter((p) => {
     const matchCat = category === 'all' || p.category === category;
     let matchPrice = true;
-    if (priceRange === 'under-500') matchPrice = p.priceValue < 500000;
-    else if (priceRange === '500-1000') matchPrice = p.priceValue >= 500000 && p.priceValue <= 1000000;
-    else if (priceRange === '1000-3000') matchPrice = p.priceValue > 1000000 && p.priceValue <= 3000000;
-    else if (priceRange === 'above-3000') matchPrice = p.priceValue > 3000000;
+    if (priceRange === 'under-400') matchPrice = p.priceValue < 400000;
+    else if (priceRange === '400-600') matchPrice = p.priceValue >= 400000 && p.priceValue <= 600000;
+    else if (priceRange === '600-1000') matchPrice = p.priceValue > 600000 && p.priceValue <= 1000000;
+    else if (priceRange === 'above-1000') matchPrice = p.priceValue > 1000000;
 
     const query = searchQuery.toLowerCase().trim();
     const matchQuery = !query ||
@@ -59,7 +59,7 @@ function ProductsContent() {
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Trang chủ</Link>
         <span className="separator">/</span>
-        <span className="current">Tất cả sản phẩm</span>
+        <span className="current">Tất cả sản phẩm đồ da</span>
       </nav>
 
       <div className="page-layout">
@@ -68,15 +68,15 @@ function ProductsContent() {
           <div className="sidebar-card">
             {/* Category Filter */}
             <div className="filter-group">
-              <h3 className="filter-title">Danh mục</h3>
+              <h3 className="filter-title">Danh mục sản phẩm</h3>
               <ul className="sidebar-cat-list">
                 {[
                   { id: 'all', label: 'Tất cả sản phẩm' },
-                  { id: 'noithat', label: 'Nội thất' },
-                  { id: 'trangtri', label: 'Trang trí' },
-                  { id: 'den', label: 'Đèn' },
-                  { id: 'luutru', label: 'Lưu trữ' },
-                  { id: 'phongngu', label: 'Phòng ngủ' },
+                  { id: 'giay-tay', label: 'Giày Tây & Công Sở' },
+                  { id: 'giay-luoi', label: 'Giày Lười Da' },
+                  { id: 'dep-da', label: 'Dép Da & Sandal' },
+                  { id: 'vi-da', label: 'Ví Da Bò Nam' },
+                  { id: 'that-lung', label: 'Thắt Lưng Da' },
                 ].map((item) => (
                   <li key={item.id}>
                     <div
@@ -99,10 +99,10 @@ function ProductsContent() {
               <div className="price-filter-list">
                 {[
                   { id: 'all', label: 'Tất cả mức giá' },
-                  { id: 'under-500', label: 'Dưới 500.000đ' },
-                  { id: '500-1000', label: '500.000đ - 1.000.000đ' },
-                  { id: '1000-3000', label: '1.000.000đ - 3.000.000đ' },
-                  { id: 'above-3000', label: 'Trên 3.000.000đ' },
+                  { id: 'under-400', label: 'Dưới 400.000đ' },
+                  { id: '400-600', label: '400.000đ - 600.000đ' },
+                  { id: '600-1000', label: '600.000đ - 1.000.000đ' },
+                  { id: 'above-1000', label: 'Trên 1.000.000đ' },
                 ].map((item) => (
                   <label key={item.id} className="radio-label">
                     <input
@@ -137,7 +137,7 @@ function ProductsContent() {
         <section className="main-content">
           <div className="products-toolbar">
             <div>
-              <h1 className="products-page-title">Sản phẩm</h1>
+              <h1 className="products-page-title">Sản Phẩm Đồ Da Cao Cấp</h1>
               <p className="products-count">
                 Hiển thị {sorted.length} trên {products.length} sản phẩm
               </p>
@@ -148,7 +148,7 @@ function ProductsContent() {
               <div className="toolbar-search">
                 <input
                   type="text"
-                  placeholder="Tìm tên sản phẩm..."
+                  placeholder="Tìm tên sản phẩm, chất liệu..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

@@ -14,7 +14,7 @@ export default function Footer() {
       showToast('⚠️ Vui lòng nhập địa chỉ email hợp lệ!', 'warning');
       return;
     }
-    showToast('🎉 Cảm ơn bạn đã đăng ký nhận ưu đãi từ Mini Shop!', 'success');
+    showToast('🎉 Cảm ơn bạn đã đăng ký nhận ưu đãi từ Tanpolo!', 'success');
     setEmail('');
   };
 
@@ -30,10 +30,10 @@ export default function Footer() {
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
               </svg>
-              <span>Mini Shop</span>
+              <span>Mini Shop - Tanpolo</span>
             </Link>
             <p className="footer-desc">
-              Sản phẩm đồ dùng & trang trí thủ công tinh tế, tối giản, mang lại sự ấm cúng cho ngôi nhà của bạn.
+              Thương hiệu đồ da nam cao cấp TANPOLO Since 1992s. Cam kết 100% da bò thật nguyên tấm, gia công tỉ mỉ, khẳng định đẳng cấp phái mạnh.
             </p>
             <div className="social-links">
               <a href="#" className="social-link" aria-label="Facebook">
@@ -59,13 +59,15 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="footer-col-title">Khám Phá</h4>
+            <h4 className="footer-col-title">Danh Mục</h4>
             <ul className="footer-links-list">
               <li><Link href="/">Trang chủ</Link></li>
               <li><Link href="/products">Tất cả sản phẩm</Link></li>
-              <li><Link href="/products?cat=noithat">Nội thất phòng khách</Link></li>
-              <li><Link href="/products?cat=trangtri">Đồ decor trang trí</Link></li>
-              <li><Link href="/products?cat=den">Đèn chiếu sáng</Link></li>
+              <li><Link href="/products?cat=giay-tay">Giày tây & Công sở</Link></li>
+              <li><Link href="/products?cat=giay-luoi">Giày lười Da</Link></li>
+              <li><Link href="/products?cat=dep-da">Dép da & Sandal</Link></li>
+              <li><Link href="/products?cat=vi-da">Ví da nam cao cấp</Link></li>
+              <li><Link href="/products?cat=that-lung">Thắt lưng da bò</Link></li>
             </ul>
           </div>
 
@@ -74,9 +76,9 @@ export default function Footer() {
             <h4 className="footer-col-title">Chính Sách</h4>
             <ul className="footer-links-list">
               <li><a href="#">Chính sách đổi trả 7 ngày</a></li>
-              <li><a href="#">Giao hàng & thanh toán</a></li>
-              <li><a href="#">Bảo hành sản phẩm 12T</a></li>
-              <li><a href="#">Bảo mật thông tin</a></li>
+              <li><a href="#">Giao hàng & thanh toán COD</a></li>
+              <li><a href="#">Bảo hành da bò 12 tháng</a></li>
+              <li><a href="#">Cam kết da thật 100%</a></li>
               <li><Link href="/admin">Khu vực quản trị</Link></li>
             </ul>
           </div>
@@ -85,7 +87,7 @@ export default function Footer() {
           <div>
             <h4 className="footer-col-title">Đăng Ký Nhận Tin</h4>
             <p className="footer-desc" style={{ margin: '0 0 12px 0' }}>
-              Nhận voucher giảm 10% cho đơn hàng đầu tiên cùng ưu đãi hấp dẫn mỗi tuần.
+              Nhận thông tin bộ sưu tập đồ da mới cùng các chính sách ưu đãi mỗi tháng.
             </p>
             <form className="newsletter-form" onSubmit={handleSubscribe}>
               <input
@@ -103,7 +105,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom-bar">
-          <div>© {new Date().getFullYear()} Mini Shop. All rights reserved. Thiết kế hiện đại cho tổ ấm của bạn.</div>
+          <div>© {new Date().getFullYear()} Mini Shop - Tanpolo Leather. Đồ da thật chất lượng cao.</div>
           <div style={{ display: 'flex', gap: '16px' }}>
             <a href="#">Điều khoản sử dụng</a>
             <a href="#">Chính sách riêng tư</a>
