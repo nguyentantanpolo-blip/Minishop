@@ -2506,108 +2506,316 @@ img {
   background-color: var(--bg-subtle);
 }
 
-/* Footer Styles */
+/* Footer Styles (TANPOLO Brand Design) */
 .site-footer {
   background-color: #ffffff;
-  border-top: 1px solid var(--border-color);
-  padding: 48px 0 24px 0;
+  border-top: 1px solid #e5e7eb;
+  padding: 56px 0 28px 0;
   margin-top: auto;
+  color: #374151;
+  font-family: inherit;
 }
 
-.footer-grid {
+.footer-main-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
-  gap: 32px;
-  margin-bottom: 40px;
+  grid-template-columns: 1.45fr 1fr 1.15fr 1.35fr;
+  gap: 40px;
+  margin-bottom: 48px;
+  align-items: start;
 }
 
-.footer-desc {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  margin: 12px 0 16px 0;
-  max-width: 320px;
-}
-
-.social-links {
+/* Column 1: Brand & Company */
+.footer-company-col {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
 }
 
-.social-link {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: var(--bg-subtle);
-  color: var(--text-dark);
+.tanpolo-logo-wrap {
+  margin-bottom: 20px;
+}
+
+.tanpolo-logo-link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tanpolo-crest-svg {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.tanpolo-logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 72px;
+}
+
+.tanpolo-brand-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  color: #111827;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.tanpolo-brand-since {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.since-line {
+  height: 1px;
+  background-color: #9ca3af;
+  flex: 1;
+}
+
+.since-text {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #4b5563;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.company-info-block {
+  margin-bottom: 20px;
+}
+
+.company-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.company-text {
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.company-phone a {
+  color: #111827;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.92rem;
+  letter-spacing: 0.3px;
+  transition: color var(--transition-fast);
+}
+
+.company-phone a:hover {
+  color: var(--primary-color);
+}
+
+/* Social & Channels Row */
+.footer-social-channels {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 8px;
+}
+
+.social-channel-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+
+.social-channel-item:hover {
+  transform: translateY(-2px);
+}
+
+.social-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: box-shadow 0.2s ease;
 }
 
-.social-link:hover {
-  background-color: var(--primary-light);
-  color: var(--primary-color);
+.social-icon-box.email-box {
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
 }
 
-.footer-col-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin-bottom: 16px;
+.social-icon-box.facebook-box {
+  background-color: #1877f2;
 }
 
-.footer-links-list {
+.social-icon-box.zalo-box {
+  background-color: #ffffff;
+  border: 1.5px solid #0068ff;
+}
+
+.zalo-text-icon {
+  color: #0068ff;
+  font-weight: 800;
+  font-size: 0.85rem;
+  font-family: inherit, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.social-channel-label {
+  font-size: 0.72rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Columns 2 & 3: Navigation & Policy Links */
+.footer-heading {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 20px;
+}
+
+.footer-links-group {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
+  padding: 0;
+  margin: 0;
 }
 
-.footer-links-list a {
+.footer-links-group a {
+  font-size: 0.875rem;
+  color: #4b5563;
+  text-decoration: none;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+  display: inline-block;
+  line-height: 1.4;
+}
+
+.footer-links-group a:hover {
+  color: #111827;
+  font-weight: 500;
+  transform: translateX(2px);
+}
+
+/* Column 4: Newsletter & Verification */
+.newsletter-description {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 16px;
 }
 
-.footer-links-list a:hover {
-  color: var(--primary-color);
-}
-
-.newsletter-form {
+.tanpolo-newsletter-form {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
 }
 
-.newsletter-input {
-  flex: 1;
-  padding: 9px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  font-size: 0.85rem;
+.tanpolo-newsletter-input {
+  width: 100%;
+  padding: 12px 14px;
+  background-color: #f1f3f5;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #111827;
   outline: none;
+  transition: all 0.2s ease;
 }
 
-.newsletter-btn {
-  background-color: var(--primary-color);
+.tanpolo-newsletter-input:focus {
+  background-color: #ffffff;
+  border-color: #111827;
+  box-shadow: 0 0 0 1px #111827;
+}
+
+.tanpolo-newsletter-submit-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #1f1f1f;
   color: #ffffff;
   border: none;
-  padding: 9px 16px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
+  border-radius: 4px;
   font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
+.tanpolo-newsletter-submit-btn:hover {
+  background-color: #000000;
+}
+
+.tanpolo-newsletter-submit-btn:active {
+  transform: scale(0.99);
+}
+
+/* Bộ Công Thương Badge */
+.bo-cong-thuong-wrapper {
+  margin-top: 4px;
+}
+
+.bo-cong-thuong-link {
+  display: inline-block;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.bo-cong-thuong-link:hover {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+.bct-badge-svg {
+  display: block;
+  height: auto;
+  max-width: 180px;
+}
+
+/* Footer Bottom Bar */
 .footer-bottom-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-top: 24px;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid #f1f5f9;
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: #64748b;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-bottom-links a {
+  color: #64748b;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer-bottom-links a:hover {
+  color: #111827;
 }
 
 /* Keyframe Animations */
@@ -2629,8 +2837,17 @@ img {
   .admin-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .footer-main-grid,
   .footer-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-main-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
   }
 }
 

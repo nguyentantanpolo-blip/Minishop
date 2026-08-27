@@ -14,101 +14,284 @@ export default function Footer() {
       showToast('⚠️ Vui lòng nhập địa chỉ email hợp lệ!', 'warning');
       return;
     }
-    showToast('🎉 Cảm ơn bạn đã đăng ký nhận ưu đãi từ Tanpolo!', 'success');
+    showToast('🎉 Cảm ơn bạn đã đăng ký nhận thông tin từ TANPOLO!', 'success');
     setEmail('');
   };
 
   return (
-    <footer className="site-footer" id="contact">
+    <footer className="site-footer" id="footer">
       <div className="container">
-        <div className="footer-grid">
-          {/* Brand Info */}
-          <div className="footer-brand">
-            <Link href="/" className="brand-logo">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary-color)' }}>
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-              </svg>
-              <span>Mini Shop - Tanpolo</span>
-            </Link>
-            <p className="footer-desc">
-              Thương hiệu đồ da nam cao cấp TANPOLO Since 1992s. Cam kết 100% da bò thật nguyên tấm, gia công tỉ mỉ, khẳng định đẳng cấp phái mạnh.
-            </p>
-            <div className="social-links">
-              <a href="#" className="social-link" aria-label="Facebook">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+        <div className="footer-main-grid">
+          {/* Column 1: Brand & Company Details */}
+          <div className="footer-company-col">
+            <div className="tanpolo-logo-wrap">
+              <Link href="/" className="tanpolo-logo-link" aria-label="Tanpolo Homepage">
+                {/* Tanpolo Crest Logo */}
+                <svg
+                  width="72"
+                  height="72"
+                  viewBox="0 0 80 80"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="tanpolo-crest-svg"
+                >
+                  {/* 5-point Crown */}
+                  <g stroke="#1a1a1a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                    <circle cx="18" cy="11" r="1.3" fill="#1a1a1a" />
+                    <circle cx="29" cy="6.5" r="1.3" fill="#1a1a1a" />
+                    <circle cx="40" cy="5" r="1.6" fill="#1a1a1a" />
+                    <circle cx="51" cy="6.5" r="1.3" fill="#1a1a1a" />
+                    <circle cx="62" cy="11" r="1.3" fill="#1a1a1a" />
+                    <path
+                      d="M17 15 L18 12 L29 7.8 L33 14.5 L40 6.2 L47 14.5 L51 7.8 L62 12 L63 15 Z"
+                      fill="#1a1a1a"
+                    />
+                    <line x1="16" y1="16.5" x2="64" y2="16.5" strokeWidth="2" />
+                  </g>
+
+                  {/* Shield Crest */}
+                  <rect
+                    x="15"
+                    y="20"
+                    width="50"
+                    height="50"
+                    rx="4"
+                    stroke="#1a1a1a"
+                    strokeWidth="2.2"
+                    fill="none"
+                  />
+
+                  {/* Horse Profile & Dynamic Diagonal Stripes */}
+                  <g stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                    {/* Horse Head */}
+                    <path d="M26 40 C26 31 31 25 42 25 C47 25 54 28 54 32 C54 35 48 37 44 38 C40 39 36 43 36 48" />
+                    <circle cx="46" cy="30" r="1" fill="#1a1a1a" />
+                    <path d="M44 28 C47 27 50 27 52 29" strokeWidth="1.5" />
+                    {/* Dynamic Parallel Stripes */}
+                    <line x1="22" y1="52" x2="43" y2="52" strokeWidth="2.2" />
+                    <line x1="22" y1="57" x2="48" y2="57" strokeWidth="2.2" />
+                    <line x1="22" y1="62" x2="52" y2="62" strokeWidth="2.2" />
+                  </g>
                 </svg>
+
+                <div className="tanpolo-logo-text">
+                  <span className="tanpolo-brand-title">TANPOLO</span>
+                  <div className="tanpolo-brand-since">
+                    <span className="since-line"></span>
+                    <span className="since-text">SINCE 1992s</span>
+                    <span className="since-line"></span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            <div className="company-info-block">
+              <h3 className="company-title">CÔNG TY TNHH GIÀY NHẬT HUY</h3>
+              <p className="company-text">MST: 0319013067</p>
+              <p className="company-text">
+                985/71/5 Hương Lộ 2, Phường Bình Trị Đông, TP Hồ Chí Minh, Việt Nam
+              </p>
+              <p className="company-text company-phone">
+                <a href="tel:0988444806">098 844 48 06</a>
+              </p>
+            </div>
+
+            {/* Social & Contact Channels */}
+            <div className="footer-social-channels">
+              {/* Email */}
+              <a
+                href="mailto:tanpolo.shoes@gmail.com"
+                className="social-channel-item"
+                title="Gửi Email cho Tanpolo"
+              >
+                <div className="social-icon-box email-box">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                  </svg>
+                </div>
+                <span className="social-channel-label">Email</span>
               </a>
-              <a href="#" className="social-link" aria-label="Instagram">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
+
+              {/* Facebook */}
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-channel-item"
+                title="Facebook Tanpolo"
+              >
+                <div className="social-icon-box facebook-box">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </div>
+                <span className="social-channel-label">Facebook</span>
               </a>
-              <a href="#" className="social-link" aria-label="Youtube">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
-                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
-                </svg>
+
+              {/* Zalo */}
+              <a
+                href="https://zalo.me/0988444806"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-channel-item"
+                title="Zalo Chat Tanpolo"
+              >
+                <div className="social-icon-box zalo-box">
+                  <span className="zalo-text-icon">Zalo</span>
+                </div>
+                <span className="social-channel-label">Zalo</span>
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="footer-col-title">Danh Mục</h4>
-            <ul className="footer-links-list">
-              <li><Link href="/">Trang chủ</Link></li>
-              <li><Link href="/products">Tất cả sản phẩm</Link></li>
-              <li><Link href="/products?cat=giay-tay">Giày tây & Công sở</Link></li>
-              <li><Link href="/products?cat=giay-luoi">Giày lười Da</Link></li>
-              <li><Link href="/products?cat=dep-da">Dép da & Sandal</Link></li>
-              <li><Link href="/products?cat=vi-da">Ví da nam cao cấp</Link></li>
-              <li><Link href="/products?cat=that-lung">Thắt lưng da bò</Link></li>
+          {/* Column 2: HƯỚNG DẪN */}
+          <div className="footer-links-col">
+            <h4 className="footer-heading">HƯỚNG DẪN</h4>
+            <ul className="footer-links-group">
+              <li>
+                <Link href="/products">Hướng dẫn mua hàng</Link>
+              </li>
+              <li>
+                <Link href="/checkout">Giao nhận và thanh toán</Link>
+              </li>
+              <li>
+                <Link href="/cart">Tra cứu đơn hàng</Link>
+              </li>
             </ul>
           </div>
 
-          {/* Support */}
-          <div>
-            <h4 className="footer-col-title">Chính Sách</h4>
-            <ul className="footer-links-list">
-              <li><a href="#">Chính sách đổi trả 7 ngày</a></li>
-              <li><a href="#">Giao hàng & thanh toán COD</a></li>
-              <li><a href="#">Bảo hành da bò 12 tháng</a></li>
-              <li><a href="#">Cam kết da thật 100%</a></li>
-              <li><Link href="/admin">Khu vực quản trị</Link></li>
+          {/* Column 3: CHÍNH SÁCH */}
+          <div className="footer-links-col">
+            <h4 className="footer-heading">CHÍNH SÁCH</h4>
+            <ul className="footer-links-group">
+              <li>
+                <a href="#footer">Chăm sóc khách hàng</a>
+              </li>
+              <li>
+                <a href="#footer">Chính sách bảo hành</a>
+              </li>
+              <li>
+                <a href="#footer">Chính sách đổi hàng</a>
+              </li>
+              <li>
+                <a href="#footer">Chính sách thanh toán</a>
+              </li>
+              <li>
+                <a href="#footer">Chính sách vận chuyển</a>
+              </li>
+              <li>
+                <a href="#footer">Chính sách bảo mật</a>
+              </li>
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div>
-            <h4 className="footer-col-title">Đăng Ký Nhận Tin</h4>
-            <p className="footer-desc" style={{ margin: '0 0 12px 0' }}>
-              Nhận thông tin bộ sưu tập đồ da mới cùng các chính sách ưu đãi mỗi tháng.
+          {/* Column 4: ĐĂNG KÝ NHẬN THÔNG TIN */}
+          <div className="footer-newsletter-col">
+            <h4 className="footer-heading">ĐĂNG KÝ NHẬN THÔNG TIN</h4>
+            <p className="newsletter-description">
+              Nhận thông tin sản phẩm mới nhất, tin khuyến mãi và nhiều hơn nữa.
             </p>
-            <form className="newsletter-form" onSubmit={handleSubscribe}>
+
+            <form className="tanpolo-newsletter-form" onSubmit={handleSubscribe}>
               <input
                 type="email"
-                className="newsletter-input"
-                placeholder="Nhập email của bạn..."
+                className="tanpolo-newsletter-input"
+                placeholder="Email của bạn"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-label="Email của bạn"
               />
-              <button type="submit" className="newsletter-btn">
-                Gửi
+              <button type="submit" className="tanpolo-newsletter-submit-btn">
+                ĐĂNG KÝ
               </button>
             </form>
+
+            {/* Bộ Công Thương Badge */}
+            <div className="bo-cong-thuong-wrapper">
+              <a
+                href="http://online.gov.vn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bo-cong-thuong-link"
+                title="Đã thông báo Bộ Công Thương"
+              >
+                <svg
+                  width="180"
+                  height="54"
+                  viewBox="0 0 180 54"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="bct-badge-svg"
+                >
+                  {/* Left Circle Seal */}
+                  <circle cx="27" cy="27" r="23" fill="#0088cc" />
+                  <circle cx="27" cy="27" r="25" stroke="#0088cc" strokeWidth="2" fill="none" />
+                  <circle cx="27" cy="27" r="20" stroke="#ffffff" strokeWidth="1.2" fill="none" strokeDasharray="2 2" />
+                  {/* Checkmark in circle */}
+                  <path
+                    d="M17 26.5 L24 33.5 L37 18.5"
+                    stroke="#ffffff"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
+                  {/* Text around circle */}
+                  <text
+                    x="27"
+                    y="12"
+                    fill="#ffffff"
+                    fontSize="5"
+                    fontWeight="700"
+                    textAnchor="middle"
+                    fontFamily="Arial, sans-serif"
+                    letterSpacing="0.8"
+                  >
+                    ONLINE.GOV.VN
+                  </text>
+
+                  {/* Right Blue Badge Box */}
+                  <rect x="52" y="10" width="124" height="34" rx="4" fill="#0088cc" />
+                  <text
+                    x="114"
+                    y="23"
+                    fill="#ffffff"
+                    fontSize="9.5"
+                    fontWeight="700"
+                    textAnchor="middle"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                    letterSpacing="0.4"
+                  >
+                    ĐÃ THÔNG BÁO
+                  </text>
+                  <text
+                    x="114"
+                    y="36"
+                    fill="#ffffff"
+                    fontSize="10"
+                    fontWeight="800"
+                    textAnchor="middle"
+                    fontFamily="Arial, Helvetica, sans-serif"
+                    letterSpacing="0.6"
+                  >
+                    BỘ CÔNG THƯƠNG
+                  </text>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
+        {/* Footer Bottom Divider */}
         <div className="footer-bottom-bar">
-          <div>© {new Date().getFullYear()} Mini Shop - Tanpolo Leather. Đồ da thật chất lượng cao.</div>
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <a href="#">Điều khoản sử dụng</a>
-            <a href="#">Chính sách riêng tư</a>
+          <div>© {new Date().getFullYear()} TANPOLO - Công ty TNHH Giày Nhật Huy. All rights reserved.</div>
+          <div className="footer-bottom-links">
+            <Link href="/admin">Quản trị viên</Link>
+            <span>•</span>
+            <a href="#footer">Điều khoản</a>
+            <span>•</span>
+            <a href="#footer">Bảo mật</a>
           </div>
         </div>
       </div>
