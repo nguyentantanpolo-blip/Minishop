@@ -3021,7 +3021,6 @@ img {
   margin-bottom: 10px;
   box-shadow: var(--shadow-sm);
 }
-
 .image-dropzone-title {
   font-weight: 700;
   font-size: 0.9rem;
@@ -3082,6 +3081,9 @@ img {
 }
 
 .btn-upload-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 5px 12px;
   border-radius: 6px;
   font-size: 0.775rem;
@@ -3091,6 +3093,10 @@ img {
   border: 1px solid var(--border-color);
   background-color: #ffffff;
   color: var(--text-dark);
+}
+
+.btn-upload-action svg {
+  flex-shrink: 0;
 }
 
 .btn-upload-action:hover {
