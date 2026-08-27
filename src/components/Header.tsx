@@ -131,12 +131,7 @@ export default function Header() {
 
                     {isAdmin && (
                       <Link href="/admin" className="btn-auth-admin" title="Vào trang quản trị">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="7.5" cy="15.5" r="5.5"></circle>
-                          <path d="m21 2-9.6 9.6"></path>
-                          <path d="m15.5 7.5 3 3L22 7l-3-3"></path>
-                        </svg>
-                        <span>Quản trị</span>
+                        Quản trị
                       </Link>
                     )}
 
@@ -145,12 +140,7 @@ export default function Header() {
                       className="btn-auth-logout"
                       title="Đăng xuất"
                     >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                      </svg>
-                      <span>Thoát</span>
+                      Thoát
                     </button>
                   </div>
                 ) : (
@@ -162,12 +152,7 @@ export default function Header() {
                       Đăng ký
                     </Link>
                     <Link href="/admin" className="btn-auth-admin" title="Bảng quản trị Admin">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="7.5" cy="15.5" r="5.5"></circle>
-                        <path d="m21 2-9.6 9.6"></path>
-                        <path d="m15.5 7.5 3 3L22 7l-3-3"></path>
-                      </svg>
-                      <span>Admin</span>
+                      Admin
                     </Link>
                   </div>
                 )}
@@ -215,50 +200,29 @@ export default function Header() {
         <ul className="mobile-nav-links">
           <li>
             <Link href="/" onClick={() => setMobileOpen(false)} className={pathname === '/' ? 'active' : ''}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-              </svg>
-              <span>Trang chủ</span>
+              Trang chủ
             </Link>
           </li>
           <li>
             <Link href="/products" onClick={() => setMobileOpen(false)} className={pathname.startsWith('/products') ? 'active' : ''}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              </svg>
-              <span>Sản phẩm</span>
+              Sản phẩm
             </Link>
           </li>
           <li>
             <Link href="/wishlist" onClick={() => setMobileOpen(false)}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-              </svg>
-              <span>Yêu thích</span>
+              Yêu thích
               {wishlistCount > 0 && <span className="wishlist-badge">{wishlistCount}</span>}
             </Link>
           </li>
           <li>
             <Link href="/cart" onClick={() => setMobileOpen(false)}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-              </svg>
-              <span>Giỏ hàng</span>
+              Giỏ hàng
               <span className="cart-badge">{cartCount}</span>
             </Link>
           </li>
           <li>
             <Link href="/admin" onClick={() => setMobileOpen(false)}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="7.5" cy="15.5" r="5.5"></circle>
-                <path d="m21 2-9.6 9.6"></path>
-                <path d="m15.5 7.5 3 3L22 7l-3-3"></path>
-              </svg>
-              <span>Quản trị hệ thống</span>
+              Quản trị hệ thống
             </Link>
           </li>
         </ul>
