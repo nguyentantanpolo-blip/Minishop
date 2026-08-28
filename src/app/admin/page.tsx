@@ -81,7 +81,7 @@ export default function AdminPage() {
     formatPrice,
   } = useShop();
 
-  const { user, isAdmin, quickLogin, logout } = useAuth();
+  const { user, isAdmin, loading, logout } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'categories' | 'inventory' | 'orders' | 'customers'>('overview');
 
@@ -229,6 +229,14 @@ export default function AdminPage() {
   // =========================================================================
   // AUTH GUARD: User is not admin
   // =========================================================================
+  if (loading) {
+    return (
+      <main className="container" style={{ padding: '80px 20px', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: 'var(--text-muted)' }}>Đang kiểm tra quyền truy cập...</div>
+      </main>
+    );
+  }
+
   if (!user || !isAdmin) {
     return (
       <main className="container" style={{ padding: '80px 20px', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -254,14 +262,13 @@ export default function AdminPage() {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <button
-              type="button"
+            <Link
+              href="/login"
               className="btn-auth-register"
-              onClick={() => quickLogin('admin')}
-              style={{ width: '100%', justifyContent: 'center', height: '42px', fontSize: '0.9rem' }}
+              style={{ width: '100%', justifyContent: 'center', height: '42px', fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
             >
-              <IconZap size={14} /> Đăng nhập nhanh quyền Quản Trị Viên
-            </button>
+              <IconLock size={14} /> Đăng nhập với tài khoản Quản trị viên
+            </Link>
 
             <Link
               href="/"

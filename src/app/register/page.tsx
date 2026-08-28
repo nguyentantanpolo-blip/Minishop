@@ -16,8 +16,9 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -25,7 +26,9 @@ export default function RegisterPage() {
       return;
     }
 
-    const success = register(fullname, email, password);
+    setSubmitting(true);
+    const success = await register(fullname, email, password);
+    setSubmitting(false);
     if (success) {
       router.push('/');
     }
@@ -131,8 +134,9 @@ export default function RegisterPage() {
               type="submit"
               className="btn-checkout-primary"
               style={{ height: '46px', fontSize: '0.95rem', marginTop: '10px' }}
+              disabled={submitting}
             >
-              Đăng ký tài khoản
+              {submitting ? 'Đang tạo tài khoản...' : 'Đăng ký tài khoản'}
             </button>
           </form>
 

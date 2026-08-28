@@ -37,7 +37,8 @@ CREATE TABLE products (
     category_name TEXT,                        -- Tên danh mục hiển thị nhanh
     image TEXT NOT NULL,                       -- Đường dẫn hình ảnh chính
     badge TEXT,                                -- Nhãn ('Mới', 'Hot', '-20%')
-    stock TEXT DEFAULT 'Còn hàng',             -- Tình trạng hàng
+    stock TEXT DEFAULT 'Còn hàng',             -- Tình trạng hàng ('Còn hàng', 'Sắp hết hàng', 'Hết hàng')
+    stock_quantity INTEGER NOT NULL DEFAULT 50 CHECK (stock_quantity >= 0), -- Số lượng tồn kho
     specs JSONB,                               -- Thông số kỹ thuật (Chất liệu, màu sắc, kích thước, gallery...)
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())

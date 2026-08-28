@@ -4,32 +4,25 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { IconLightbulb, IconUser, IconKey } from '@/components/icons';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, quickLogin } = useAuth();
+  const { login } = useAuth();
   const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(account, password);
-    if (success) {
-      if (account.toLowerCase().includes('admin')) {
+    setSubmitting(true);
+    const session = await login(account, password);
+    setSubmitting(false);
+    if (session) {
+      if (session.role === 'admin') {
         router.push('/admin');
       } else {
         router.push('/');
       }
-    }
-  };
-
-  const handleQuick = (role: 'user' | 'admin') => {
-    quickLogin(role);
-    if (role === 'admin') {
-      router.push('/admin');
-    } else {
-      router.push('/');
     }
   };
 
@@ -50,44 +43,17 @@ export default function LoginPage() {
             <p className="auth-subtitle">Đăng nhập để trải nghiệm mua sắm & quản lý</p>
           </div>
 
-          {/* Quick 1-Click Test Box */}
-          <div className="quick-test-box">
-            <div className="quick-test-title"><IconLightbulb size={16} style={{ verticalAlign: 'middle' }} /> Đăng nhập thử nhanh (1 Click)</div>
-            <div className="quick-test-btns">
-              <button
-                type="button"
-                className="btn-test btn-test-user"
-                onClick={() => handleQuick('user')}
-              >
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  <IconUser size={16} />
-                  Khách hàng
-                </span>
-              </button>
-              <button
-                type="button"
-                className="btn-test btn-test-admin"
-                onClick={() => handleQuick('admin')}
-              >
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  <IconKey size={16} />
-                  Quản trị viên
-                </span>
-              </button>
-            </div>
-          </div>
-
           {/* Login Form */}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label" htmlFor="login-acc">
-                Email hoặc Tên đăng nhập
+                Email
               </label>
               <input
-                type="text"
+                type="email"
                 id="login-acc"
                 className="form-input"
-                placeholder="user@minishop.vn hoặc admin"
+                placeholder="user@minishop.vn"
                 value={account}
                 onChange={(e) => setAccount(e.target.value)}
                 required
@@ -118,8 +84,9 @@ export default function LoginPage() {
               type="submit"
               className="btn-checkout-primary"
               style={{ height: '46px', fontSize: '0.95rem', marginTop: '10px' }}
+              disabled={submitting}
             >
-              Đăng nhập ngay
+              {submitting ? 'Đang đăng nhập...' : 'Đăng nhập ngay'}
             </button>
           </form>
 
