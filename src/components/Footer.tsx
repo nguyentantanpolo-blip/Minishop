@@ -137,7 +137,7 @@ export default function Footer() {
                 aria-label="Zalo Tanpolo"
               >
                 <div className="social-icon-box zalo-box">
-                  <IconZalo size={26} />
+                  <IconZalo size={44} />
                 </div>
                 <span className="social-channel-label">Zalo</span>
               </a>

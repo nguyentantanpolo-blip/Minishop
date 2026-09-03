@@ -2749,9 +2749,11 @@ img {
 }
 
 .social-icon-box.zalo-box {
-  background-color: #ffffff;
-  border: 1.5px solid #0068ff;
-  box-shadow: 0 2px 6px rgba(0, 104, 255, 0.15);
+  background: transparent;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 104, 255, 0.25);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .social-channel-item:hover .social-icon-box {
