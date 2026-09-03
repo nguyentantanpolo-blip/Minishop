@@ -144,6 +144,7 @@ export default function AdminPage() {
   // =========================================================================
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [orderSort, setOrderSort] = useState<'newest' | 'oldest' | 'highest' | 'lowest'>('newest');
   const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
   const [isOrderEditModalOpen, setIsOrderEditModalOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -343,15 +344,31 @@ export default function AdminPage() {
     return !q || c.id.toLowerCase().includes(q) || c.name.toLowerCase().includes(q) || (c.description && c.description.toLowerCase().includes(q));
   });
 
-  const filteredOrders = orders.filter((o) => {
-    const matchStatus = orderStatusFilter === 'all' || o.status === orderStatusFilter;
-    const q = orderSearch.toLowerCase().trim();
-    return matchStatus && (!q ||
-      o.id.toLowerCase().includes(q) ||
-      o.customer.toLowerCase().includes(q) ||
-      o.phone.toLowerCase().includes(q) ||
-      o.address.toLowerCase().includes(q));
-  });
+  const cancelledOrders = orders.filter((o) => o.status === 'cancelled');
+
+  const filteredOrders = orders
+    .filter((o) => {
+      const matchStatus = orderStatusFilter === 'all' || o.status === orderStatusFilter;
+      const q = orderSearch.toLowerCase().trim();
+      return (
+        matchStatus &&
+        (!q ||
+          o.id.toLowerCase().includes(q) ||
+          o.customer.toLowerCase().includes(q) ||
+          o.phone.toLowerCase().includes(q) ||
+          o.address.toLowerCase().includes(q) ||
+          (o.notes && o.notes.toLowerCase().includes(q)) ||
+          o.items?.some((it) => it.name.toLowerCase().includes(q)))
+      );
+    })
+    .sort((a, b) => {
+      if (orderSort === 'highest') return b.total - a.total;
+      if (orderSort === 'lowest') return a.total - b.total;
+      if (orderSort === 'oldest') return a.date.localeCompare(b.date);
+      return b.date.localeCompare(a.date);
+    });
+
+  const filteredOrdersTotal = filteredOrders.reduce((sum, o) => sum + o.total, 0);
 
 
   const filteredCustomers = customers.filter((c) => {
@@ -1715,134 +1732,504 @@ export default function AdminPage() {
       )}
 
       {/* =====================================================================
-          TAB 5: QUẢN LÝ ĐƠN HÀNG (ORDERS CRUD)
+          TAB 5: QUẢN LÝ ĐƠN HÀNG (ORDERS CRUD - REVAMPED & BEAUTIFIED)
           ===================================================================== */}
       {activeTab === 'orders' && (
-        <div>
-          {/* Toolbar */}
-          <div className="admin-toolbar">
-            <div className="admin-toolbar-left">
-              <div className="admin-search-box">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Order KPI Summary Cards */}
+          <div className="orders-kpi-grid">
+            {/* KPI 1: All Orders */}
+            <div
+              className={`order-kpi-card ${orderStatusFilter === 'all' ? 'active-filter' : ''}`}
+              onClick={() => setOrderStatusFilter('all')}
+              title="Xem tất cả đơn hàng"
+            >
+              <div className="order-kpi-icon" style={{ background: '#f1f5f9', color: 'var(--text-dark)' }}>
+                <IconShoppingBag size={22} />
+              </div>
+              <div className="order-kpi-info">
+                <span className="order-kpi-label">Tổng đơn hàng</span>
+                <span className="order-kpi-val">{orders.length}</span>
+                <span className="order-kpi-sub">Doanh thu: {formatPrice(totalRevenue)}</span>
+              </div>
+            </div>
+
+            {/* KPI 2: Pending Orders */}
+            <div
+              className={`order-kpi-card ${orderStatusFilter === 'pending' ? 'active-filter' : ''}`}
+              onClick={() => setOrderStatusFilter(orderStatusFilter === 'pending' ? 'all' : 'pending')}
+              title="Lọc đơn chờ xử lý"
+            >
+              <div className="order-kpi-icon" style={{ background: '#fef3c7', color: '#d97706' }}>
+                <IconClock size={22} />
+              </div>
+              <div className="order-kpi-info">
+                <span className="order-kpi-label" style={{ color: '#b45309' }}>Chờ xử lý</span>
+                <span className="order-kpi-val" style={{ color: '#d97706' }}>{pendingOrders.length}</span>
+                <span className="order-kpi-sub">Cần đóng gói & giao</span>
+              </div>
+            </div>
+
+            {/* KPI 3: Shipping Orders */}
+            <div
+              className={`order-kpi-card ${orderStatusFilter === 'shipping' ? 'active-filter' : ''}`}
+              onClick={() => setOrderStatusFilter(orderStatusFilter === 'shipping' ? 'all' : 'shipping')}
+              title="Lọc đơn đang giao hàng"
+            >
+              <div className="order-kpi-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
+                <IconTruck size={22} />
+              </div>
+              <div className="order-kpi-info">
+                <span className="order-kpi-label" style={{ color: '#1d4ed8' }}>Đang giao hàng</span>
+                <span className="order-kpi-val" style={{ color: '#2563eb' }}>{shippingOrders.length}</span>
+                <span className="order-kpi-sub">Đang trên đường giao</span>
+              </div>
+            </div>
+
+            {/* KPI 4: Completed Orders */}
+            <div
+              className={`order-kpi-card ${orderStatusFilter === 'completed' ? 'active-filter' : ''}`}
+              onClick={() => setOrderStatusFilter(orderStatusFilter === 'completed' ? 'all' : 'completed')}
+              title="Lọc đơn giao thành công"
+            >
+              <div className="order-kpi-icon" style={{ background: '#ecfdf5', color: '#059669' }}>
+                <IconCheckCircle size={22} />
+              </div>
+              <div className="order-kpi-info">
+                <span className="order-kpi-label" style={{ color: '#047857' }}>Giao thành công</span>
+                <span className="order-kpi-val" style={{ color: '#059669' }}>{completedOrders.length}</span>
+                <span className="order-kpi-sub">Đã quyết toán</span>
+              </div>
+            </div>
+
+            {/* KPI 5: Cancelled Orders */}
+            <div
+              className={`order-kpi-card ${orderStatusFilter === 'cancelled' ? 'active-filter' : ''}`}
+              onClick={() => setOrderStatusFilter(orderStatusFilter === 'cancelled' ? 'all' : 'cancelled')}
+              title="Lọc đơn đã hủy"
+            >
+              <div className="order-kpi-icon" style={{ background: '#fee2e2', color: '#dc2626' }}>
+                <IconXCircle size={22} />
+              </div>
+              <div className="order-kpi-info">
+                <span className="order-kpi-label" style={{ color: '#b91c1c' }}>Đã hủy đơn</span>
+                <span className="order-kpi-val" style={{ color: '#dc2626' }}>{cancelledOrders.length}</span>
+                <span className="order-kpi-sub">Khách hủy / hoàn hàng</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Controls Toolbar */}
+          <div className="admin-toolbar" style={{ marginBottom: '14px' }}>
+            <div className="admin-toolbar-left" style={{ gap: '10px' }}>
+              {/* Search Box */}
+              <div className="admin-search-box" style={{ minWidth: '280px' }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
                 <input
                   type="text"
-                  placeholder="Tìm theo mã đơn #MS, tên khách, SĐT..."
+                  placeholder="Tìm theo mã đơn, khách hàng, SĐT, địa chỉ, SP..."
                   value={orderSearch}
                   onChange={(e) => setOrderSearch(e.target.value)}
                 />
+                {orderSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setOrderSearch('')}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
               </div>
 
-              <select
-                className="admin-select"
-                value={orderStatusFilter}
-                onChange={(e) => setOrderStatusFilter(e.target.value)}
-              >
-                <option value="all">Tất cả trạng thái ({orders.length})</option>
-                <option value="pending">Chờ xử lý ({orders.filter((o) => o.status === 'pending').length})</option>
-                <option value="shipping">Đang giao ({orders.filter((o) => o.status === 'shipping').length})</option>
-                <option value="completed">Thành công ({orders.filter((o) => o.status === 'completed').length})</option>
-                <option value="cancelled">Đã hủy ({orders.filter((o) => o.status === 'cancelled').length})</option>
-              </select>
+              {/* Status Filter Pills */}
+              <div className="order-filter-pills">
+                <button
+                  type="button"
+                  className={`order-filter-pill ${orderStatusFilter === 'all' ? 'active' : ''}`}
+                  onClick={() => setOrderStatusFilter('all')}
+                >
+                  Tất cả <span className="order-filter-pill-count">{orders.length}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`order-filter-pill ${orderStatusFilter === 'pending' ? 'active' : ''}`}
+                  onClick={() => setOrderStatusFilter('pending')}
+                  style={orderStatusFilter === 'pending' ? { background: '#d97706', borderColor: '#d97706' } : {}}
+                >
+                  Chờ xử lý <span className="order-filter-pill-count">{pendingOrders.length}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`order-filter-pill ${orderStatusFilter === 'shipping' ? 'active' : ''}`}
+                  onClick={() => setOrderStatusFilter('shipping')}
+                  style={orderStatusFilter === 'shipping' ? { background: '#2563eb', borderColor: '#2563eb' } : {}}
+                >
+                  Đang giao <span className="order-filter-pill-count">{shippingOrders.length}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`order-filter-pill ${orderStatusFilter === 'completed' ? 'active' : ''}`}
+                  onClick={() => setOrderStatusFilter('completed')}
+                  style={orderStatusFilter === 'completed' ? { background: '#059669', borderColor: '#059669' } : {}}
+                >
+                  Thành công <span className="order-filter-pill-count">{completedOrders.length}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`order-filter-pill ${orderStatusFilter === 'cancelled' ? 'active' : ''}`}
+                  onClick={() => setOrderStatusFilter('cancelled')}
+                  style={orderStatusFilter === 'cancelled' ? { background: '#dc2626', borderColor: '#dc2626' } : {}}
+                >
+                  Đã hủy <span className="order-filter-pill-count">{cancelledOrders.length}</span>
+                </button>
+              </div>
             </div>
 
-            <div className="admin-toolbar-right">
+            <div className="admin-toolbar-right" style={{ gap: '10px' }}>
+              {/* Sort Selector */}
+              <select
+                className="admin-select"
+                value={orderSort}
+                onChange={(e) => setOrderSort(e.target.value as any)}
+                title="Sắp xếp danh sách"
+              >
+                <option value="newest">Mới nhất trước</option>
+                <option value="oldest">Cũ nhất trước</option>
+                <option value="highest">Giá trị cao nhất</option>
+                <option value="lowest">Giá trị thấp nhất</option>
+              </select>
+
+              <button
+                className="btn-admin-reset"
+                onClick={() => refreshData()}
+                title="Làm mới dữ liệu từ máy chủ"
+                disabled={isLoading}
+              >
+                <IconRefresh size={14} className={isLoading ? 'spin-anim' : ''} />
+              </button>
+
               <button className="btn-admin-add" onClick={handleOpenManualOrderModal}>
-                <span><IconPackage size={14} /> Tạo đơn hàng thủ công</span>
+                <IconPlus size={15} /> Tạo đơn hàng mới
               </button>
             </div>
           </div>
 
-          {/* Orders Table */}
-          <div className="admin-table-card">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Mã đơn</th>
-                  <th>Khách hàng & SĐT</th>
-                  <th>Địa chỉ nhận hàng</th>
-                  <th>Tổng tiền</th>
-                  <th>Thanh toán</th>
-                  <th>Trạng thái</th>
-                  <th style={{ textAlign: 'right' }}>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td>
-                      <strong>{order.id}</strong>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{order.date}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 600, color: 'var(--text-dark)' }}>{order.customer}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}><IconPhone size={12} /> {order.phone}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontSize: '0.825rem', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={order.address}>
-                        {order.address}
-                      </div>
-                      {order.notes && (
-                        <div style={{ fontSize: '0.75rem', color: '#b45309' }}>Note: {order.notes}</div>
-                      )}
-                    </td>
-                    <td>
-                      <span style={{ fontWeight: 700, color: '#059669' }}>{order.totalFormatted}</span>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{order.items?.length || 1} sản phẩm</div>
-                    </td>
-                    <td>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)' }}>
-                        {order.paymentMethod}
-                      </span>
-                    </td>
-                    <td>
-                      <select
-                        className="status-dropdown-select"
-                        value={order.status}
-                        onChange={(e) => updateOrderStatus(order.id, e.target.value as Order['status'])}
-                      >
-                        <option value="pending">Đang xử lý</option>
-                        <option value="shipping">Đang giao hàng</option>
-                        <option value="completed">Giao thành công</option>
-                        <option value="cancelled">Đã hủy đơn</option>
-                      </select>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div className="action-btn-group" style={{ justifyContent: 'flex-end' }}>
-                        <button
-                          className="btn-action-sm"
-                          title="Xem chi tiết đơn"
-                          onClick={() => setViewingOrder(order)}
-                        >
-                          <IconEye size={14} />
-                        </button>
-                        <button
-                          className="btn-action-sm"
-                          title="Sửa thông tin đơn"
-                          onClick={() => handleOpenEditOrder(order)}
-                        >
-                          <IconPencil size={14} />
-                        </button>
-                        <button
-                          className="btn-action-sm"
-                          title="Xóa đơn hàng"
-                          onClick={() => {
-                            if (window.confirm(`Bạn có chắc muốn xóa đơn hàng "${order.id}"?`)) {
-                              deleteOrder(order.id);
-                            }
-                          }}
-                          style={{ color: '#ef4444' }}
-                        >
-                          <IconTrash size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Orders Table Card */}
+          <div className="admin-table-card" style={{ padding: 0, overflow: 'hidden' }}>
+            {filteredOrders.length === 0 ? (
+              <div className="admin-table-empty">
+                <div className="admin-table-empty-icon">
+                  <IconPackage size={32} />
+                </div>
+                <h4 style={{ fontSize: '1.05rem', color: 'var(--text-dark)', margin: 0 }}>
+                  Không tìm thấy đơn hàng nào
+                </h4>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>
+                  {orderSearch || orderStatusFilter !== 'all'
+                    ? 'Không có đơn hàng nào khớp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.'
+                    : 'Chưa có đơn hàng nào được tạo trong hệ thống.'}
+                </p>
+                {(orderSearch || orderStatusFilter !== 'all') && (
+                  <button
+                    type="button"
+                    className="btn-admin-reset"
+                    style={{ marginTop: '8px' }}
+                    onClick={() => {
+                      setOrderSearch('');
+                      setOrderStatusFilter('all');
+                    }}
+                  >
+                    Đặt lại bộ lọc
+                  </button>
+                )}
+              </div>
+            ) : (
+              <>
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th style={{ paddingLeft: '20px' }}>Mã đơn & Thời gian</th>
+                      <th>Khách hàng & SĐT</th>
+                      <th>Sản phẩm trong đơn</th>
+                      <th>Tổng thanh toán</th>
+                      <th>Phương thức</th>
+                      <th>Trạng thái đơn</th>
+                      <th style={{ textAlign: 'right', paddingRight: '20px' }}>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredOrders.map((order) => {
+                      const initial = order.customer ? order.customer.charAt(0).toUpperCase() : 'K';
+                      return (
+                        <tr key={order.id}>
+                          {/* Mã đơn & Thời gian */}
+                          <td style={{ paddingLeft: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <strong
+                                style={{
+                                  fontFamily: 'ui-monospace, monospace',
+                                  fontSize: '0.92rem',
+                                  color: 'var(--text-dark)',
+                                }}
+                              >
+                                #{order.id}
+                              </strong>
+                              <button
+                                type="button"
+                                className={`order-copy-btn ${copiedKey === order.id ? 'copied' : ''}`}
+                                style={{ padding: '2px 5px', fontSize: '0.68rem' }}
+                                title="Sao chép mã đơn"
+                                onClick={() => handleCopyText(order.id, order.id)}
+                              >
+                                {copiedKey === order.id ? <IconCheck size={10} /> : <IconCopy size={10} />}
+                              </button>
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.76rem',
+                                color: 'var(--text-muted)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                marginTop: '3px',
+                              }}
+                            >
+                              <IconClock size={11} /> {order.date}
+                            </div>
+                          </td>
+
+                          {/* Khách hàng & SĐT */}
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <div
+                                style={{
+                                  width: '34px',
+                                  height: '34px',
+                                  borderRadius: '50%',
+                                  background: 'linear-gradient(135deg, #059669, #10b981)',
+                                  color: '#ffffff',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontWeight: 800,
+                                  fontSize: '0.85rem',
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {initial}
+                              </div>
+                              <div>
+                                <div style={{ fontWeight: 700, color: 'var(--text-dark)', fontSize: '0.88rem' }}>
+                                  {order.customer}
+                                </div>
+                                <a
+                                  href={`tel:${order.phone}`}
+                                  style={{
+                                    fontSize: '0.78rem',
+                                    color: '#2563eb',
+                                    textDecoration: 'none',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    fontWeight: 600,
+                                    marginTop: '2px',
+                                  }}
+                                >
+                                  <IconPhone size={11} /> {order.phone}
+                                </a>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Sản phẩm trong đơn */}
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              {order.items && order.items.length > 0 ? (
+                                <>
+                                  <div className="order-thumbs-stack">
+                                    {order.items.slice(0, 3).map((item, idx) => (
+                                      <img
+                                        key={idx}
+                                        src={item.image || '/assets/images/products/bo5-1.jpg'}
+                                        alt={item.name}
+                                        className="order-thumb-item"
+                                        onError={(e) => {
+                                          (e.currentTarget as HTMLImageElement).src =
+                                            '/assets/images/products/bo5-1.jpg';
+                                        }}
+                                      />
+                                    ))}
+                                    {order.items.length > 3 && (
+                                      <span className="order-thumb-more">+{order.items.length - 3}</span>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <div
+                                      style={{
+                                        fontSize: '0.82rem',
+                                        fontWeight: 600,
+                                        color: 'var(--text-dark)',
+                                        maxWidth: '180px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                      title={order.items.map((i) => `${i.name} (x${i.quantity})`).join(', ')}
+                                    >
+                                      {order.items[0]?.name}
+                                    </div>
+                                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                                      {order.items.reduce((s, it) => s + it.quantity, 0)} món hàng
+                                    </div>
+                                  </div>
+                                </>
+                              ) : (
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-light)', fontStyle: 'italic' }}>
+                                  1 sản phẩm
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Tổng thanh toán */}
+                          <td>
+                            <div style={{ fontWeight: 800, color: '#059669', fontSize: '0.96rem' }}>
+                              {order.totalFormatted}
+                            </div>
+                            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                              {order.shippingFee === 0 ? 'Miễn phí ship' : `Ship: ${formatPrice(order.shippingFee)}`}
+                            </div>
+                          </td>
+
+                          {/* Phương thức thanh toán */}
+                          <td>
+                            <span
+                              style={{
+                                fontSize: '0.76rem',
+                                fontWeight: 700,
+                                padding: '3px 8px',
+                                borderRadius: 'var(--radius-sm)',
+                                background: order.paymentMethod.toLowerCase().includes('chuyển khoản')
+                                  ? '#eff6ff'
+                                  : '#fef3c7',
+                                color: order.paymentMethod.toLowerCase().includes('chuyển khoản')
+                                  ? '#1e40af'
+                                  : '#92400e',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              <IconCreditCard size={12} />
+                              {order.paymentMethod.toLowerCase().includes('chuyển khoản') ? 'Chuyển khoản' : 'COD'}
+                            </span>
+                          </td>
+
+                          {/* Trạng thái đơn hàng */}
+                          <td>
+                            <select
+                              className="status-dropdown-select"
+                              style={{
+                                padding: '4px 8px',
+                                fontSize: '0.8rem',
+                                fontWeight: 600,
+                                borderRadius: 'var(--radius-pill)',
+                                cursor: 'pointer',
+                              }}
+                              value={order.status}
+                              onChange={(e) => updateOrderStatus(order.id, e.target.value as Order['status'])}
+                            >
+                              <option value="pending">⏳ Đang xử lý</option>
+                              <option value="shipping">🚚 Đang giao hàng</option>
+                              <option value="completed">✅ Giao thành công</option>
+                              <option value="cancelled">❌ Đã hủy đơn</option>
+                            </select>
+                          </td>
+
+                          {/* Thao tác */}
+                          <td style={{ textAlign: 'right', paddingRight: '20px' }}>
+                            <div className="action-btn-group" style={{ justifyContent: 'flex-end', gap: '6px' }}>
+                              <button
+                                className="btn-action-sm"
+                                title="Xem chi tiết đơn hàng"
+                                onClick={() => setViewingOrder(order)}
+                                style={{ color: '#059669' }}
+                              >
+                                <IconEye size={15} />
+                              </button>
+                              <button
+                                className="btn-action-sm"
+                                title="In hóa đơn đơn hàng"
+                                onClick={() => handlePrintOrder(order)}
+                              >
+                                <IconPrinter size={15} />
+                              </button>
+                              <button
+                                className="btn-action-sm"
+                                title="Chỉnh sửa đơn hàng"
+                                onClick={() => handleOpenEditOrder(order)}
+                                style={{ color: '#2563eb' }}
+                              >
+                                <IconPencil size={15} />
+                              </button>
+                              <button
+                                className="btn-action-sm"
+                                title="Xóa đơn hàng"
+                                onClick={() => {
+                                  if (window.confirm(`Bạn có chắc chắn muốn xóa đơn hàng "${order.id}"?`)) {
+                                    deleteOrder(order.id);
+                                  }
+                                }}
+                                style={{ color: '#ef4444' }}
+                              >
+                                <IconTrash size={15} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+
+                {/* Table Bottom Footer Summary */}
+                <div
+                  style={{
+                    padding: '14px 20px',
+                    background: '#f8fafc',
+                    borderTop: '1px solid var(--border-color)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    fontSize: '0.84rem',
+                    color: 'var(--text-muted)',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                  }}
+                >
+                  <div>
+                    Hiển thị <strong>{filteredOrders.length}</strong> trên tổng số <strong>{orders.length}</strong> đơn hàng
+                  </div>
+                  <div>
+                    Tổng giá trị hiển thị: <strong style={{ color: '#059669', fontSize: '0.95rem' }}>{formatPrice(filteredOrdersTotal)}</strong>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
