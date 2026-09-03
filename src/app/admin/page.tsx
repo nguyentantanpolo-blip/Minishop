@@ -138,6 +138,7 @@ export default function AdminPage() {
   const [modalCatImageFileName, setModalCatImageFileName] = useState('');
   const [isDraggingCatImage, setIsDraggingCatImage] = useState(false);
   const catImageInputRef = useRef<HTMLInputElement>(null);
+  const [viewingCategoryProducts, setViewingCategoryProducts] = useState<Category | null>(null);
 
   // =========================================================================
   // Order Filter & Detail State
@@ -1278,67 +1279,188 @@ export default function AdminPage() {
           </div>
 
           {/* Categories Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px', marginBottom: '40px' }}>
             {filteredCategories.map((c) => {
-              const count = products.filter((p) => p.category === c.id).length;
+              const catProducts = products.filter((p) => p.category === c.id);
+              const count = catProducts.length;
+              const totalStock = catProducts.reduce((sum, p) => sum + (p.stockQuantity || (p.stock === 'Hết hàng' ? 0 : 10)), 0);
+              const priceValues = catProducts.map((p) => p.priceValue).filter((v): v is number => typeof v === 'number' && v > 0);
+              const minPrice = priceValues.length > 0 ? Math.min(...priceValues) : 0;
+              const maxPrice = priceValues.length > 0 ? Math.max(...priceValues) : 0;
+
               return (
-                <div key={c.id} style={{
-                  background: '#ffffff',
-                  borderRadius: 'var(--radius-lg)',
-                  border: '1px solid var(--border-color)',
-                  overflow: 'hidden',
-                  boxShadow: 'var(--shadow-sm)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}>
-                  <div style={{ height: '140px', overflow: 'hidden', position: 'relative' }}>
-                    <img src={c.image || '/assets/images/products/bo5-1.jpg'} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <span style={{
-                      position: 'absolute',
-                      top: '10px',
-                      right: '10px',
-                      background: 'rgba(15, 23, 42, 0.85)',
-                      color: '#ffffff',
-                      padding: '3px 10px',
-                      borderRadius: 'var(--radius-pill)',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                    }}>
-                      {count} Sản phẩm
-                    </span>
+                <div key={c.id} className="category-admin-card">
+                  {/* Category Card Cover */}
+                  <div className="category-card-cover">
+                    <img
+                      src={c.image || '/assets/images/products/bo5-1.jpg'}
+                      alt={c.name}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/assets/images/products/bo5-1.jpg';
+                      }}
+                    />
+                    <div className="category-cover-overlay">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span
+                          style={{
+                            background: 'rgba(15, 23, 42, 0.85)',
+                            backdropFilter: 'blur(4px)',
+                            color: '#ffffff',
+                            padding: '3px 10px',
+                            borderRadius: 'var(--radius-pill)',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.04em',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          Slug: {c.id}
+                        </span>
+                        <span
+                          style={{
+                            background: '#059669',
+                            color: '#ffffff',
+                            padding: '3px 10px',
+                            borderRadius: 'var(--radius-pill)',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          }}
+                        >
+                          {count} Sản phẩm
+                        </span>
+                      </div>
+
+                      <div>
+                        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', textShadow: '0 1px 3px rgba(0,0,0,0.5)', margin: 0 }}>
+                          {c.name}
+                        </h3>
+                        <div style={{ fontSize: '0.75rem', color: '#e2e8f0', marginTop: '2px' }}>
+                          Tổng kho: <strong>{totalStock} chiếc</strong> {minPrice > 0 && `• ${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`}
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
+                  {/* Category Card Content */}
                   <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '4px' }}>{c.name}</h3>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '8px' }}>Mã Slug: <code>{c.id}</code></div>
-                    <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', flex: 1, marginBottom: '16px' }}>
-                      {c.description || 'Chưa có mô tả chi tiết cho danh mục này.'}
+                    <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginBottom: '10px', lineHeight: 1.4 }}>
+                      {c.description || 'Danh mục sản phẩm đồ da thủ công Tanpolo.'}
                     </p>
 
-                    <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
+                    {/* Product Thumbnails Gallery Preview */}
+                    <div style={{ marginTop: 'auto' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-dark)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          Mẫu sản phẩm ({count})
+                        </span>
+                        {count > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setViewingCategoryProducts(c)}
+                            style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                          >
+                            Xem tất cả →
+                          </button>
+                        )}
+                      </div>
+
+                      {count === 0 ? (
+                        <div style={{ padding: '10px', background: '#f8fafc', borderRadius: 'var(--radius-md)', textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-light)' }}>
+                          Chưa có sản phẩm trong danh mục
+                        </div>
+                      ) : (
+                        <div className="category-thumbs-preview-row">
+                          {catProducts.slice(0, 4).map((p) => (
+                            <img
+                              key={p.id}
+                              src={p.image || '/assets/images/products/bo5-1.jpg'}
+                              alt={p.name}
+                              title={`${p.name} - ${p.price}`}
+                              className="category-preview-thumb"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = '/assets/images/products/bo5-1.jpg';
+                              }}
+                            />
+                          ))}
+                          {count > 4 && (
+                            <div
+                              onClick={() => setViewingCategoryProducts(c)}
+                              style={{
+                                width: '38px',
+                                height: '38px',
+                                borderRadius: 'var(--radius-sm)',
+                                background: '#e2e8f0',
+                                color: 'var(--text-dark)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                              }}
+                              title={`Xem thêm ${count - 4} sản phẩm khác`}
+                            >
+                              +{count - 4}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px', marginTop: '6px' }}>
                       <button
-                        onClick={() => handleOpenEditCategory(c)}
+                        type="button"
+                        onClick={() => setViewingCategoryProducts(c)}
                         style={{
                           flex: 1,
-                          padding: '8px',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--primary-border)',
+                          background: 'var(--primary-light)',
+                          color: 'var(--primary-color)',
+                          fontWeight: 700,
+                          fontSize: '0.825rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        <IconEye size={14} /> Xem sản phẩm ({count})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditCategory(c)}
+                        title="Chỉnh sửa danh mục"
+                        style={{
+                          padding: '8px 10px',
                           borderRadius: '8px',
                           border: '1px solid var(--border-color)',
                           background: '#ffffff',
+                          color: 'var(--text-dark)',
                           fontWeight: 600,
                           fontSize: '0.825rem',
                           cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}
                       >
-                        <IconPencil size={14} /> Chỉnh sửa
+                        <IconPencil size={14} />
                       </button>
                       <button
+                        type="button"
                         onClick={() => {
                           if (window.confirm(`Bạn có chắc muốn xóa danh mục "${c.name}"?`)) {
                             deleteCategory(c.id);
                           }
                         }}
+                        title="Xóa danh mục"
                         style={{
-                          padding: '8px 12px',
+                          padding: '8px 10px',
                           borderRadius: '8px',
                           border: '1px solid #fee2e2',
                           background: '#fef2f2',
@@ -1346,9 +1468,12 @@ export default function AdminPage() {
                           fontWeight: 600,
                           fontSize: '0.825rem',
                           cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}
                       >
-                        <IconTrash size={14} /> Xóa
+                        <IconTrash size={14} />
                       </button>
                     </div>
                   </div>
@@ -2903,6 +3028,241 @@ export default function AdminPage() {
           </div>
         </div>
       </div>
+
+      {/* =====================================================================
+          MODAL 2.5: VIEW CATEGORY PRODUCTS (XEM SẢN PHẨM THEO DANH MỤC)
+          ===================================================================== */}
+      {viewingCategoryProducts && (() => {
+        const catProducts = products.filter((p) => p.category === viewingCategoryProducts.id);
+        const totalStock = catProducts.reduce((sum, p) => sum + (p.stockQuantity || (p.stock === 'Hết hàng' ? 0 : 10)), 0);
+
+        return (
+          <div
+            className="modal-overlay open"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setViewingCategoryProducts(null);
+            }}
+          >
+            <div className="modal-admin-card modal-admin-card--cat-products">
+              {/* Header */}
+              <div className="modal-admin-header">
+                <div className="modal-admin-title-wrap">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem' }}>
+                      <IconFolder size={18} color="var(--primary-color)" /> {viewingCategoryProducts.name}
+                    </h3>
+                    <span
+                      style={{
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        padding: '3px 10px',
+                        borderRadius: 'var(--radius-pill)',
+                        background: '#f0fdf4',
+                        color: '#15803d',
+                        border: '1px solid #bbf7d0',
+                      }}
+                    >
+                      {catProducts.length} Mẫu sản phẩm • {totalStock} chiếc
+                    </span>
+                  </div>
+                  <p className="modal-admin-subtitle">
+                    Slug ID: <code>{viewingCategoryProducts.id}</code> — {viewingCategoryProducts.description || 'Toàn bộ danh sách sản phẩm thuộc danh mục này'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="modal-close-btn"
+                  onClick={() => setViewingCategoryProducts(null)}
+                  title="Đóng modal"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="modal-admin-body" style={{ overflowY: 'auto', maxHeight: '65vh', padding: '20px' }}>
+                {catProducts.length === 0 ? (
+                  <div className="admin-table-empty">
+                    <div className="admin-table-empty-icon">
+                      <IconPackage size={32} />
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-dark)' }}>
+                      Chưa có sản phẩm nào trong danh mục này
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      Bạn có thể tạo sản phẩm mới và gán vào danh mục này ngay bên dưới.
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-admin-add"
+                      onClick={() => {
+                        const targetCat = viewingCategoryProducts.id;
+                        setViewingCategoryProducts(null);
+                        handleOpenAddProduct();
+                        setModalCategory(targetCat);
+                      }}
+                    >
+                      <IconPlus size={14} /> Thêm sản phẩm đầu tiên
+                    </button>
+                  </div>
+                ) : (
+                  <div className="cat-products-grid">
+                    {catProducts.map((p) => (
+                      <div key={p.id} className="cat-product-card">
+                        <div style={{ position: 'relative' }}>
+                          <img
+                            src={p.image || '/assets/images/products/bo5-1.jpg'}
+                            alt={p.name}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = '/assets/images/products/bo5-1.jpg';
+                            }}
+                          />
+                          {p.badge && (
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: '8px',
+                                left: '8px',
+                                background: 'var(--primary-color)',
+                                color: '#ffffff',
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                padding: '2px 8px',
+                                borderRadius: 'var(--radius-pill)',
+                              }}
+                            >
+                              {p.badge}
+                            </span>
+                          )}
+                          <span
+                            style={{
+                              position: 'absolute',
+                              bottom: '8px',
+                              right: '8px',
+                              background: p.stock === 'Hết hàng' ? '#ef4444' : '#059669',
+                              color: '#ffffff',
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              padding: '2px 8px',
+                              borderRadius: 'var(--radius-pill)',
+                            }}
+                          >
+                            {p.stock} ({p.stockQuantity ?? 50})
+                          </span>
+                        </div>
+
+                        <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', flex: 1, gap: '6px' }}>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              fontWeight: 700,
+                              color: 'var(--text-dark)',
+                              lineHeight: 1.35,
+                              minHeight: '34px',
+                            }}
+                          >
+                            {p.name}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                            Mã: <code>{p.id}</code>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: 'auto', paddingTop: '6px' }}>
+                            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#059669' }}>
+                              {p.price}
+                            </span>
+                            {p.oldPrice && (
+                              <span style={{ fontSize: '0.75rem', textDecoration: 'line-through', color: 'var(--text-light)' }}>
+                                {p.oldPrice}
+                              </span>
+                            )}
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '6px', marginTop: '8px', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px' }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setViewingCategoryProducts(null);
+                                handleOpenEditProduct(p);
+                              }}
+                              style={{
+                                flex: 1,
+                                padding: '6px 10px',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid var(--border-color)',
+                                background: '#ffffff',
+                                fontSize: '0.78rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              <IconPencil size={12} /> Sửa SP
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleStockQuick(p)}
+                              title="Đổi trạng thái còn hàng / hết hàng nhanh"
+                              style={{
+                                padding: '6px 8px',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid var(--border-color)',
+                                background: 'var(--bg-subtle)',
+                                fontSize: '0.78rem',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <IconRefresh size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="modal-admin-footer">
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  Đang hiển thị <strong>{catProducts.length}</strong> sản phẩm thuộc <strong>{viewingCategoryProducts.name}</strong>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    className="btn-admin-reset"
+                    onClick={() => {
+                      setProdCategory(viewingCategoryProducts.id);
+                      setActiveTab('products');
+                      setViewingCategoryProducts(null);
+                    }}
+                  >
+                    Xem & Lọc trong tab Sản phẩm →
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-admin-add"
+                    onClick={() => {
+                      const targetCat = viewingCategoryProducts.id;
+                      setViewingCategoryProducts(null);
+                      handleOpenAddProduct();
+                      setModalCategory(targetCat);
+                    }}
+                  >
+                    <IconPlus size={14} /> Thêm sản phẩm mới
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* =====================================================================
           MODAL 3: VIEW ORDER DETAILS (EXPANDED & BEAUTIFIED)
