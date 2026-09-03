@@ -697,6 +697,17 @@ export default function AdminPage() {
     setManualCartItems(manualCartItems.filter((_, i) => i !== index));
   };
 
+  const handleUpdateManualItemQty = (index: number, delta: number) => {
+    const updated = [...manualCartItems];
+    const newQty = updated[index].quantity + delta;
+    if (newQty <= 0) {
+      handleRemoveManualItem(index);
+    } else {
+      updated[index].quantity = newQty;
+      setManualCartItems(updated);
+    }
+  };
+
   const handleSaveManualOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!manualCustomer.trim() || !manualPhone.trim() || !manualAddress.trim() || manualCartItems.length === 0) return;
@@ -3854,169 +3865,392 @@ export default function AdminPage() {
       )}
 
       {/* =====================================================================
-          MODAL 5: MANUAL ORDER CREATION
+          MODAL 5: MANUAL ORDER CREATION (REVAMPED & BEAUTIFIED)
           ===================================================================== */}
-      {isManualOrderModalOpen && (
-        <div className="modal-overlay open">
-          <div className="modal-admin-card" style={{ maxWidth: '640px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                <IconPackage size={16} /> Tạo Đơn Hàng Mới (Thủ Công)
-              </h2>
-              <button
-                type="button"
-                onClick={() => setIsManualOrderModalOpen(false)}
-                style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
-              >
-                ×
-              </button>
-            </div>
+      {isManualOrderModalOpen && (() => {
+        const manualSubtotal = manualCartItems.reduce((sum, item) => sum + item.priceValue * item.quantity, 0);
+        const manualShippingFee = manualCartItems.length > 0 ? (manualSubtotal >= 500000 ? 0 : 30000) : 0;
+        const manualTotal = manualSubtotal + manualShippingFee;
+        const currentProd = products.find((p) => p.id === manualSelectedProdId) || products[0];
 
-            <form onSubmit={handleSaveManualOrder} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div className="form-group">
-                  <label className="form-label">Tên khách hàng (*)</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    required
-                    placeholder="VD: Hoàng Văn Minh"
-                    value={manualCustomer}
-                    onChange={(e) => setManualCustomer(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Số điện thoại (*)</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    required
-                    placeholder="0912345678"
-                    value={manualPhone}
-                    onChange={(e) => setManualPhone(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Địa chỉ giao hàng (*)</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  required
-                  placeholder="Địa chỉ nhà, tên đường, phường/quận, thành phố..."
-                  value={manualAddress}
-                  onChange={(e) => setManualAddress(e.target.value)}
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div className="form-group">
-                  <label className="form-label">Phương thức thanh toán</label>
-                  <select
-                    className="form-input"
-                    value={manualPaymentMethod}
-                    onChange={(e) => setManualPaymentMethod(e.target.value)}
-                  >
-                    <option value="COD">Thanh toán khi nhận hàng (COD)</option>
-                    <option value="QR Banking">Chuyển khoản QR Banking</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Ghi chú</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Khách dặn giao buổi sáng..."
-                    value={manualNotes}
-                    onChange={(e) => setManualNotes(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Add items to order */}
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
-                <label className="form-label">Chọn sản phẩm thêm vào đơn (*)</label>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
-                  <select
-                    className="form-input"
-                    style={{ flex: 1 }}
-                    value={manualSelectedProdId}
-                    onChange={(e) => setManualSelectedProdId(e.target.value)}
-                  >
-                    {products.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} - {p.price}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="number"
-                    min="1"
-                    className="form-input"
-                    style={{ width: '70px' }}
-                    value={manualProdQty}
-                    onChange={(e) => setManualProdQty(Math.max(1, parseInt(e.target.value) || 1))}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddManualItem}
-                    style={{ padding: '0 16px', borderRadius: '8px', background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}
-                  >
-                    Thêm
-                  </button>
-                </div>
-
-                {/* Items preview */}
-                {manualCartItems.length === 0 ? (
-                  <div style={{ padding: '16px', textAlign: 'center', background: '#f8fafc', borderRadius: '8px', color: '#64748b', fontSize: '0.85rem' }}>
-                    Chưa có sản phẩm nào được chọn.
+        return (
+          <div
+            className="modal-overlay open"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setIsManualOrderModalOpen(false);
+            }}
+          >
+            <div className="modal-admin-card modal-admin-card--manual-order">
+              {/* Modal Header */}
+              <div className="modal-admin-header">
+                <div className="modal-admin-title-wrap">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem' }}>
+                      <IconPlus size={18} color="var(--primary-color)" /> Tạo Đơn Hàng Mới (Thủ Công)
+                    </h3>
+                    <span
+                      style={{
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        padding: '3px 9px',
+                        borderRadius: 'var(--radius-pill)',
+                        background: '#eff6ff',
+                        color: '#2563eb',
+                      }}
+                    >
+                      Bán tại quầy / Hotline
+                    </span>
                   </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {manualCartItems.map((item, idx) => (
-                      <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', fontSize: '0.85rem' }}>
-                        <div>
-                          <strong>{item.name}</strong> ({item.quantity} x {item.price})
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ fontWeight: 700, color: '#059669' }}>
-                            {formatPrice(item.priceValue * item.quantity)}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveManualItem(idx)}
-                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: 700 }}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '16px' }}>
+                  <p className="modal-admin-subtitle">
+                    Khởi tạo đơn đặt hàng nhanh chóng, tính toán phí giao hàng và doanh thu tự động
+                  </p>
+                </div>
                 <button
                   type="button"
-                  className="btn-admin-reset"
+                  className="modal-close-btn"
                   onClick={() => setIsManualOrderModalOpen(false)}
+                  title="Đóng modal"
                 >
-                  Hủy bỏ
-                </button>
-                <button
-                  type="submit"
-                  disabled={manualCartItems.length === 0}
-                  className="btn-admin-add"
-                >
-                  <IconRocket size={14} /> Tạo và lưu đơn hàng
+                  ×
                 </button>
               </div>
-            </form>
+
+              {/* Modal Body Form */}
+              <form id="manual-order-form" onSubmit={handleSaveManualOrder} className="modal-admin-body">
+                <div className="manual-order-grid">
+                  {/* Left Column: Customer & Delivery Info */}
+                  <div className="order-edit-section">
+                    <div className="order-edit-section-title">
+                      <IconUser size={15} /> Thông tin khách hàng & Giao hàng
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                      <div className="form-group">
+                        <label className="form-label">Tên khách hàng (*)</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          required
+                          placeholder="Họ và tên khách hàng"
+                          value={manualCustomer}
+                          onChange={(e) => setManualCustomer(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label className="form-label">Số điện thoại (*)</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          required
+                          placeholder="Số điện thoại liên hệ"
+                          value={manualPhone}
+                          onChange={(e) => setManualPhone(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Địa chỉ giao hàng chi tiết (*)</label>
+                      <textarea
+                        className="form-input"
+                        rows={3}
+                        required
+                        placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."
+                        value={manualAddress}
+                        onChange={(e) => setManualAddress(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="order-edit-section-title" style={{ marginTop: '8px' }}>
+                      <IconCreditCard size={15} /> Thanh toán & Lời nhắn
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Phương thức thanh toán</label>
+                      <select
+                        className="form-input"
+                        value={manualPaymentMethod}
+                        onChange={(e) => setManualPaymentMethod(e.target.value)}
+                        style={{ fontWeight: 600 }}
+                      >
+                        <option value="COD">💵 Thanh toán khi nhận hàng (COD)</option>
+                        <option value="QR Banking">💳 Chuyển khoản QR Banking (Đã nhận tiền)</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Ghi chú đơn hàng / Lời nhắn</label>
+                      <textarea
+                        className="form-input"
+                        rows={2}
+                        placeholder="Ghi chú giao giờ hành chính, gọi trước khi giao, v.v..."
+                        value={manualNotes}
+                        onChange={(e) => setManualNotes(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Right Column: Product Picker, Cart Items & Summary */}
+                  <div className="manual-prod-picker-card">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-dark)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        Thêm sản phẩm vào đơn
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        Kho: {products.length} mẫu
+                      </span>
+                    </div>
+
+                    {/* Product Selection Row with Thumbnail */}
+                    <div
+                      style={{
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <img
+                          src={currentProd?.image || '/assets/images/products/bo5-1.jpg'}
+                          alt="Selected product"
+                          style={{
+                            width: '46px',
+                            height: '46px',
+                            borderRadius: 'var(--radius-sm)',
+                            objectFit: 'cover',
+                            border: '1px solid var(--border-color)',
+                            flexShrink: 0,
+                          }}
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src = '/assets/images/products/bo5-1.jpg';
+                          }}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <select
+                            className="form-input"
+                            style={{ fontSize: '0.825rem', padding: '6px 10px', width: '100%' }}
+                            value={manualSelectedProdId}
+                            onChange={(e) => setManualSelectedProdId(e.target.value)}
+                          >
+                            {products.map((p) => (
+                              <option key={p.id} value={p.id}>
+                                {p.name} — {p.price}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Số lượng:</span>
+                          <div className="manual-qty-control">
+                            <button
+                              type="button"
+                              className="manual-qty-btn"
+                              onClick={() => setManualProdQty(Math.max(1, manualProdQty - 1))}
+                            >
+                              -
+                            </button>
+                            <span className="manual-qty-val">{manualProdQty}</span>
+                            <button
+                              type="button"
+                              className="manual-qty-btn"
+                              onClick={() => setManualProdQty(manualProdQty + 1)}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleAddManualItem}
+                          className="btn-admin-add"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+                        >
+                          <IconPlus size={13} /> Thêm vào đơn
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Selected Cart Items List */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)' }}>
+                        Sản phẩm đã chọn ({manualCartItems.length})
+                      </span>
+
+                      {manualCartItems.length === 0 ? (
+                        <div
+                          style={{
+                            padding: '24px 16px',
+                            textAlign: 'center',
+                            background: '#ffffff',
+                            border: '1px dashed var(--border-color)',
+                            borderRadius: 'var(--radius-md)',
+                            color: 'var(--text-muted)',
+                            fontSize: '0.82rem',
+                          }}
+                        >
+                          Chưa có sản phẩm nào trong đơn hàng.
+                          <br />
+                          <span style={{ fontSize: '0.74rem', color: 'var(--text-light)' }}>
+                            Vui lòng chọn sản phẩm ở trên và bấm &quot;Thêm vào đơn&quot;
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="order-edit-items-scroll">
+                          {manualCartItems.map((item, idx) => (
+                            <div key={idx} className="manual-cart-item">
+                              <img
+                                src={item.image || '/assets/images/products/bo5-1.jpg'}
+                                alt={item.name}
+                                onError={(e) => {
+                                  (e.currentTarget as HTMLImageElement).src = '/assets/images/products/bo5-1.jpg';
+                                }}
+                              />
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div
+                                  style={{
+                                    fontSize: '0.82rem',
+                                    fontWeight: 700,
+                                    color: 'var(--text-dark)',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                  }}
+                                >
+                                  {item.name}
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                                  {item.price}
+                                </div>
+                              </div>
+
+                              <div className="manual-qty-control">
+                                <button
+                                  type="button"
+                                  className="manual-qty-btn"
+                                  onClick={() => handleUpdateManualItemQty(idx, -1)}
+                                >
+                                  -
+                                </button>
+                                <span className="manual-qty-val">{item.quantity}</span>
+                                <button
+                                  type="button"
+                                  className="manual-qty-btn"
+                                  onClick={() => handleUpdateManualItemQty(idx, 1)}
+                                >
+                                  +
+                                </button>
+                              </div>
+
+                              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#059669', minWidth: '70px', textAlign: 'right' }}>
+                                {formatPrice(item.priceValue * item.quantity)}
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveManualItem(idx)}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  color: '#ef4444',
+                                  cursor: 'pointer',
+                                  padding: '4px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                }}
+                                title="Xóa món này"
+                              >
+                                <IconTrash size={14} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Financial Summary Box */}
+                    <div
+                      style={{
+                        borderTop: '1px dashed var(--border-color)',
+                        paddingTop: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                        fontSize: '0.825rem',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Tạm tính:</span>
+                        <strong>{formatPrice(manualSubtotal)}</strong>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Phí giao hàng:</span>
+                        <span>
+                          {manualShippingFee === 0 && manualCartItems.length > 0 ? (
+                            <span style={{ color: '#059669', fontWeight: 600 }}>Miễn phí (Đơn ≥ 500k)</span>
+                          ) : (
+                            formatPrice(manualShippingFee)
+                          )}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          borderTop: '1px solid var(--border-color)',
+                          paddingTop: '8px',
+                          marginTop: '2px',
+                          color: 'var(--text-dark)',
+                          fontWeight: 800,
+                          fontSize: '0.95rem',
+                        }}
+                      >
+                        <span>Tổng thanh toán:</span>
+                        <span style={{ color: '#059669', fontSize: '1.1rem' }}>{formatPrice(manualTotal)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+              {/* Modal Footer */}
+              <div className="modal-admin-footer">
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  Tổng số món: <strong>{manualCartItems.reduce((s, i) => s + i.quantity, 0)}</strong> sản phẩm
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    className="btn-admin-reset"
+                    onClick={() => setIsManualOrderModalOpen(false)}
+                  >
+                    Hủy bỏ
+                  </button>
+                  <button
+                    type="submit"
+                    form="manual-order-form"
+                    disabled={manualCartItems.length === 0}
+                    className="btn-admin-add"
+                  >
+                    <IconRocket size={14} /> Tạo đơn hàng {manualTotal > 0 && `• ${formatPrice(manualTotal)}`}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
 
       {/* =====================================================================
