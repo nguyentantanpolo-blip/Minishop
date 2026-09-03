@@ -3216,95 +3216,252 @@ export default function AdminPage() {
       )}
 
       {/* =====================================================================
-          MODAL 4: EDIT ORDER
+          MODAL 4: EDIT ORDER (EXPANDED & BEAUTIFIED)
           ===================================================================== */}
       {isOrderEditModalOpen && editingOrder && (
-        <div className="modal-overlay open">
-          <div className="modal-admin-card" style={{ maxWidth: '520px', width: '100%' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                <IconPencil size={16} /> Cập Nhật Đơn Hàng {editingOrder.id}
-              </h2>
+        <div
+          className="modal-overlay open"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsOrderEditModalOpen(false);
+          }}
+        >
+          <div className="modal-admin-card modal-admin-card--edit-order">
+            {/* Modal Header */}
+            <div className="modal-admin-header">
+              <div className="modal-admin-title-wrap">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem' }}>
+                    <IconPencil size={18} color="var(--primary-color)" /> Cập Nhật Đơn Hàng #{editingOrder.id}
+                  </h3>
+                  <span className={`badge-status-${editOrderStatus}`} style={{ fontSize: '0.8rem', padding: '3px 10px' }}>
+                    {editOrderStatus === 'pending' && 'Đang xử lý'}
+                    {editOrderStatus === 'shipping' && 'Đang giao hàng'}
+                    {editOrderStatus === 'completed' && 'Giao thành công'}
+                    {editOrderStatus === 'cancelled' && 'Đã hủy đơn'}
+                  </span>
+                </div>
+                <p className="modal-admin-subtitle">
+                  Thời gian đặt: {editingOrder.date} • Tổng tiền: <strong style={{ color: '#059669' }}>{editingOrder.totalFormatted}</strong>
+                </p>
+              </div>
               <button
                 type="button"
+                className="modal-close-btn"
                 onClick={() => setIsOrderEditModalOpen(false)}
-                style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
+                title="Đóng modal"
               >
                 ×
               </button>
             </div>
 
-            <form onSubmit={handleSaveOrderEditForm} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div className="form-group">
-                <label className="form-label">Tên khách hàng (*)</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  required
-                  value={editOrderCustomer}
-                  onChange={(e) => setEditOrderCustomer(e.target.value)}
-                />
-              </div>
+            {/* Modal Body Form */}
+            <form id="order-edit-form" onSubmit={handleSaveOrderEditForm} className="modal-admin-body">
+              <div className="order-edit-grid">
+                {/* Left Column: Form Inputs */}
+                <div className="order-edit-section">
+                  <div className="order-edit-section-title">
+                    <IconUser size={15} /> Thông tin người nhận & Địa chỉ
+                  </div>
 
-              <div className="form-group">
-                <label className="form-label">Số điện thoại (*)</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  required
-                  value={editOrderPhone}
-                  onChange={(e) => setEditOrderPhone(e.target.value)}
-                />
-              </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                    <div className="form-group">
+                      <label className="form-label">Tên khách hàng (*)</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        required
+                        placeholder="Họ và tên khách hàng"
+                        value={editOrderCustomer}
+                        onChange={(e) => setEditOrderCustomer(e.target.value)}
+                      />
+                    </div>
 
-              <div className="form-group">
-                <label className="form-label">Địa chỉ giao hàng (*)</label>
-                <textarea
-                  className="form-input"
-                  rows={2}
-                  required
-                  value={editOrderAddress}
-                  onChange={(e) => setEditOrderAddress(e.target.value)}
-                />
-              </div>
+                    <div className="form-group">
+                      <label className="form-label">Số điện thoại (*)</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        required
+                        placeholder="Số điện thoại liên hệ"
+                        value={editOrderPhone}
+                        onChange={(e) => setEditOrderPhone(e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-              <div className="form-group">
-                <label className="form-label">Ghi chú đơn hàng</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={editOrderNotes}
-                  onChange={(e) => setEditOrderNotes(e.target.value)}
-                />
-              </div>
+                  <div className="form-group">
+                    <label className="form-label">Địa chỉ giao hàng chi tiết (*)</label>
+                    <textarea
+                      className="form-input"
+                      rows={3}
+                      required
+                      placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."
+                      value={editOrderAddress}
+                      onChange={(e) => setEditOrderAddress(e.target.value)}
+                    />
+                  </div>
 
-              <div className="form-group">
-                <label className="form-label">Trạng thái đơn (*)</label>
-                <select
-                  className="form-input"
-                  value={editOrderStatus}
-                  onChange={(e) => setEditOrderStatus(e.target.value as Order['status'])}
-                >
-                  <option value="pending">Đang xử lý</option>
-                  <option value="shipping">Đang giao hàng</option>
-                  <option value="completed">Giao thành công</option>
-                  <option value="cancelled">Đã hủy đơn</option>
-                </select>
-              </div>
+                  <div className="order-edit-section-title" style={{ marginTop: '8px' }}>
+                    <IconSettings size={15} /> Trạng thái & Ghi chú
+                  </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
-                <button
-                  type="button"
-                  className="btn-admin-reset"
-                  onClick={() => setIsOrderEditModalOpen(false)}
-                >
-                  Hủy bỏ
-                </button>
-                <button type="submit" className="btn-admin-add">
-                  <IconSave size={14} /> Lưu thay đổi
-                </button>
+                  <div className="form-group">
+                    <label className="form-label">Trạng thái xử lý đơn hàng (*)</label>
+                    <select
+                      className="form-input"
+                      style={{ fontWeight: 600 }}
+                      value={editOrderStatus}
+                      onChange={(e) => setEditOrderStatus(e.target.value as Order['status'])}
+                    >
+                      <option value="pending">⏳ Chờ xử lý (Pending) - Tiếp nhận đơn</option>
+                      <option value="shipping">🚚 Đang giao hàng (Shipping) - Bàn giao vận chuyển</option>
+                      <option value="completed">✅ Giao thành công (Completed) - Đã thanh toán</option>
+                      <option value="cancelled">❌ Đã hủy đơn (Cancelled) - Hủy đơn hàng</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Ghi chú đơn hàng / Lời nhắn</label>
+                    <textarea
+                      className="form-input"
+                      rows={2}
+                      placeholder="Ghi chú giao giờ hành chính, gọi trước khi giao, v.v..."
+                      value={editOrderNotes}
+                      onChange={(e) => setEditOrderNotes(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Column: Order Preview & Items Summary */}
+                <div className="order-edit-preview-card">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-dark)' }}>
+                      Sản phẩm trong đơn ({editingOrder.items?.length || 0})
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {editingOrder.paymentMethod}
+                    </span>
+                  </div>
+
+                  {/* Items Scrollable List */}
+                  <div className="order-edit-items-scroll">
+                    {editingOrder.items?.map((item, idx) => (
+                      <div key={idx} className="order-edit-item-row">
+                        <img
+                          src={item.image || '/assets/images/products/bo5-1.jpg'}
+                          alt={item.name}
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src =
+                              '/assets/images/products/bo5-1.jpg';
+                          }}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div
+                            style={{
+                              fontSize: '0.82rem',
+                              fontWeight: 700,
+                              color: 'var(--text-dark)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {item.name}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                            {item.price} • Số lượng: <strong>x{item.quantity}</strong>
+                          </div>
+                        </div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#059669', flexShrink: 0 }}>
+                          {formatPrice(item.priceValue * item.quantity)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Financial Summary */}
+                  <div
+                    style={{
+                      borderTop: '1px dashed var(--border-color)',
+                      paddingTop: '10px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '6px',
+                      fontSize: '0.825rem',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Tạm tính:</span>
+                      <strong>{formatPrice(editingOrder.subtotal)}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Phí giao hàng:</span>
+                      <span>
+                        {editingOrder.shippingFee === 0 ? 'Miễn phí' : formatPrice(editingOrder.shippingFee)}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        borderTop: '1px solid var(--border-color)',
+                        paddingTop: '8px',
+                        marginTop: '2px',
+                        color: 'var(--text-dark)',
+                        fontWeight: 800,
+                        fontSize: '0.95rem',
+                      }}
+                    >
+                      <span>Tổng thanh toán:</span>
+                      <span style={{ color: '#059669', fontSize: '1.05rem' }}>{editingOrder.totalFormatted}</span>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: '#f1f5f9',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: '10px',
+                      fontSize: '0.75rem',
+                      color: 'var(--text-muted)',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    💡 <em>Thay đổi thông tin sẽ được cập nhật đồng bộ lên cơ sở dữ liệu và áp dụng ngay lập tức cho quy trình xử lý đơn hàng.</em>
+                  </div>
+                </div>
               </div>
             </form>
+
+            {/* Modal Footer */}
+            <div className="modal-admin-footer">
+              <button
+                type="button"
+                className="btn-admin-reset"
+                onClick={() => {
+                  setViewingOrder(editingOrder);
+                  setIsOrderEditModalOpen(false);
+                }}
+                style={{ marginRight: 'auto' }}
+                title="Xem chi tiết đầy đủ đơn hàng"
+              >
+                <IconEye size={14} /> Xem chi tiết đơn
+              </button>
+
+              <button
+                type="button"
+                className="btn-admin-reset"
+                onClick={() => setIsOrderEditModalOpen(false)}
+              >
+                Hủy bỏ
+              </button>
+
+              <button type="submit" form="order-edit-form" className="btn-admin-add">
+                <IconSave size={14} /> Lưu thay đổi
+              </button>
+            </div>
           </div>
         </div>
       )}
