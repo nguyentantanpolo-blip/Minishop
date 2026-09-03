@@ -75,7 +75,6 @@ export default function AdminPage() {
     addProduct,
     updateProduct,
     deleteProduct,
-    resetProducts,
     addCategory,
     updateCategory,
     deleteCategory,
@@ -808,13 +807,6 @@ export default function AdminPage() {
 
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
-            onClick={() => refreshData()}
-            className="btn-admin-reset"
-            title="Đồng bộ dữ liệu mới nhất từ Database"
-          >
-            <IconRefresh size={14} /> Đồng bộ DB
-          </button>
-          <button
             onClick={() => logout()}
             className="btn-auth-logout"
             style={{ height: '36px', padding: '0 14px', borderRadius: '8px' }}
@@ -1146,9 +1138,6 @@ export default function AdminPage() {
             <div className="admin-toolbar-right">
               <button className="btn-admin-add" onClick={handleOpenAddProduct}>
                 <span><IconPlus size={14} /> Thêm sản phẩm mới</span>
-              </button>
-              <button className="btn-admin-reset" onClick={resetProducts} title="Khôi phục 19 sản phẩm đồ da chuẩn">
-                <IconRefresh size={14} /> Dữ liệu mẫu
               </button>
             </div>
           </div>
