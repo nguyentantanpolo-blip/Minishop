@@ -46,11 +46,20 @@ import {
   IconShoppingBag,
   IconTarget,
   IconTrash,
+  IconTruck,
   IconUpload,
   IconUser,
   IconUsers,
   IconWarning,
+  IconXCircle,
   IconZap,
+  IconCopy,
+  IconCheck,
+  IconCheckCircle,
+  IconClock,
+  IconCreditCard,
+  IconFileText,
+  IconExternalLink,
 } from '@/components/icons';
 
 export default function AdminPage() {
@@ -143,6 +152,17 @@ export default function AdminPage() {
   const [editOrderAddress, setEditOrderAddress] = useState('');
   const [editOrderNotes, setEditOrderNotes] = useState('');
   const [editOrderStatus, setEditOrderStatus] = useState<Order['status']>('pending');
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const handleCopyText = (key: string, text: string) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => {
+        setCopiedKey((prev) => (prev === key ? null : prev));
+      }, 2000);
+    }
+  };
 
   // Manual Order Creation State
   const [isManualOrderModalOpen, setIsManualOrderModalOpen] = useState(false);
@@ -727,6 +747,10 @@ export default function AdminPage() {
 
     setIsCustomerModalOpen(false);
   };
+
+  const currentViewingOrder = viewingOrder
+    ? orders.find((o) => o.id === viewingOrder.id) || viewingOrder
+    : null;
 
   return (
     <main className="container" style={{ paddingBottom: '60px' }}>
@@ -2483,89 +2507,709 @@ export default function AdminPage() {
       </div>
 
       {/* =====================================================================
-          MODAL 3: VIEW ORDER DETAILS
+          MODAL 3: VIEW ORDER DETAILS (EXPANDED & BEAUTIFIED)
           ===================================================================== */}
-      {viewingOrder && (
-        <div className="modal-overlay open">
-          <div className="modal-admin-card" style={{ maxWidth: '640px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div>
-                <h2 className="modal-title" style={{ fontSize: '1.25rem', marginBottom: '2px' }}>
-                  Chi Tiết Đơn Hàng {viewingOrder.id}
-                </h2>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Thời gian đặt: {viewingOrder.date}</div>
+      {currentViewingOrder && (
+        <div
+          className="modal-overlay open"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setViewingOrder(null);
+          }}
+        >
+          <div className="modal-admin-card modal-admin-card--xl printable-order-modal">
+            {/* Top Bar for Desktop & Actions */}
+            <div className="order-detail-header-bar no-print">
+              <div className="order-detail-header-left">
+                <div className="order-code-badge">
+                  <span>#{currentViewingOrder.id}</span>
+                  <button
+                    type="button"
+                    className={`order-copy-btn ${copiedKey === 'order-id' ? 'copied' : ''}`}
+                    title="Sao chép mã đơn hàng"
+                    onClick={() => handleCopyText('order-id', currentViewingOrder.id)}
+                  >
+                    {copiedKey === 'order-id' ? (
+                      <>
+                        <IconCheck size={12} /> Đã chép
+                      </>
+                    ) : (
+                      <>
+                        <IconCopy size={12} /> Chép mã
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <span
+                  className={`badge-status-${currentViewingOrder.status}`}
+                  style={{
+                    fontSize: '0.85rem',
+                    padding: '6px 14px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  {currentViewingOrder.status === 'pending' && <IconClock size={14} />}
+                  {currentViewingOrder.status === 'shipping' && <IconTruck size={14} />}
+                  {currentViewingOrder.status === 'completed' && <IconCheckCircle size={14} />}
+                  {currentViewingOrder.status === 'cancelled' && <IconXCircle size={14} />}
+                  {currentViewingOrder.statusText}
+                </span>
+
+                <div
+                  style={{
+                    fontSize: '0.84rem',
+                    color: 'var(--text-muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                  }}
+                >
+                  <IconClock size={14} /> Thời gian đặt: <strong>{currentViewingOrder.date}</strong>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setViewingOrder(null)}
-                style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
-              >
-                ×
-              </button>
+
+              {/* Header Action Buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => handlePrintOrder(currentViewingOrder)}
+                  className="btn-admin-reset"
+                  style={{ padding: '8px 14px', fontSize: '0.825rem' }}
+                  title="In hóa đơn đơn hàng"
+                >
+                  <IconPrinter size={15} /> In hóa đơn
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleOpenEditOrder(currentViewingOrder);
+                    setViewingOrder(null);
+                  }}
+                  className="btn-admin-reset"
+                  style={{
+                    padding: '8px 14px',
+                    fontSize: '0.825rem',
+                    color: '#2563eb',
+                    borderColor: '#bfdbfe',
+                    backgroundColor: '#eff6ff',
+                  }}
+                  title="Chỉnh sửa thông tin đơn hàng"
+                >
+                  <IconPencil size={15} /> Sửa đơn
+                </button>
+
+                <button
+                  type="button"
+                  className="modal-close-btn"
+                  onClick={() => setViewingOrder(null)}
+                  title="Đóng modal"
+                >
+                  ×
+                </button>
+              </div>
             </div>
 
-            {/* Customer Info Box */}
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px', marginBottom: '16px', fontSize: '0.85rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                <div><strong>Khách hàng:</strong> {viewingOrder.customer}</div>
-                <div><strong>Điện thoại:</strong> <IconPhone size={12} /> {viewingOrder.phone}</div>
-                <div style={{ gridColumn: 'span 2' }}><strong>Địa chỉ nhận:</strong> <IconMapPin size={12} /> {viewingOrder.address}</div>
-                {viewingOrder.notes && (
-                  <div style={{ gridColumn: 'span 2', color: '#b45309' }}><strong>Ghi chú:</strong> {viewingOrder.notes}</div>
-                )}
-                <div><strong>Thanh toán:</strong> {viewingOrder.paymentMethod}</div>
-                <div><strong>Trạng thái:</strong> <span className={`badge-status-${viewingOrder.status}`}>{viewingOrder.statusText}</span></div>
+            {/* Print Only Header */}
+            <div
+              style={{
+                display: 'none',
+                padding: '24px 0 16px 0',
+                borderBottom: '2px solid #0f172a',
+                marginBottom: '20px',
+              }}
+              className="print-only-block"
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, letterSpacing: '0.05em' }}>
+                    TANPOLO LEATHER GOODS
+                  </h1>
+                  <p style={{ fontSize: '0.85rem', color: '#475569', margin: '4px 0 0 0' }}>
+                    Đồ Da Thủ Công Cao Cấp • Hotline: 0987.654.321
+                  </p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <h2 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 700 }}>HÓA ĐƠN BÁN HÀNG</h2>
+                  <div style={{ fontSize: '0.85rem', marginTop: '4px' }}>
+                    Mã đơn: <strong>#{currentViewingOrder.id}</strong> | Ngày đặt: {currentViewingOrder.date}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Items List */}
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '10px' }}><IconPackage size={14} /> Sản phẩm trong đơn</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {viewingOrder.items?.map((item, idx) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
-                    <img src={item.image || '/assets/images/products/bo5-1.jpg'} alt={item.name} style={{ width: '44px', height: '44px', borderRadius: '6px', objectFit: 'cover' }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{item.name}</div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Số lượng: {item.quantity} x {item.price}</div>
+            {/* Modal Body */}
+            <div className="order-detail-body">
+              {/* ORDER STEPPER TRACKER */}
+              <div className="order-stepper-wrapper no-print">
+                <div className="order-stepper-title">
+                  <span>Tiến trình xử lý đơn hàng</span>
+                  <span style={{ fontWeight: 600, textTransform: 'none', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Cập nhật trực tiếp:
+                  </span>
+                </div>
+
+                {currentViewingOrder.status === 'cancelled' ? (
+                  <div
+                    style={{
+                      background: '#fee2e2',
+                      border: '1px solid #fca5a5',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '14px 18px',
+                      color: '#b91c1c',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <IconXCircle size={22} />
+                      <div>
+                        <strong>Đơn hàng này đã bị hủy</strong>
+                        <div style={{ fontSize: '0.8rem', marginTop: '2px', color: '#dc2626' }}>
+                          Trạng thái hiện tại không thể giao vận. Bạn có thể khôi phục lại đơn nếu cần.
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ fontWeight: 700, color: '#059669', fontSize: '0.875rem' }}>
-                      {formatPrice(item.priceValue * item.quantity)}
+                    <button
+                      type="button"
+                      className="btn-step-action outline"
+                      style={{ borderColor: '#fca5a5', color: '#b91c1c' }}
+                      onClick={() => updateOrderStatus(currentViewingOrder.id, 'pending')}
+                    >
+                      <IconRefresh size={14} /> Khôi phục về Đang xử lý
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="order-stepper-track">
+                      {/* Step 1: Pending */}
+                      <div
+                        className={`order-step-node ${
+                          currentViewingOrder.status === 'completed' || currentViewingOrder.status === 'shipping'
+                            ? 'completed'
+                            : 'current'
+                        }`}
+                      >
+                        {/* Connector line from Step 1 to Step 2 */}
+                        <div
+                          className={`order-step-connector ${
+                            currentViewingOrder.status === 'completed' || currentViewingOrder.status === 'shipping'
+                              ? 'active'
+                              : ''
+                          }`}
+                        />
+                        <div className="order-step-icon-circle">
+                          {currentViewingOrder.status === 'completed' || currentViewingOrder.status === 'shipping' ? (
+                            <IconCheck size={18} />
+                          ) : (
+                            <IconClock size={18} />
+                          )}
+                        </div>
+                        <div className="order-step-label">1. Tiếp nhận đơn</div>
+                        <div className="order-step-desc">Chờ duyệt & đóng gói</div>
+                      </div>
+
+                      {/* Step 2: Shipping */}
+                      <div
+                        className={`order-step-node ${
+                          currentViewingOrder.status === 'completed'
+                            ? 'completed'
+                            : currentViewingOrder.status === 'shipping'
+                            ? 'current'
+                            : ''
+                        }`}
+                      >
+                        {/* Connector line from Step 2 to Step 3 */}
+                        <div
+                          className={`order-step-connector ${
+                            currentViewingOrder.status === 'completed' ? 'active' : ''
+                          }`}
+                        />
+                        <div className="order-step-icon-circle">
+                          {currentViewingOrder.status === 'completed' ? (
+                            <IconCheck size={18} />
+                          ) : (
+                            <IconTruck size={18} />
+                          )}
+                        </div>
+                        <div className="order-step-label">2. Đang giao hàng</div>
+                        <div className="order-step-desc">Đang vận chuyển</div>
+                      </div>
+
+                      {/* Step 3: Completed (No connector line) */}
+                      <div
+                        className={`order-step-node ${
+                          currentViewingOrder.status === 'completed' ? 'completed' : ''
+                        }`}
+                      >
+                        <div className="order-step-icon-circle">
+                          <IconCheckCircle size={18} />
+                        </div>
+                        <div className="order-step-label">3. Giao thành công</div>
+                        <div className="order-step-desc">Khách đã nhận hàng</div>
+                      </div>
+                    </div>
+
+                    {/* Quick Stepper Action Buttons */}
+                    <div className="order-stepper-actions">
+                      <div className="order-stepper-quick-btns">
+                        {currentViewingOrder.status === 'pending' && (
+                          <>
+                            <button
+                              type="button"
+                              className="btn-step-action info"
+                              onClick={() => updateOrderStatus(currentViewingOrder.id, 'shipping')}
+                            >
+                              <IconTruck size={14} /> Bắt đầu giao hàng
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-step-action danger"
+                              onClick={() => {
+                                if (window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+                                  updateOrderStatus(currentViewingOrder.id, 'cancelled');
+                                }
+                              }}
+                            >
+                              <IconXCircle size={14} /> Hủy đơn hàng
+                            </button>
+                          </>
+                        )}
+
+                        {currentViewingOrder.status === 'shipping' && (
+                          <>
+                            <button
+                              type="button"
+                              className="btn-step-action primary"
+                              onClick={() => updateOrderStatus(currentViewingOrder.id, 'completed')}
+                            >
+                              <IconCheckCircle size={14} /> Xác nhận Giao thành công
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-step-action outline"
+                              onClick={() => updateOrderStatus(currentViewingOrder.id, 'pending')}
+                            >
+                              <IconClock size={14} /> Về Chờ xử lý
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-step-action danger"
+                              onClick={() => {
+                                if (window.confirm('Khách từ chối nhận hoặc hủy đơn?')) {
+                                  updateOrderStatus(currentViewingOrder.id, 'cancelled');
+                                }
+                              }}
+                            >
+                              <IconXCircle size={14} /> Hủy đơn
+                            </button>
+                          </>
+                        )}
+
+                        {currentViewingOrder.status === 'completed' && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span
+                              style={{
+                                color: '#059669',
+                                fontWeight: 700,
+                                fontSize: '0.85rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                              }}
+                            >
+                              <IconCheckCircle size={16} /> Đơn hàng đã hoàn thành và quyết toán thành công
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Dropdown status selector */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Chuyển nhanh:</span>
+                        <select
+                          className="form-control"
+                          style={{
+                            padding: '4px 10px',
+                            fontSize: '0.82rem',
+                            borderRadius: 'var(--radius-sm)',
+                            fontWeight: 600,
+                            minWidth: '150px',
+                          }}
+                          value={currentViewingOrder.status}
+                          onChange={(e) =>
+                            updateOrderStatus(currentViewingOrder.id, e.target.value as Order['status'])
+                          }
+                        >
+                          <option value="pending">Chờ xử lý (Pending)</option>
+                          <option value="shipping">Đang giao hàng (Shipping)</option>
+                          <option value="completed">Giao thành công (Completed)</option>
+                          <option value="cancelled">Đã hủy đơn (Cancelled)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* TWO-COLUMN CONTENT GRID */}
+              <div className="order-detail-layout-grid">
+                {/* LEFT COLUMN: ITEMS & FINANCIALS */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {/* Card: Sản phẩm trong đơn */}
+                  <div className="order-card">
+                    <div className="order-card-header">
+                      <h3 className="order-card-title">
+                        <IconPackage size={18} color="var(--primary-color)" />
+                        Danh sách sản phẩm ({currentViewingOrder.items?.length || 0})
+                      </h3>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Đồ da Tanpolo chính hãng
+                      </span>
+                    </div>
+
+                    <div className="order-card-body" style={{ padding: 0 }}>
+                      <table className="order-items-table">
+                        <thead>
+                          <tr>
+                            <th>Sản phẩm</th>
+                            <th style={{ textAlign: 'center' }}>Đơn giá</th>
+                            <th style={{ textAlign: 'center' }}>Số lượng</th>
+                            <th style={{ textAlign: 'right' }}>Thành tiền</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentViewingOrder.items?.map((item, idx) => (
+                            <tr key={idx}>
+                              <td>
+                                <div className="order-product-cell">
+                                  <img
+                                    src={item.image || '/assets/images/products/bo5-1.jpg'}
+                                    alt={item.name}
+                                    onError={(e) => {
+                                      (e.currentTarget as HTMLImageElement).src =
+                                        '/assets/images/products/bo5-1.jpg';
+                                    }}
+                                  />
+                                  <div>
+                                    <div className="order-product-name">{item.name}</div>
+                                    <div className="order-product-cat">
+                                      {item.categoryName ? (
+                                        <span>Danh mục: {item.categoryName}</span>
+                                      ) : (
+                                        <span>Mã SP: {item.id}</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style={{ textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                {item.price}
+                              </td>
+                              <td style={{ textAlign: 'center' }}>
+                                <span className="order-item-qty-badge">x{item.quantity}</span>
+                              </td>
+                              <td className="order-item-total">
+                                {formatPrice(item.priceValue * item.quantity)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                ))}
+
+                  {/* Card: Bảng tính tiền & Phương thức thanh toán */}
+                  <div className="order-card">
+                    <div className="order-card-header">
+                      <h3 className="order-card-title">
+                        <IconCreditCard size={18} color="var(--primary-color)" />
+                        Thanh toán & Vận chuyển
+                      </h3>
+                      <span
+                        style={{
+                          fontSize: '0.8rem',
+                          background:
+                            currentViewingOrder.paymentMethod.toLowerCase().includes('chuyển khoản')
+                              ? '#dbeafe'
+                              : '#fef3c7',
+                          color:
+                            currentViewingOrder.paymentMethod.toLowerCase().includes('chuyển khoản')
+                              ? '#1e40af'
+                              : '#92400e',
+                          padding: '3px 10px',
+                          borderRadius: 'var(--radius-pill)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {currentViewingOrder.paymentMethod.toLowerCase().includes('chuyển khoản')
+                          ? 'Đã xác nhận thanh toán CK'
+                          : 'Thu tiền khi giao hàng (COD)'}
+                      </span>
+                    </div>
+
+                    <div className="order-card-body">
+                      <div className="order-finance-box" style={{ marginTop: 0 }}>
+                        <div className="order-finance-row">
+                          <span>Tạm tính tiền hàng:</span>
+                          <strong>{formatPrice(currentViewingOrder.subtotal)}</strong>
+                        </div>
+
+                        <div className="order-finance-row">
+                          <span>Phí vận chuyển toàn quốc:</span>
+                          <span>
+                            {currentViewingOrder.shippingFee === 0 ? (
+                              <span style={{ color: '#059669', fontWeight: 700 }}>Miễn phí giao hàng</span>
+                            ) : (
+                              formatPrice(currentViewingOrder.shippingFee)
+                            )}
+                          </span>
+                        </div>
+
+                        <div className="order-finance-row">
+                          <span>Phương thức thanh toán:</span>
+                          <strong>{currentViewingOrder.paymentMethod}</strong>
+                        </div>
+
+                        <div className="order-finance-row total-row">
+                          <span>Tổng cộng thanh toán:</span>
+                          <span className="total-amount">{currentViewingOrder.totalFormatted}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* RIGHT COLUMN: CUSTOMER, ADDRESS, NOTES, ACTIONS */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {/* Card: Thông tin khách hàng */}
+                  <div className="order-card">
+                    <div className="order-card-header">
+                      <h3 className="order-card-title">
+                        <IconUser size={18} color="var(--primary-color)" />
+                        Khách hàng & Nhận hàng
+                      </h3>
+                    </div>
+
+                    <div className="order-card-body">
+                      {/* Customer Avatar & Name */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          paddingBottom: '14px',
+                          borderBottom: '1px solid var(--border-color)',
+                          marginBottom: '10px',
+                        }}
+                      >
+                        <div className="order-customer-avatar">
+                          {currentViewingOrder.customer ? currentViewingOrder.customer.charAt(0).toUpperCase() : 'K'}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-dark)' }}>
+                            {currentViewingOrder.customer}
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                            Khách hàng đặt qua Website
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Phone */}
+                      <div className="order-info-line">
+                        <div className="order-info-icon">
+                          <IconPhone size={16} />
+                        </div>
+                        <div className="order-info-content">
+                          <div className="order-info-label">Số điện thoại</div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '8px',
+                            }}
+                          >
+                            <a
+                              href={`tel:${currentViewingOrder.phone}`}
+                              style={{
+                                color: '#2563eb',
+                                fontWeight: 700,
+                                fontSize: '0.92rem',
+                                textDecoration: 'none',
+                              }}
+                            >
+                              {currentViewingOrder.phone}
+                            </a>
+                            <button
+                              type="button"
+                              className={`order-copy-btn ${copiedKey === 'phone' ? 'copied' : ''}`}
+                              onClick={() => handleCopyText('phone', currentViewingOrder.phone)}
+                            >
+                              {copiedKey === 'phone' ? (
+                                <>
+                                  <IconCheck size={11} /> Đã chép
+                                </>
+                              ) : (
+                                <>
+                                  <IconCopy size={11} /> Chép
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Address */}
+                      <div className="order-info-line">
+                        <div className="order-info-icon">
+                          <IconMapPin size={16} />
+                        </div>
+                        <div className="order-info-content">
+                          <div className="order-info-label">Địa chỉ nhận hàng</div>
+                          <div className="order-info-val">{currentViewingOrder.address}</div>
+                          <div style={{ marginTop: '6px' }}>
+                            <button
+                              type="button"
+                              className={`order-copy-btn ${copiedKey === 'address' ? 'copied' : ''}`}
+                              onClick={() => handleCopyText('address', currentViewingOrder.address)}
+                            >
+                              {copiedKey === 'address' ? (
+                                <>
+                                  <IconCheck size={11} /> Đã sao chép địa chỉ
+                                </>
+                              ) : (
+                                <>
+                                  <IconCopy size={11} /> Sao chép địa chỉ
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card: Ghi chú đơn hàng */}
+                  <div className="order-card">
+                    <div className="order-card-header">
+                      <h3 className="order-card-title">
+                        <IconFileText size={18} color="var(--primary-color)" />
+                        Ghi chú từ khách hàng
+                      </h3>
+                    </div>
+                    <div className="order-card-body">
+                      {currentViewingOrder.notes && currentViewingOrder.notes.trim() ? (
+                        <div className="order-notes-box">
+                          <strong>Lời nhắn:</strong> &ldquo;{currentViewingOrder.notes}&rdquo;
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            color: 'var(--text-light)',
+                            fontStyle: 'italic',
+                            fontSize: '0.84rem',
+                            padding: '6px 0',
+                          }}
+                        >
+                          Không có ghi chú thêm từ khách hàng
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card: Thao tác quản trị */}
+                  <div className="order-card no-print">
+                    <div className="order-card-header">
+                      <h3 className="order-card-title">
+                        <IconSettings size={18} color="var(--primary-color)" />
+                        Thao tác quản trị
+                      </h3>
+                    </div>
+                    <div className="order-card-body" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleOpenEditOrder(currentViewingOrder);
+                          setViewingOrder(null);
+                        }}
+                        className="btn-admin-reset"
+                        style={{
+                          width: '100%',
+                          justifyContent: 'center',
+                          color: '#2563eb',
+                          borderColor: '#bfdbfe',
+                          padding: '10px',
+                        }}
+                      >
+                        <IconPencil size={15} /> Chỉnh sửa thông tin đơn hàng
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handlePrintOrder(currentViewingOrder)}
+                        className="btn-admin-reset"
+                        style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
+                      >
+                        <IconPrinter size={15} /> In phiếu giao hàng / Hóa đơn
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `CẢNH BÁO: Bạn có chắc chắn muốn xóa vĩnh viễn đơn hàng "${currentViewingOrder.id}"?`
+                            )
+                          ) {
+                            deleteOrder(currentViewingOrder.id);
+                            setViewingOrder(null);
+                          }
+                        }}
+                        className="btn-admin-reset"
+                        style={{
+                          width: '100%',
+                          justifyContent: 'center',
+                          color: '#ef4444',
+                          borderColor: '#fca5a5',
+                          padding: '10px',
+                        }}
+                      >
+                        <IconTrash size={15} /> Xóa vĩnh viễn đơn hàng này
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Total Calculation */}
-            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px', fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
-                <span>Tạm tính:</span>
-                <span>{formatPrice(viewingOrder.subtotal)}</span>
+            {/* Modal Footer */}
+            <div className="modal-admin-footer no-print">
+              <div style={{ flex: 1, fontSize: '0.86rem', color: 'var(--text-muted)' }}>
+                Tổng giá trị đơn: <strong style={{ color: '#059669', fontSize: '1rem' }}>{currentViewingOrder.totalFormatted}</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
-                <span>Phí vận chuyển:</span>
-                <span>{viewingOrder.shippingFee === 0 ? 'Miễn phí' : formatPrice(viewingOrder.shippingFee)}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.1rem', color: '#059669', borderTop: '1px dashed #e2e8f0', paddingTop: '8px' }}>
-                <span>Tổng thanh toán:</span>
-                <span>{viewingOrder.totalFormatted}</span>
-              </div>
-            </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-              <button
-                onClick={() => handlePrintOrder(viewingOrder)}
-                className="btn-admin-reset"
-              >
-                <IconPrinter size={14} /> In hóa đơn
-              </button>
-              <button
-                onClick={() => setViewingOrder(null)}
-                className="btn-admin-add"
-              >
-                Đóng
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => handlePrintOrder(currentViewingOrder)}
+                  className="btn-admin-reset"
+                >
+                  <IconPrinter size={15} /> In hóa đơn
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewingOrder(null)}
+                  className="btn-admin-add"
+                >
+                  Đóng
+                </button>
+              </div>
             </div>
           </div>
         </div>

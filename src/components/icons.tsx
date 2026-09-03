@@ -15,6 +15,7 @@ export type IconProps = {
   strokeWidth?: number;
   className?: string;
   style?: React.CSSProperties;
+  color?: string;
 };
 
 const base = (props: IconProps) => ({
@@ -22,7 +23,7 @@ const base = (props: IconProps) => ({
   height: props.size ?? 16,
   viewBox: '0 0 24 24',
   fill: 'none',
-  stroke: 'currentColor',
+  stroke: props.color ?? 'currentColor',
   strokeWidth: props.strokeWidth ?? 2,
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
@@ -353,3 +354,49 @@ export const IconDot = (p: IconProps) => (
     <circle cx="12" cy="12" r="6" fill="currentColor" stroke="none" />
   </Svg>
 );
+
+export const IconCopy = (p: IconProps) => (
+  <Svg {...p}>
+    <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+  </Svg>
+);
+
+export const IconCheck = (p: IconProps) => (
+  <Svg {...p}>
+    <polyline points="20 6 9 17 4 12" />
+  </Svg>
+);
+
+export const IconClock = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </Svg>
+);
+
+export const IconCreditCard = (p: IconProps) => (
+  <Svg {...p}>
+    <rect width="20" height="14" x="2" y="5" rx="2" />
+    <line x1="2" x2="22" y1="10" y2="10" />
+  </Svg>
+);
+
+export const IconFileText = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" x2="8" y1="13" y2="13" />
+    <line x1="16" x2="8" y1="17" y2="17" />
+    <line x1="10" x2="8" y1="9" y2="9" />
+  </Svg>
+);
+
+export const IconExternalLink = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    <polyline points="15 3 21 3 21 9" />
+    <line x1="10" x2="21" y1="14" y2="3" />
+  </Svg>
+);
+
