@@ -400,3 +400,58 @@ export const IconExternalLink = (p: IconProps) => (
   </Svg>
 );
 
+export const IconGmail = ({ size = 24, className = '' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M2.25 6.75C2.25 5.50736 3.25736 4.5 4.5 4.5H6V10.5L2.25 7.6875V6.75Z" fill="#4285F4" />
+    <path d="M21.75 6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H18V10.5L21.75 7.6875V6.75Z" fill="#34A853" />
+    <path d="M18 10.5V19.5H19.5C20.7426 19.5 22 18.4926 22 17.25V7.6875L18 10.5Z" fill="#4285F4" />
+    <path d="M6 10.5V19.5H4.5C3.25736 19.5 2 18.4926 2 17.25V7.6875L6 10.5Z" fill="#EA4335" />
+    <path d="M6 4.5L12 9L18 4.5H6Z" fill="#EA4335" />
+    <path d="M6 10.5L12 15L18 10.5V4.5L12 9L6 4.5V10.5Z" fill="#FBBC05" />
+  </svg>
+);
+
+export const IconFacebook = ({ size = 24, color = '#1877F2', className = '' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill={color}
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
+
+export const IconZalo = ({ size = 24, className = '' }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    aria-hidden="true"
+  >
+    <path
+      d="M24 4C12.954 4 4 12.059 4 22c0 5.56 2.822 10.518 7.31 13.918L9.2 43.1a1 1 0 0 0 1.49 1.09l7.7-4.49c1.8.49 3.69.76 5.61.76 11.046 0 20-8.059 20-18S35.046 4 24 4z"
+      fill="#0068FF"
+    />
+    <path
+      d="M19.5 25.5h-5.2c-.6 0-1-.5-1-1v-.3c0-.4.2-.8.6-1.1l4.8-4.6h-4.7c-.5 0-.9-.4-.9-.9s.4-.9.9-.9h5.1c.6 0 1 .5 1 1v.3c0 .4-.2.8-.6 1.1l-4.9 4.7h4.9c.5 0 .9.4.9.9s-.4.8-.9.8zm4.4.2c-.5 0-.9-.3-1-.8l-2.4-7.2c-.2-.5.1-1.1.6-1.3.5-.2 1.1.1 1.3.6l1.9 5.8 4.6-5.9c.3-.4.9-.5 1.4-.2.4.3.5.9.2 1.4l-5.6 7.1c-.2.3-.6.5-1 .5zm8.9 0c-1.8 0-3.3-1.4-3.3-3.2v-5c0-.5.4-.9.9-.9s.9.4.9.9v5c0 .8.7 1.4 1.5 1.4.8 0 1.5-.6 1.5-1.4v-5c0-.5.4-.9.9-.9s.9.4.9.9v5c0 1.8-1.5 3.2-3.3 3.2zm6.6-.2c-1.7 0-3-1.4-3-3.1s1.3-3.1 3-3.1 3 1.4 3 3.1-1.3 3.1-3 3.1zm0-1.8c.7 0 1.2-.6 1.2-1.3s-.5-1.3-1.2-1.3-1.2.6-1.2 1.3.5 1.3 1.2 1.3z"
+      fill="#ffffff"
+    />
+  </svg>
+);
+
+

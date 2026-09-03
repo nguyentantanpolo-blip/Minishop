@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '@/context/ToastContext';
+import { IconGmail, IconFacebook, IconZalo } from '@/components/icons';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -98,13 +99,17 @@ export default function Footer() {
 
             {/* Social & Contact Channels */}
             <div className="footer-social-channels">
-              {/* Email */}
+              {/* Gmail */}
               <a
                 href="mailto:tanpolo.shoes@gmail.com"
                 className="social-channel-item"
-                title="Gửi Email cho Tanpolo"
+                title="Gửi Gmail cho Tanpolo (tanpolo.shoes@gmail.com)"
+                aria-label="Gmail Tanpolo"
               >
-                <span className="social-channel-label">tanpolo.shoes@gmail.com</span>
+                <div className="social-icon-box email-box">
+                  <IconGmail size={24} />
+                </div>
+                <span className="social-channel-label">Gmail</span>
               </a>
 
               {/* Facebook */}
@@ -113,8 +118,12 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-channel-item"
-                title="Facebook Tanpolo"
+                title="Facebook Tanpolo Vietnam"
+                aria-label="Facebook Tanpolo"
               >
+                <div className="social-icon-box facebook-box">
+                  <IconFacebook size={22} color="#ffffff" />
+                </div>
                 <span className="social-channel-label">Facebook</span>
               </a>
 
@@ -124,9 +133,13 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-channel-item"
-                title="Zalo Chat Tanpolo"
+                title="Zalo Chat: 098 844 48 06"
+                aria-label="Zalo Tanpolo"
               >
-                <span className="social-channel-label">Zalo: 098 844 48 06</span>
+                <div className="social-icon-box zalo-box">
+                  <IconZalo size={26} />
+                </div>
+                <span className="social-channel-label">Zalo</span>
               </a>
             </div>
           </div>
