@@ -895,52 +895,72 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   };
 
   // =========================================================================
-  // Product CRUD Handlers
+  // Product CRUD Handlers (Supabase-First)
   // =========================================================================
   const addProduct = async (productData: Omit<Product, 'id'>) => {
-    const newId = 'p_' + Date.now().toString(36);
-    const newProduct: Product = {
-      ...productData,
-      id: newId,
-    };
-
-    const updated = [newProduct, ...products];
-    saveProductsToStorage(updated);
-
     try {
-      const created = await api.createProduct({ ...newProduct });
-      if (created && created.id) {
-        const synced = products.map((p) => (p.id === newId ? created : p));
-        saveProductsToStorage(synced.length ? synced : [created, ...products]);
-      }
-      showToast(`Đã thêm sản phẩm "${newProduct.name}" vào Database!`, 'success');
+      // 1. Tạo trực tiếp trên Supabase Database
+      const created = await api.createProduct(productData);
+
+      // 2. Cập nhật state & localStorage bằng dữ liệu thực tế từ Supabase
+      setProducts((prev) => {
+        const next = [created, ...prev.filter((p) => p.id !== created.id)];
+        try {
+          localStorage.setItem('minishop_products', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      setIsBackendConnected(true);
+      showToast(`Đã thêm sản phẩm "${created.name}" vào Supabase thành công!`, 'success');
     } catch (err: any) {
-      showToast(`Đã lưu sản phẩm "${newProduct.name}"!`, 'success');
+      console.error('Lỗi tạo sản phẩm trên Supabase:', err);
+      showToast(`Lỗi tạo sản phẩm trên Supabase: ${err.message || err}`, 'error');
+      throw err;
     }
   };
 
   const updateProduct = async (id: string, productData: Partial<Product>) => {
-    const updated = products.map((p) => (p.id === id ? { ...p, ...productData } : p));
-    saveProductsToStorage(updated);
-
     try {
-      await api.updateProduct(id, productData);
-      showToast(`Đã cập nhật sản phẩm "${productData.name || id}" trên Database!`, 'success');
+      // 1. Cập nhật trên Supabase Database
+      const updated = await api.updateProduct(id, productData);
+
+      // 2. Cập nhật state & localStorage
+      setProducts((prev) => {
+        const next = prev.map((p) => (p.id === id ? updated : p));
+        try {
+          localStorage.setItem('minishop_products', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      setIsBackendConnected(true);
+      showToast(`Đã cập nhật sản phẩm "${updated.name}" trên Supabase!`, 'success');
     } catch (err: any) {
-      showToast(`Đã cập nhật sản phẩm "${productData.name || id}"!`, 'success');
+      console.error('Lỗi cập nhật sản phẩm trên Supabase:', err);
+      showToast(`Lỗi cập nhật sản phẩm: ${err.message || err}`, 'error');
+      throw err;
     }
   };
 
   const deleteProduct = async (id: string) => {
     const p = products.find((prod) => prod.id === id);
-    const updated = products.filter((prod) => prod.id !== id);
-    saveProductsToStorage(updated);
-
     try {
+      // 1. Xóa khỏi Supabase Database
       await api.deleteProduct(id);
-      showToast(`Đã xóa sản phẩm "${p?.name || id}" khỏi Database!`, 'info');
+
+      // 2. Cập nhật state & localStorage
+      setProducts((prev) => {
+        const next = prev.filter((prod) => prod.id !== id);
+        try {
+          localStorage.setItem('minishop_products', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      setIsBackendConnected(true);
+      showToast(`Đã xóa sản phẩm "${p?.name || id}" khỏi Supabase!`, 'info');
     } catch (err: any) {
-      showToast(`Đã xóa sản phẩm "${p?.name || id}"!`, 'info');
+      console.error('Lỗi xóa sản phẩm trên Supabase:', err);
+      showToast(`Lỗi xóa sản phẩm: ${err.message || err}`, 'error');
+      throw err;
     }
   };
 
@@ -968,51 +988,82 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     if (targetQty === 0) derivedStock = 'Hết hàng';
     else if (targetQty <= 5) derivedStock = 'Sắp hết hàng';
 
-    const updated = products.map((p) =>
-      p.id === productId ? { ...p, stockQuantity: targetQty, stock: derivedStock } : p
-    );
-    saveProductsToStorage(updated);
-
     try {
       await api.adjustStock(productId, payload);
-      showToast(`Đã cập nhật tồn kho "${prod.name}" (${currentQty} → ${targetQty})!`, 'success');
+      setProducts((prev) => {
+        const next = prev.map((p) =>
+          p.id === productId ? { ...p, stockQuantity: targetQty, stock: derivedStock } : p
+        );
+        try {
+          localStorage.setItem('minishop_products', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      setIsBackendConnected(true);
+      showToast(`Đã cập nhật tồn kho "${prod.name}" (${currentQty} → ${targetQty}) trên Supabase!`, 'success');
       refreshData();
     } catch (err: any) {
-      showToast(`Đã điều chỉnh tồn kho "${prod.name}"!`, 'info');
+      console.error('Lỗi cập nhật tồn kho trên Supabase:', err);
+      showToast(`Lỗi điều chỉnh tồn kho: ${err.message || err}`, 'error');
     }
   };
 
   // =========================================================================
-  // Category CRUD Handlers
+  // Category CRUD Handlers (Supabase-First)
   // =========================================================================
   const addCategory = async (catData: Category) => {
-    const updated = [...categories, catData];
-    saveCategoriesToStorage(updated);
-
     try {
-      await api.createCategory(catData);
-      showToast(`Đã thêm danh mục "${catData.name}" vào Database!`, 'success');
+      // 1. Tạo trực tiếp trên Supabase Database
+      const created = await api.createCategory(catData);
+
+      // 2. Cập nhật state & localStorage
+      setCategories((prev) => {
+        const next = [...prev.filter((c) => c.id !== created.id), created];
+        try {
+          localStorage.setItem('minishop_categories', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      setIsBackendConnected(true);
+      showToast(`Đã thêm danh mục "${created.name}" vào Supabase thành công!`, 'success');
     } catch (err: any) {
-      showToast(`Đã thêm danh mục "${catData.name}"!`, 'success');
+      console.error('Lỗi tạo danh mục trên Supabase:', err);
+      showToast(`Lỗi tạo danh mục trên Supabase: ${err.message || err}`, 'error');
+      throw err;
     }
   };
 
   const updateCategory = async (id: string, catData: Partial<Category>) => {
-    const updated = categories.map((c) => (c.id === id ? { ...c, ...catData } : c));
-    saveCategoriesToStorage(updated);
-
-    if (catData.name) {
-      const updatedProducts = products.map((p) =>
-        p.category === id ? { ...p, categoryName: catData.name! } : p
-      );
-      saveProductsToStorage(updatedProducts);
-    }
-
     try {
-      await api.updateCategory(id, catData);
-      showToast(`Đã cập nhật danh mục "${catData.name || id}" trên Database!`, 'success');
+      // 1. Cập nhật trên Supabase Database
+      const updated = await api.updateCategory(id, catData);
+
+      // 2. Cập nhật state & localStorage
+      setCategories((prev) => {
+        const next = prev.map((c) => (c.id === id ? updated : c));
+        try {
+          localStorage.setItem('minishop_categories', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+
+      if (catData.name) {
+        setProducts((prev) => {
+          const next = prev.map((p) =>
+            p.category === id ? { ...p, categoryName: catData.name! } : p
+          );
+          try {
+            localStorage.setItem('minishop_products', JSON.stringify(next));
+          } catch (e) {}
+          return next;
+        });
+      }
+      setIsBackendConnected(true);
+      showToast(`Đã cập nhật danh mục "${updated.name}" trên Supabase!`, 'success');
     } catch (err: any) {
-      showToast(`Đã cập nhật danh mục "${catData.name || id}"!`, 'success');
+      console.error('Lỗi cập nhật danh mục trên Supabase:', err);
+      showToast(`Lỗi cập nhật danh mục: ${err.message || err}`, 'error');
+      throw err;
     }
   };
 
@@ -1025,14 +1076,24 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const updated = categories.filter((c) => c.id !== id);
-    saveCategoriesToStorage(updated);
-
     try {
+      // 1. Xóa trên Supabase Database
       await api.deleteCategory(id);
-      showToast(`Đã xóa danh mục "${cat?.name || id}" khỏi Database!`, 'info');
+
+      // 2. Cập nhật state & localStorage
+      setCategories((prev) => {
+        const next = prev.filter((c) => c.id !== id);
+        try {
+          localStorage.setItem('minishop_categories', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      setIsBackendConnected(true);
+      showToast(`Đã xóa danh mục "${cat?.name || id}" khỏi Supabase!`, 'info');
     } catch (err: any) {
-      showToast(`Đã xóa danh mục "${cat?.name || id}"!`, 'info');
+      console.error('Lỗi xóa danh mục trên Supabase:', err);
+      showToast(`Lỗi xóa danh mục trên Supabase: ${err.message || err}`, 'error');
+      throw err;
     }
   };
 

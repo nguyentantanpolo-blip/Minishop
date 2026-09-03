@@ -498,7 +498,7 @@ export default function AdminPage() {
     updateProduct(p.id, { stock: nextStock });
   };
 
-  const handleSaveProductForm = (e: React.FormEvent) => {
+  const handleSaveProductForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!modalName.trim() || !modalPrice || !modalDesc.trim()) return;
 
@@ -542,13 +542,16 @@ export default function AdminPage() {
       },
     };
 
-    if (editingProduct) {
-      updateProduct(editingProduct.id, productPayload);
-    } else {
-      addProduct(productPayload);
+    try {
+      if (editingProduct) {
+        await updateProduct(editingProduct.id, productPayload);
+      } else {
+        await addProduct(productPayload);
+      }
+      setIsProdModalOpen(false);
+    } catch (err) {
+      // Error is caught and toasted in ShopContext
     }
-
-    setIsProdModalOpen(false);
   };
 
   // =========================================================================
@@ -626,29 +629,32 @@ export default function AdminPage() {
     setIsCatModalOpen(true);
   };
 
-  const handleSaveCategoryForm = (e: React.FormEvent) => {
+  const handleSaveCategoryForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!modalCatId.trim() || !modalCatName.trim()) return;
 
     const cleanId = modalCatId.trim().toLowerCase().replace(/\s+/g, '-');
     const finalCatImage = modalCatImage.trim() || '/assets/images/products/bo5-1.jpg';
 
-    if (editingCategory) {
-      updateCategory(editingCategory.id, {
-        name: modalCatName.trim(),
-        description: modalCatDesc.trim(),
-        image: finalCatImage,
-      });
-    } else {
-      addCategory({
-        id: cleanId,
-        name: modalCatName.trim(),
-        description: modalCatDesc.trim(),
-        image: finalCatImage,
-      });
+    try {
+      if (editingCategory) {
+        await updateCategory(editingCategory.id, {
+          name: modalCatName.trim(),
+          description: modalCatDesc.trim(),
+          image: finalCatImage,
+        });
+      } else {
+        await addCategory({
+          id: cleanId,
+          name: modalCatName.trim(),
+          description: modalCatDesc.trim(),
+          image: finalCatImage,
+        });
+      }
+      setIsCatModalOpen(false);
+    } catch (err) {
+      // Error toast already displayed in ShopContext
     }
-
-    setIsCatModalOpen(false);
   };
 
   // =========================================================================

@@ -7,7 +7,7 @@ import { useShop } from '@/context/ShopContext';
 import ProductCard from '@/components/ProductCard';
 
 function ProductsContent() {
-  const { products } = useShop();
+  const { products, categories, isLoading } = useShop();
   const searchParams = useSearchParams();
 
   const [category, setCategory] = useState<string>('all');
@@ -21,6 +21,9 @@ function ProductsContent() {
     if (q) setSearchQuery(q);
     if (cat) setCategory(cat);
   }, [searchParams]);
+
+  // Selected category object
+  const currentCatObj = categories.find((c) => c.id === category);
 
   // Filter calculations
   const filtered = products.filter((p) => {
@@ -48,9 +51,9 @@ function ProductsContent() {
     return 0;
   });
 
-  const getCategoryCount = (cat: string) => {
-    if (cat === 'all') return products.length;
-    return products.filter((p) => p.category === cat).length;
+  const getCategoryCount = (catId: string) => {
+    if (catId === 'all') return products.length;
+    return products.filter((p) => p.category === catId).length;
   };
 
   return (
@@ -59,31 +62,44 @@ function ProductsContent() {
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Trang chủ</Link>
         <span className="separator">/</span>
-        <span className="current">Tất cả sản phẩm đồ da</span>
+        {category === 'all' ? (
+          <span className="current">Tất cả sản phẩm đồ da</span>
+        ) : (
+          <>
+            <Link href="/products" onClick={() => setCategory('all')}>Sản phẩm</Link>
+            <span className="separator">/</span>
+            <span className="current">{currentCatObj?.name || category}</span>
+          </>
+        )}
       </nav>
 
       <div className="page-layout">
         {/* Left Sidebar Filter */}
         <aside className="sidebar">
           <div className="sidebar-card">
-            {/* Category Filter */}
+            {/* Dynamic Category Filter from Supabase */}
             <div className="filter-group">
               <h3 className="filter-title">Danh mục sản phẩm</h3>
               <ul className="sidebar-cat-list">
-                {[
-                  { id: 'all', label: 'Tất cả sản phẩm' },
-                  { id: 'giay-tay', label: 'Giày Tây & Công Sở' },
-                  { id: 'giay-luoi', label: 'Giày Lười Da' },
-                  { id: 'dep-da', label: 'Dép Da & Sandal' },
-                  { id: 'vi-da', label: 'Ví Da Bò Nam' },
-                  { id: 'that-lung', label: 'Thắt Lưng Da' },
-                ].map((item) => (
+                {/* Tất cả */}
+                <li>
+                  <div
+                    className={`sidebar-cat-item ${category === 'all' ? 'active' : ''}`}
+                    onClick={() => setCategory('all')}
+                  >
+                    <span>Tất cả sản phẩm</span>
+                    <span className="count-badge">{products.length}</span>
+                  </div>
+                </li>
+
+                {/* Danh mục thực tế từ Supabase */}
+                {categories.map((item) => (
                   <li key={item.id}>
                     <div
                       className={`sidebar-cat-item ${category === item.id ? 'active' : ''}`}
                       onClick={() => setCategory(item.id)}
                     >
-                      <span>{item.label}</span>
+                      <span>{item.name}</span>
                       <span className="count-badge">{getCategoryCount(item.id)}</span>
                     </div>
                   </li>
@@ -137,7 +153,9 @@ function ProductsContent() {
         <section className="main-content">
           <div className="products-toolbar">
             <div>
-              <h1 className="products-page-title">Sản Phẩm Đồ Da Cao Cấp</h1>
+              <h1 className="products-page-title">
+                {category === 'all' ? 'Sản Phẩm Đồ Da Cao Cấp' : (currentCatObj?.name || 'Sản Phẩm')}
+              </h1>
               <p className="products-count">
                 Hiển thị {sorted.length} trên {products.length} sản phẩm
               </p>

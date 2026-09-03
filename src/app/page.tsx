@@ -7,7 +7,7 @@ import ProductCard from '@/components/ProductCard';
 import HomeBannerSlider from '@/components/HomeBannerSlider';
 
 export default function HomePage() {
-  const { products } = useShop();
+  const { products, categories } = useShop();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const filteredProducts = selectedCategory === 'all'
@@ -30,40 +30,18 @@ export default function HomePage() {
               Tất cả ({products.length})
             </button>
 
-            <button
-              className={`category-pill ${selectedCategory === 'giay-tay' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('giay-tay')}
-            >
-              Giày tây
-            </button>
-
-            <button
-              className={`category-pill ${selectedCategory === 'giay-luoi' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('giay-luoi')}
-            >
-              Giày lười
-            </button>
-
-            <button
-              className={`category-pill ${selectedCategory === 'dep-da' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('dep-da')}
-            >
-              Dép da & Sandal
-            </button>
-
-            <button
-              className={`category-pill ${selectedCategory === 'vi-da' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('vi-da')}
-            >
-              Ví da nam
-            </button>
-
-            <button
-              className={`category-pill ${selectedCategory === 'that-lung' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('that-lung')}
-            >
-              Thắt lưng da
-            </button>
+            {categories.map((cat) => {
+              const count = products.filter((p) => p.category === cat.id).length;
+              return (
+                <button
+                  key={cat.id}
+                  className={`category-pill ${selectedCategory === cat.id ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat.id)}
+                >
+                  {cat.name} {count > 0 ? `(${count})` : ''}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
