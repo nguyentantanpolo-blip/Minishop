@@ -105,3 +105,16 @@ export interface ToastMessage {
   message: string;
   type?: 'success' | 'info' | 'warning' | 'error';
 }
+
+export interface BannerSlide {
+  id: string;
+  title: string;
+  subtitle?: string;
+  badge?: string;
+  image: string;
+  link?: string;
+  buttonText?: string;
+  isActive: boolean;
+  order: number;
+}
+

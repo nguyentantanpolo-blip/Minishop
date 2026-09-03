@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { Product, Order, CartItem, Category, Customer, DashboardStats } from '@/types';
+import { Product, Order, CartItem, Category, Customer, DashboardStats, BannerSlide } from '@/types';
 import { useToast } from './ToastContext';
 import { api } from '@/services/api';
 
@@ -598,6 +598,53 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 'that-lung', name: 'Thắt Lưng Da', description: 'Dây nịt da bò khóa tự động cao cấp', image: '/assets/images/products/bo21-1.jpg' },
 ];
 
+export const INITIAL_BANNERS: BannerSlide[] = [
+  {
+    id: 'banner-1',
+    title: 'Đồ Da Thật Cao Cấp\nKhẳng Định Bản Lĩnh',
+    subtitle: 'Thương hiệu đồ da Tanpolo Since 1992s - Tinh hoa chế tác thủ công từ da bò nguyên tấm 100%.',
+    badge: 'BỘ SƯU TẬP MỚI 2026',
+    image: '/assets/images/products/bo5-1.jpg',
+    link: '/products',
+    buttonText: 'Khám phá bộ sưu tập',
+    isActive: true,
+    order: 1,
+  },
+  {
+    id: 'banner-2',
+    title: 'Giày Lười Quý Ông\nÊm Ái & Đẳng Cấp',
+    subtitle: 'Chất da bò sáp nhập khẩu, phom dáng chuẩn người Việt, đệm lót siêu êm cho ngày dài tự tin.',
+    badge: 'BEST SELLER',
+    image: '/assets/images/products/bo4-1.jpg',
+    link: '/products?q=giay-luoi',
+    buttonText: 'Xem giày lười da',
+    isActive: true,
+    order: 2,
+  },
+  {
+    id: 'banner-3',
+    title: 'Dép Da & Sandal Bò Thật\nThoải Mái Từng Bước Chân',
+    subtitle: 'Đế đúc PU chịu lực chống trơn trượt, quai da bò tấm dập vân hạt cao cấp bền đẹp cùng thời gian.',
+    badge: 'XU HƯỚNG MÙA HÈ',
+    image: '/assets/images/products/bo7-1.jpg',
+    link: '/products?q=dep-da',
+    buttonText: 'Mua ngay dép da',
+    isActive: true,
+    order: 3,
+  },
+  {
+    id: 'banner-4',
+    title: 'Ví Da Nam Thủ Công\nTinh Tế Từng Đường Kim',
+    subtitle: 'Ví gập nam da sáp ngựa điên tự nhiên, nhiều ngăn tiện dụng, càng dùng da càng bóng đẹp.',
+    badge: 'THỦ CÔNG TINH XẢO',
+    image: '/assets/images/products/bo14-1.jpg',
+    link: '/products?q=vi-da',
+    buttonText: 'Xem bộ sưu tập ví',
+    isActive: true,
+    order: 4,
+  },
+];
+
 export const INITIAL_CUSTOMERS: Customer[] = [
   {
     id: 'c_admin',
@@ -699,6 +746,13 @@ interface ShopContextType {
   updateCustomer: (id: string, customerData: Partial<Customer>) => Promise<void>;
   deleteCustomer: (id: string) => Promise<void>;
 
+  // Banner CRUD
+  banners: BannerSlide[];
+  addBanner: (bannerData: Omit<BannerSlide, 'id'>) => Promise<void>;
+  updateBanner: (id: string, bannerData: Partial<BannerSlide>) => Promise<void>;
+  deleteBanner: (id: string) => Promise<void>;
+  toggleBannerStatus: (id: string) => Promise<void>;
+
   formatPrice: (value: number) => string;
 }
 
@@ -709,6 +763,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
+  const [banners, setBanners] = useState<BannerSlide[]>(INITIAL_BANNERS);
   const [stats, setStats] = useState<DashboardStats | null>(null);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -791,6 +846,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(storedCustomers);
         if (Array.isArray(parsed) && parsed.length > 0) setCustomers(parsed);
       }
+
+      const storedBanners = localStorage.getItem('minishop_banners');
+      if (storedBanners) {
+        const parsed = JSON.parse(storedBanners);
+        if (Array.isArray(parsed) && parsed.length > 0) setBanners(parsed);
+      }
     } catch (e) {}
 
     setMounted(true);
@@ -823,6 +884,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     setCustomers(newCustomers);
     try {
       localStorage.setItem('minishop_customers', JSON.stringify(newCustomers));
+    } catch (e) {}
+  };
+
+  const saveBannersToStorage = (newBanners: BannerSlide[]) => {
+    setBanners(newBanners);
+    try {
+      localStorage.setItem('minishop_banners', JSON.stringify(newBanners));
     } catch (e) {}
   };
 
@@ -1138,6 +1206,39 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // =========================================================================
+  // Banner CRUD Handlers
+  // =========================================================================
+  const addBanner = async (bannerData: Omit<BannerSlide, 'id'>) => {
+    const newBanner: BannerSlide = {
+      ...bannerData,
+      id: 'banner_' + Date.now(),
+      order: bannerData.order || banners.length + 1,
+    };
+    const updated = [...banners, newBanner];
+    saveBannersToStorage(updated);
+    showToast('Đã thêm banner mới thành công!', 'success');
+  };
+
+  const updateBanner = async (id: string, bannerData: Partial<BannerSlide>) => {
+    const updated = banners.map((b) => (b.id === id ? { ...b, ...bannerData } : b));
+    saveBannersToStorage(updated);
+    showToast('Đã cập nhật banner thành công!', 'success');
+  };
+
+  const deleteBanner = async (id: string) => {
+    const updated = banners.filter((b) => b.id !== id);
+    saveBannersToStorage(updated);
+    showToast('Đã xóa banner thành công!', 'info');
+  };
+
+  const toggleBannerStatus = async (id: string) => {
+    const updated = banners.map((b) => (b.id === id ? { ...b, isActive: !b.isActive } : b));
+    saveBannersToStorage(updated);
+    const target = updated.find((b) => b.id === id);
+    showToast(target?.isActive ? 'Đã kích hoạt hiển thị banner!' : 'Đã ẩn banner!', 'info');
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -1145,6 +1246,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         categories: mounted ? categories : INITIAL_CATEGORIES,
         orders: mounted ? orders : INITIAL_ORDERS,
         customers: mounted ? customers : INITIAL_CUSTOMERS,
+        banners: mounted ? banners : INITIAL_BANNERS,
         stats,
         isLoading,
         isBackendConnected,
@@ -1164,6 +1266,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         addCustomer,
         updateCustomer,
         deleteCustomer,
+        addBanner,
+        updateBanner,
+        deleteBanner,
+        toggleBannerStatus,
         formatPrice,
       }}
     >

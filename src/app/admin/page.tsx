@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useShop } from '@/context/ShopContext';
 import { useAuth } from '@/context/AuthContext';
-import { Product, Category, Order, Customer, CartItem } from '@/types';
+import { Product, Category, Order, Customer, CartItem, BannerSlide } from '@/types';
 
 // Helper to convert selected file from user device to Base64 Data URL
 const readFileAsDataUrl = (file: File): Promise<string> => {
@@ -86,12 +86,17 @@ export default function AdminPage() {
     addCustomer,
     updateCustomer,
     deleteCustomer,
+    banners,
+    addBanner,
+    updateBanner,
+    deleteBanner,
+    toggleBannerStatus,
     formatPrice,
   } = useShop();
 
   const { user, isAdmin, loading, logout } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'categories' | 'inventory' | 'orders' | 'customers'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'categories' | 'inventory' | 'orders' | 'customers' | 'banners'>('overview');
 
   // =========================================================================
   // Product Filter & Modal State
@@ -204,6 +209,24 @@ export default function AdminPage() {
   const [custAddress, setCustAddress] = useState('');
   const [custRole, setCustRole] = useState<'customer' | 'admin' | 'staff'>('customer');
   const [custNotes, setCustNotes] = useState('');
+
+  // =========================================================================
+  // Banner Filter & Modal State
+  // =========================================================================
+  const [bannerSearch, setBannerSearch] = useState('');
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
+  const [editingBanner, setEditingBanner] = useState<BannerSlide | null>(null);
+  const [modalBannerTitle, setModalBannerTitle] = useState('');
+  const [modalBannerSubtitle, setModalBannerSubtitle] = useState('');
+  const [modalBannerBadge, setModalBannerBadge] = useState('');
+  const [modalBannerImage, setModalBannerImage] = useState('/assets/images/products/bo5-1.jpg');
+  const [modalBannerImageFileName, setModalBannerImageFileName] = useState('');
+  const [modalBannerLink, setModalBannerLink] = useState('/products');
+  const [modalBannerButtonText, setModalBannerButtonText] = useState('Khám phá ngay');
+  const [modalBannerIsActive, setModalBannerIsActive] = useState(true);
+  const [modalBannerOrder, setModalBannerOrder] = useState<number | ''>(1);
+  const [isDraggingBannerImage, setIsDraggingBannerImage] = useState(false);
+  const bannerImageInputRef = useRef<HTMLInputElement>(null);
 
   // =========================================================================
   // Image File Upload Handlers (No typing URLs)
@@ -776,6 +799,89 @@ export default function AdminPage() {
     setIsCustomerModalOpen(false);
   };
 
+  // =========================================================================
+  // Banner Handlers
+  // =========================================================================
+  const handleOpenAddBanner = () => {
+    setEditingBanner(null);
+    setModalBannerTitle('');
+    setModalBannerSubtitle('');
+    setModalBannerBadge('BỘ SƯU TẬP MỚI');
+    setModalBannerImage('/assets/images/products/bo5-1.jpg');
+    setModalBannerImageFileName('');
+    setModalBannerLink('/products');
+    setModalBannerButtonText('Khám phá ngay');
+    setModalBannerIsActive(true);
+    setModalBannerOrder(banners.length + 1);
+    setIsBannerModalOpen(true);
+  };
+
+  const handleOpenEditBanner = (b: BannerSlide) => {
+    setEditingBanner(b);
+    setModalBannerTitle(b.title);
+    setModalBannerSubtitle(b.subtitle || '');
+    setModalBannerBadge(b.badge || '');
+    setModalBannerImage(b.image);
+    setModalBannerImageFileName(b.title);
+    setModalBannerLink(b.link || '/products');
+    setModalBannerButtonText(b.buttonText || 'Khám phá ngay');
+    setModalBannerIsActive(b.isActive);
+    setModalBannerOrder(b.order || 1);
+    setIsBannerModalOpen(true);
+  };
+
+  const handleBannerImageFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    try {
+      const file = files[0];
+      const dataUrl = await readFileAsDataUrl(file);
+      setModalBannerImage(dataUrl);
+      setModalBannerImageFileName(file.name);
+    } catch (err: any) {
+      alert(err.message || 'Lỗi đọc file ảnh banner');
+    }
+  };
+
+  const handleSaveBannerForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!modalBannerTitle.trim() || !modalBannerImage) return;
+
+    if (editingBanner) {
+      await updateBanner(editingBanner.id, {
+        title: modalBannerTitle.trim(),
+        subtitle: modalBannerSubtitle.trim() || undefined,
+        badge: modalBannerBadge.trim() || undefined,
+        image: modalBannerImage,
+        link: modalBannerLink.trim() || '/products',
+        buttonText: modalBannerButtonText.trim() || 'Khám phá ngay',
+        isActive: modalBannerIsActive,
+        order: Number(modalBannerOrder) || 1,
+      });
+    } else {
+      await addBanner({
+        title: modalBannerTitle.trim(),
+        subtitle: modalBannerSubtitle.trim() || undefined,
+        badge: modalBannerBadge.trim() || undefined,
+        image: modalBannerImage,
+        link: modalBannerLink.trim() || '/products',
+        buttonText: modalBannerButtonText.trim() || 'Khám phá ngay',
+        isActive: modalBannerIsActive,
+        order: Number(modalBannerOrder) || banners.length + 1,
+      });
+    }
+    setIsBannerModalOpen(false);
+  };
+
+  const filteredBanners = banners.filter((b) => {
+    if (!bannerSearch.trim()) return true;
+    const q = bannerSearch.toLowerCase();
+    return (
+      b.title.toLowerCase().includes(q) ||
+      (b.subtitle && b.subtitle.toLowerCase().includes(q)) ||
+      (b.badge && b.badge.toLowerCase().includes(q))
+    );
+  }).sort((a, b) => (a.order || 0) - (b.order || 0));
+
   const currentViewingOrder = viewingOrder
     ? orders.find((o) => o.id === viewingOrder.id) || viewingOrder
     : null;
@@ -868,6 +974,14 @@ export default function AdminPage() {
         >
           <span><IconUsers size={14} /> Khách hàng</span>
           <span className="admin-tab-badge">{customers.length}</span>
+        </button>
+
+        <button
+          className={`admin-tab-btn ${activeTab === 'banners' ? 'active' : ''}`}
+          onClick={() => setActiveTab('banners')}
+        >
+          <span><IconImage size={14} /> Quản lý Banner</span>
+          <span className="admin-tab-badge">{banners.length}</span>
         </button>
       </div>
 
@@ -2490,8 +2604,249 @@ export default function AdminPage() {
       )}
 
       {/* =====================================================================
-          MODAL 1: ADD / EDIT PRODUCT (WITH FILE UPLOAD - NO TYPING URLS)
+          TAB 7: QUẢN LÝ BANNER SLIDER (BANNERS MANAGEMENT)
           ===================================================================== */}
+      {activeTab === 'banners' && (
+        <div>
+          {/* KPI Stat Cards for Banners */}
+          <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '24px' }}>
+            <div className="stat-card">
+              <div className="stat-icon-wrapper stat-icon-blue">
+                <IconImage size={24} />
+              </div>
+              <div>
+                <div className="stat-label">Tổng số Banner</div>
+                <div className="stat-value" style={{ color: '#2563eb' }}>
+                  {banners.length}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  Các slide trong hệ thống
+                </div>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon-wrapper stat-icon-green">
+                <IconCheckCircle size={24} />
+              </div>
+              <div>
+                <div className="stat-label">Đang hiển thị trên trang chủ</div>
+                <div className="stat-value" style={{ color: '#059669' }}>
+                  {banners.filter((b) => b.isActive).length}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  Slide đang trượt tự động
+                </div>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon-wrapper stat-icon-amber">
+                <IconClock size={24} />
+              </div>
+              <div>
+                <div className="stat-label">Đang tạm ẩn</div>
+                <div className="stat-value" style={{ color: '#f59e0b' }}>
+                  {banners.filter((b) => !b.isActive).length}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  Banner lưu kho / chờ kích hoạt
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Toolbar */}
+          <div className="admin-toolbar">
+            <div className="admin-toolbar-left">
+              <div className="admin-search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Tìm banner theo tiêu đề, huy hiệu..."
+                  value={bannerSearch}
+                  onChange={(e) => setBannerSearch(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="admin-toolbar-right">
+              <button className="btn-admin-add" onClick={handleOpenAddBanner}>
+                <span><IconPlus size={14} /> Thêm banner mới</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Banners Grid */}
+          {filteredBanners.length === 0 ? (
+            <div className="admin-table-empty">
+              <div className="admin-table-empty-icon">
+                <IconImage size={32} />
+              </div>
+              <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-dark)' }}>
+                Không tìm thấy banner nào phù hợp
+              </div>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                Hãy thử tìm kiếm với từ khóa khác hoặc tạo banner mới.
+              </p>
+              <button
+                type="button"
+                className="btn-admin-add"
+                onClick={handleOpenAddBanner}
+              >
+                <IconPlus size={14} /> Thêm banner đầu tiên
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '22px', marginBottom: '40px' }}>
+              {filteredBanners.map((b) => (
+                <div key={b.id} className="admin-banner-card">
+                  {/* Banner Image Preview */}
+                  <div className="admin-banner-preview">
+                    <img
+                      src={b.image || '/assets/images/products/bo5-1.jpg'}
+                      alt={b.title}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/assets/images/products/bo5-1.jpg';
+                      }}
+                    />
+                    <span className="banner-order-tag">
+                      Thứ tự: #{b.order || 1}
+                    </span>
+                    <span className={`banner-status-badge ${b.isActive ? 'active' : 'inactive'}`}>
+                      {b.isActive ? '● Đang hiển thị' : '○ Tạm ẩn'}
+                    </span>
+                  </div>
+
+                  {/* Banner Info */}
+                  <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {b.badge && (
+                      <span
+                        style={{
+                          alignSelf: 'flex-start',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          borderRadius: 'var(--radius-pill)',
+                          background: '#eff6ff',
+                          color: '#2563eb',
+                          border: '1px solid #bfdbfe',
+                        }}
+                      >
+                        {b.badge}
+                      </span>
+                    )}
+
+                    <h4
+                      style={{
+                        fontSize: '1rem',
+                        fontWeight: 800,
+                        color: 'var(--text-dark)',
+                        lineHeight: 1.3,
+                        margin: 0,
+                      }}
+                    >
+                      {b.title.replace(/\n/g, ' ')}
+                    </h4>
+
+                    {b.subtitle && (
+                      <p
+                        style={{
+                          fontSize: '0.8rem',
+                          color: 'var(--text-muted)',
+                          margin: 0,
+                          lineHeight: 1.4,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {b.subtitle}
+                      </p>
+                    )}
+
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 'auto', paddingTop: '8px', borderTop: '1px solid var(--border-subtle)' }}>
+                      <div>Nút: <strong>{b.buttonText || 'Khám phá ngay'}</strong></div>
+                      <div>Đích đến: <code>{b.link || '/products'}</code></div>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div style={{ display: 'flex', gap: '8px', paddingTop: '10px' }}>
+                      <button
+                        type="button"
+                        onClick={() => toggleBannerStatus(b.id)}
+                        style={{
+                          flex: 1,
+                          padding: '7px 10px',
+                          borderRadius: '8px',
+                          border: b.isActive ? '1px solid #fee2e2' : '1px solid #bbf7d0',
+                          background: b.isActive ? '#fef2f2' : '#f0fdf4',
+                          color: b.isActive ? '#ef4444' : '#15803d',
+                          fontWeight: 700,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                        }}
+                        title={b.isActive ? 'Ẩn banner này khỏi trang chủ' : 'Kích hoạt banner này lên trang chủ'}
+                      >
+                        {b.isActive ? 'Ẩn banner' : 'Bật hiển thị'}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditBanner(b)}
+                        style={{
+                          padding: '7px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-color)',
+                          background: '#ffffff',
+                          color: 'var(--text-dark)',
+                          fontWeight: 600,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <IconPencil size={13} /> Sửa
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`Bạn có chắc muốn xóa banner "${b.title.replace(/\n/g, ' ')}"?`)) {
+                            deleteBanner(b.id);
+                          }
+                        }}
+                        style={{
+                          padding: '7px 10px',
+                          borderRadius: '8px',
+                          border: '1px solid #fee2e2',
+                          background: '#fef2f2',
+                          color: '#ef4444',
+                          fontWeight: 600,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                        title="Xóa banner"
+                      >
+                        <IconTrash size={13} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className={`modal-overlay ${isProdModalOpen ? 'open' : ''}`}>
         <div className="modal-admin-card modal-admin-card--lg">
           {/* Header */}
@@ -4881,6 +5236,228 @@ export default function AdminPage() {
                 </button>
                 <button type="submit" className="btn-admin-add">
                   <IconSave size={14} /> Lưu & Cập nhật tồn kho
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          MODAL: ADD / EDIT BANNER (WITH IMAGE UPLOAD / LIVE PREVIEW)
+          ===================================================================== */}
+      {isBannerModalOpen && (
+        <div
+          className="modal-overlay open"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsBannerModalOpen(false);
+          }}
+        >
+          <div className="modal-admin-card modal-admin-card--lg" style={{ maxWidth: '640px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div className="modal-admin-header">
+              <div className="modal-admin-title-wrap">
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <IconImage size={18} color="var(--primary-color)" />
+                  {editingBanner ? 'Chỉnh sửa Banner' : 'Thêm Banner Slider Mới'}
+                </h3>
+                <p className="modal-admin-subtitle">
+                  {editingBanner
+                    ? 'Cập nhật nội dung, hình ảnh và trạng thái hiển thị của banner.'
+                    : 'Tải lên ảnh mới và thiết lập nội dung hiển thị trên trang chủ.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setIsBannerModalOpen(false)}
+                title="Đóng modal"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveBannerForm} className="modal-admin-body">
+              {/* Hidden File Input for Banner Image */}
+              <input
+                type="file"
+                ref={bannerImageInputRef}
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                style={{ display: 'none' }}
+                onChange={(e) => handleBannerImageFiles(e.target.files)}
+              />
+
+              {/* Banner Image Preview / Dropzone */}
+              <div className="form-group">
+                <label className="form-label">
+                  Hình ảnh Banner (Ưu tiên ảnh ngang tỉ lệ 16:9 hoặc 21:9) <span className="required">*</span>
+                </label>
+                <div className="image-upload-wrapper">
+                  {modalBannerImage ? (
+                    <div className="image-preview-box" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                      <div style={{ width: '100%', height: '180px', overflow: 'hidden', borderRadius: 'var(--radius-md)', background: '#0f172a' }}>
+                        <img
+                          src={modalBannerImage}
+                          alt="Banner preview"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                          {modalBannerImageFileName || 'Ảnh banner đã chọn'}
+                        </span>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            type="button"
+                            className="btn-upload-action"
+                            onClick={() => bannerImageInputRef.current?.click()}
+                          >
+                            <IconRefresh size={13} /> Thay ảnh khác
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-upload-action danger"
+                            onClick={() => {
+                              setModalBannerImage('');
+                              setModalBannerImageFileName('');
+                            }}
+                          >
+                            <IconTrash size={13} /> Xóa
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`image-dropzone ${isDraggingBannerImage ? 'dragging' : ''}`}
+                      onClick={() => bannerImageInputRef.current?.click()}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDraggingBannerImage(true);
+                      }}
+                      onDragLeave={() => setIsDraggingBannerImage(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDraggingBannerImage(false);
+                        handleBannerImageFiles(e.dataTransfer.files);
+                      }}
+                      style={{ padding: '36px 20px' }}
+                    >
+                      <div className="image-dropzone-icon"><IconUpload size={28} /></div>
+                      <div className="image-dropzone-title">Nhấp để chọn ảnh banner hoặc kéo thả vào đây</div>
+                      <div className="image-dropzone-subtitle">Hỗ trợ PNG, JPG, JPEG, WEBP (Khuyến nghị 1920x800px)</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Title & Badge */}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    Tiêu đề chính trên Banner <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    required
+                    placeholder="VD: Đồ Da Thật Cao Cấp"
+                    value={modalBannerTitle}
+                    onChange={(e) => setModalBannerTitle(e.target.value)}
+                  />
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-light)' }}>
+                    Mẹo: Có thể xuống dòng để chia 2 hàng chữ
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Huy hiệu (Badge)</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="VD: NEW, SALE 20%"
+                    value={modalBannerBadge}
+                    onChange={(e) => setModalBannerBadge(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Subtitle */}
+              <div className="form-group">
+                <label className="form-label">Phụ đề mô tả ngắn</label>
+                <textarea
+                  className="form-input"
+                  rows={2}
+                  placeholder="Mô tả chất liệu, bảo hành, nét đặc trưng của bộ sưu tập..."
+                  value={modalBannerSubtitle}
+                  onChange={(e) => setModalBannerSubtitle(e.target.value)}
+                />
+              </div>
+
+              {/* Button text & Link */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '12px' }}>
+                <div className="form-group">
+                  <label className="form-label">Chữ trên nút (CTA)</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Khám phá ngay"
+                    value={modalBannerButtonText}
+                    onChange={(e) => setModalBannerButtonText(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Đường dẫn liên kết khi nhấp</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="/products hoặc /products?q=giay-tay"
+                    value={modalBannerLink}
+                    onChange={(e) => setModalBannerLink(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Order & Active Switch */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: '#f8fafc', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Thứ tự hiển thị (#)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    className="form-input"
+                    value={modalBannerOrder}
+                    onChange={(e) => setModalBannerOrder(e.target.value === '' ? '' : Number(e.target.value))}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <label className="form-label" style={{ marginBottom: '6px' }}>Trạng thái hiển thị</label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
+                    <input
+                      type="checkbox"
+                      checked={modalBannerIsActive}
+                      onChange={(e) => setModalBannerIsActive(e.target.checked)}
+                      style={{ width: '18px', height: '18px', accentColor: '#059669', cursor: 'pointer' }}
+                    />
+                    <span style={{ color: modalBannerIsActive ? '#059669' : '#64748b' }}>
+                      {modalBannerIsActive ? 'Kích hoạt trên trang chủ' : 'Tạm ẩn banner'}
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Submit Buttons */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '14px' }}>
+                <button
+                  type="button"
+                  className="btn-admin-reset"
+                  onClick={() => setIsBannerModalOpen(false)}
+                >
+                  Hủy bỏ
+                </button>
+                <button type="submit" className="btn-admin-add">
+                  <IconSave size={14} /> {editingBanner ? 'Cập nhật Banner' : 'Lưu & Đăng Banner'}
                 </button>
               </div>
             </form>
