@@ -170,6 +170,16 @@ export const IconWarning = (p: IconProps) => (
   </Svg>
 );
 
+export const IconAlertTriangle = IconWarning;
+
+export const IconLayers = (p: IconProps) => (
+  <Svg {...p}>
+    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+    <polyline points="2 17 12 22 22 17" />
+    <polyline points="2 12 12 17 22 12" />
+  </Svg>
+);
+
 export const IconUsers = (p: IconProps) => (
   <Svg {...p}>
     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -204,6 +214,13 @@ export const IconXCircle = (p: IconProps) => (
     <circle cx="12" cy="12" r="10" />
     <path d="m15 9-6 6" />
     <path d="m9 9 6 6" />
+  </Svg>
+);
+
+export const IconX = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
   </Svg>
 );
 

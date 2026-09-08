@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useShop } from '@/context/ShopContext';
 import { useAuth } from '@/context/AuthContext';
 import { Product, Category, Order, Customer, CartItem, BannerSlide } from '@/types';
+import { OrderInvoiceModal } from '@/components/OrderInvoiceModal';
+import { CustomerModal } from '@/components/CustomerModal';
+import { InventoryAdjustModal } from '@/components/InventoryAdjustModal';
 
 // Helper to convert selected file from user device to Base64 Data URL
 const readFileAsDataUrl = (file: File): Promise<string> => {
@@ -159,6 +162,9 @@ export default function AdminPage() {
   const [editOrderNotes, setEditOrderNotes] = useState('');
   const [editOrderStatus, setEditOrderStatus] = useState<Order['status']>('pending');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isAutoPrint, setIsAutoPrint] = useState(false);
 
   const handleCopyText = (key: string, text: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -192,9 +198,6 @@ export default function AdminPage() {
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
   const [adjustingProduct, setAdjustingProduct] = useState<Product | null>(null);
   const [adjustType, setAdjustType] = useState<'add' | 'subtract' | 'set'>('add');
-  const [adjustQtyValue, setAdjustQtyValue] = useState<number | ''>(10);
-  const [adjustReason, setAdjustReason] = useState('Nhập hàng từ xưởng sản xuất');
-  const [customReason, setCustomReason] = useState('');
 
 
   // =========================================================================
@@ -203,12 +206,6 @@ export default function AdminPage() {
   const [customerSearch, setCustomerSearch] = useState('');
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
-  const [custName, setCustName] = useState('');
-  const [custEmail, setCustEmail] = useState('');
-  const [custPhone, setCustPhone] = useState('');
-  const [custAddress, setCustAddress] = useState('');
-  const [custRole, setCustRole] = useState<'customer' | 'admin' | 'staff'>('customer');
-  const [custNotes, setCustNotes] = useState('');
 
   // =========================================================================
   // Banner Filter & Modal State
@@ -560,15 +557,6 @@ export default function AdminPage() {
   const handleOpenAdjustModal = (product: Product, type: 'add' | 'subtract' | 'set' = 'add') => {
     setAdjustingProduct(product);
     setAdjustType(type);
-    setAdjustQtyValue(type === 'set' ? (product.stockQuantity !== undefined ? product.stockQuantity : 50) : 10);
-    setAdjustReason(
-      type === 'add'
-        ? 'Nhập hàng từ xưởng sản xuất'
-        : type === 'subtract'
-        ? 'Xuất hàng hỏng / lỗi tiêu hủy'
-        : 'Kiểm kê kho định kỳ'
-    );
-    setCustomReason('');
     setIsAdjustModalOpen(true);
   };
 
@@ -577,33 +565,6 @@ export default function AdminPage() {
       changeQuantity: delta,
       reason: delta > 0 ? `Tăng nhanh +${delta} SP` : `Giảm nhanh ${delta} SP`,
     });
-  };
-
-  const handleSaveAdjustStock = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!adjustingProduct || adjustQtyValue === '') return;
-
-    const val = Number(adjustQtyValue);
-    const finalReason = adjustReason === 'Khác' ? (customReason.trim() || 'Điều chỉnh kho') : adjustReason;
-
-    if (adjustType === 'set') {
-      await adjustStock(adjustingProduct.id, {
-        newQuantity: val,
-        reason: finalReason,
-      });
-    } else if (adjustType === 'add') {
-      await adjustStock(adjustingProduct.id, {
-        changeQuantity: val,
-        reason: finalReason,
-      });
-    } else if (adjustType === 'subtract') {
-      await adjustStock(adjustingProduct.id, {
-        changeQuantity: -val,
-        reason: finalReason,
-      });
-    }
-
-    setIsAdjustModalOpen(false);
   };
 
   // =========================================================================
@@ -753,8 +714,10 @@ export default function AdminPage() {
     setIsManualOrderModalOpen(false);
   };
 
-  const handlePrintOrder = (order: Order) => {
-    window.print();
+  const handlePrintOrder = (order: Order, autoPrint: boolean = false) => {
+    setInvoiceOrder(order);
+    setIsAutoPrint(autoPrint);
+    setIsInvoiceModalOpen(true);
   };
 
 
@@ -763,46 +726,20 @@ export default function AdminPage() {
   // =========================================================================
   const handleOpenAddCustomer = () => {
     setEditingCustomer(null);
-    setCustName('');
-    setCustEmail('');
-    setCustPhone('');
-    setCustAddress('');
-    setCustRole('customer');
-    setCustNotes('');
     setIsCustomerModalOpen(true);
   };
 
   const handleOpenEditCustomer = (c: Customer) => {
     setEditingCustomer(c);
-    setCustName(c.name);
-    setCustEmail(c.email || '');
-    setCustPhone(c.phone || '');
-    setCustAddress(c.address || '');
-    setCustRole(c.role || 'customer');
-    setCustNotes(c.notes || '');
     setIsCustomerModalOpen(true);
   };
 
-  const handleSaveCustomerForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!custName.trim()) return;
-
-    const payload = {
-      name: custName.trim(),
-      email: custEmail.trim() || undefined,
-      phone: custPhone.trim() || undefined,
-      address: custAddress.trim() || undefined,
-      role: custRole,
-      notes: custNotes.trim() || undefined,
-    };
-
+  const handleSaveCustomer = async (payload: Partial<Customer>) => {
     if (editingCustomer) {
-      updateCustomer(editingCustomer.id, payload);
+      await updateCustomer(editingCustomer.id, payload);
     } else {
-      addCustomer(payload);
+      await addCustomer(payload);
     }
-
-    setIsCustomerModalOpen(false);
   };
 
   // =========================================================================
@@ -2418,8 +2355,8 @@ export default function AdminPage() {
                               </button>
                               <button
                                 className="btn-action-sm"
-                                title="In hóa đơn đơn hàng"
-                                onClick={() => handlePrintOrder(order)}
+                                title="In hóa đơn đơn hàng (PDF)"
+                                onClick={() => handlePrintOrder(order, true)}
                               >
                                 <IconPrinter size={15} />
                               </button>
@@ -3682,10 +3619,27 @@ export default function AdminPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <button
                   type="button"
-                  onClick={() => handlePrintOrder(currentViewingOrder)}
+                  onClick={() => handlePrintOrder(currentViewingOrder, false)}
                   className="btn-admin-reset"
                   style={{ padding: '8px 14px', fontSize: '0.825rem' }}
-                  title="In hóa đơn đơn hàng"
+                  title="Xem trước hóa đơn chuẩn A4"
+                >
+                  <IconEye size={14} /> Xem trước HĐ
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePrintOrder(currentViewingOrder, true)}
+                  className="btn-admin-reset"
+                  style={{
+                    padding: '8px 14px',
+                    fontSize: '0.825rem',
+                    color: '#b45309',
+                    borderColor: '#fde68a',
+                    backgroundColor: '#fef3c7',
+                    fontWeight: 700,
+                  }}
+                  title="In hóa đơn đơn hàng ra máy in hoặc lưu PDF"
                 >
                   <IconPrinter size={15} /> In hóa đơn
                 </button>
@@ -3717,34 +3671,6 @@ export default function AdminPage() {
                 >
                   ×
                 </button>
-              </div>
-            </div>
-
-            {/* Print Only Header */}
-            <div
-              style={{
-                display: 'none',
-                padding: '24px 0 16px 0',
-                borderBottom: '2px solid #0f172a',
-                marginBottom: '20px',
-              }}
-              className="print-only-block"
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, letterSpacing: '0.05em' }}>
-                    TANPOLO LEATHER GOODS
-                  </h1>
-                  <p style={{ fontSize: '0.85rem', color: '#475569', margin: '4px 0 0 0' }}>
-                    Đồ Da Thủ Công Cao Cấp • Hotline: 0987.654.321
-                  </p>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <h2 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 700 }}>HÓA ĐƠN BÁN HÀNG</h2>
-                  <div style={{ fontSize: '0.85rem', marginTop: '4px' }}>
-                    Mã đơn: <strong>#{currentViewingOrder.id}</strong> | Ngày đặt: {currentViewingOrder.date}
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -4260,11 +4186,28 @@ export default function AdminPage() {
 
                       <button
                         type="button"
-                        onClick={() => handlePrintOrder(currentViewingOrder)}
+                        onClick={() => handlePrintOrder(currentViewingOrder, false)}
                         className="btn-admin-reset"
                         style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
                       >
-                        <IconPrinter size={15} /> In phiếu giao hàng / Hóa đơn
+                        <IconEye size={15} /> Xem trước hóa đơn A4
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handlePrintOrder(currentViewingOrder, true)}
+                        className="btn-admin-reset"
+                        style={{
+                          width: '100%',
+                          justifyContent: 'center',
+                          padding: '10px',
+                          color: '#b45309',
+                          borderColor: '#fde68a',
+                          backgroundColor: '#fef3c7',
+                          fontWeight: 700,
+                        }}
+                      >
+                        <IconPrinter size={15} /> In phiếu giao hàng / Hóa đơn (PDF)
                       </button>
 
                       <button
@@ -4305,10 +4248,18 @@ export default function AdminPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button
                   type="button"
-                  onClick={() => handlePrintOrder(currentViewingOrder)}
+                  onClick={() => handlePrintOrder(currentViewingOrder, false)}
                   className="btn-admin-reset"
                 >
-                  <IconPrinter size={15} /> In hóa đơn
+                  <IconEye size={15} /> Xem trước HĐ
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePrintOrder(currentViewingOrder, true)}
+                  className="btn-admin-reset"
+                  style={{ color: '#b45309', borderColor: '#fde68a', backgroundColor: '#fef3c7', fontWeight: 700 }}
+                >
+                  <IconPrinter size={15} /> In hóa đơn (PDF)
                 </button>
                 <button
                   type="button"
@@ -4964,290 +4915,31 @@ export default function AdminPage() {
 
 
       {/* =====================================================================
-          MODAL 7: ADD / EDIT CUSTOMER
+          MODAL 7: ADD / EDIT CUSTOMER (LUXURY CRM REDESIGN)
           ===================================================================== */}
-      {isCustomerModalOpen && (
-        <div className="modal-overlay open">
-          <div className="modal-admin-card" style={{ maxWidth: '520px', width: '100%' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                {editingCustomer ? (<><IconPencil size={16} /> Chỉnh Sửa Khách Hàng</>) : (<><IconUsers size={16} /> Thêm Khách Hàng Mới</>)}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setIsCustomerModalOpen(false)}
-                style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
-              >
-                ×
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveCustomerForm} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div className="form-group">
-                <label className="form-label">Họ và tên (*)</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  required
-                  placeholder="VD: Nguyễn Văn An"
-                  value={custName}
-                  onChange={(e) => setCustName(e.target.value)}
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div className="form-group">
-                  <label className="form-label">Số điện thoại</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="0912345678"
-                    value={custPhone}
-                    onChange={(e) => setCustPhone(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input
-                    type="email"
-                    className="form-input"
-                    placeholder="an.nguyen@gmail.com"
-                    value={custEmail}
-                    onChange={(e) => setCustEmail(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Địa chỉ</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="Địa chỉ giao hàng mặc định..."
-                  value={custAddress}
-                  onChange={(e) => setCustAddress(e.target.value)}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Phân quyền tài khoản</label>
-                <select
-                  className="form-input"
-                  value={custRole}
-                  onChange={(e) => setCustRole(e.target.value as any)}
-                >
-                  <option value="customer">Khách hàng (Customer)</option>
-                  <option value="staff">Nhân viên (Staff)</option>
-                  <option value="admin">Quản trị viên (Admin)</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Ghi chú quản trị</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="Khách VIP, thường mua giày size 41..."
-                  value={custNotes}
-                  onChange={(e) => setCustNotes(e.target.value)}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
-                <button
-                  type="button"
-                  className="btn-admin-reset"
-                  onClick={() => setIsCustomerModalOpen(false)}
-                >
-                  Hủy bỏ
-                </button>
-                <button type="submit" className="btn-admin-add">
-                  <IconSave size={14} /> {editingCustomer ? 'Cập nhật khách hàng' : 'Lưu khách hàng mới'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <CustomerModal
+        isOpen={isCustomerModalOpen}
+        onClose={() => setIsCustomerModalOpen(false)}
+        customer={editingCustomer}
+        orders={orders}
+        onSave={handleSaveCustomer}
+        onViewOrder={(ord) => setViewingOrder(ord)}
+      />
 
       {/* =====================================================================
-          MODAL: QUẢN LÝ / ĐIỀU CHỈNH TỒN KHO
+      {/* =====================================================================
+          MODAL: QUẢN LÝ / ĐIỀU CHỈNH TỒN KHO (LUXURY REDESIGN)
           ===================================================================== */}
-      {isAdjustModalOpen && adjustingProduct && (
-        <div className="modal-overlay open">
-          <div className="modal-admin-card" style={{ maxWidth: '520px', width: '100%' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                <IconPackage size={16} /> Điều Chỉnh Tồn Kho Sản Phẩm
-              </h2>
-              <button
-                type="button"
-                onClick={() => setIsAdjustModalOpen(false)}
-                style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Product Quick Info */}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
-              <img
-                src={adjustingProduct.image}
-                alt={adjustingProduct.name}
-                style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }}
-              />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#0f172a' }}>{adjustingProduct.name}</div>
-                <div style={{ display: 'flex', gap: '10px', fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
-                  <span>Đơn giá: <strong style={{ color: '#0f172a' }}>{adjustingProduct.price}</strong></span>
-                  <span>•</span>
-                  <span>Tồn kho hiện tại: <strong style={{ color: '#2563eb' }}>{adjustingProduct.stockQuantity !== undefined ? adjustingProduct.stockQuantity : 50} chiếc</strong></span>
-                </div>
-              </div>
-            </div>
-
-            <form onSubmit={handleSaveAdjustStock} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Mode Selection */}
-              <div>
-                <label className="form-label">Phương thức điều chỉnh (*)</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setAdjustType('add')}
-                    style={{
-                      padding: '8px',
-                      borderRadius: '8px',
-                      border: adjustType === 'add' ? '2px solid #16a34a' : '1px solid #e2e8f0',
-                      background: adjustType === 'add' ? '#f0fdf4' : '#ffffff',
-                      color: adjustType === 'add' ? '#15803d' : '#475569',
-                      fontWeight: 700,
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <IconPlus size={14} /> Nhập thêm
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setAdjustType('subtract')}
-                    style={{
-                      padding: '8px',
-                      borderRadius: '8px',
-                      border: adjustType === 'subtract' ? '2px solid #dc2626' : '1px solid #e2e8f0',
-                      background: adjustType === 'subtract' ? '#fef2f2' : '#ffffff',
-                      color: adjustType === 'subtract' ? '#dc2626' : '#475569',
-                      fontWeight: 700,
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <IconMinus size={14} /> Xuất bớt
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setAdjustType('set')}
-                    style={{
-                      padding: '8px',
-                      borderRadius: '8px',
-                      border: adjustType === 'set' ? '2px solid #2563eb' : '1px solid #e2e8f0',
-                      background: adjustType === 'set' ? '#eff6ff' : '#ffffff',
-                      color: adjustType === 'set' ? '#1d4ed8' : '#475569',
-                      fontWeight: 700,
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <IconTarget size={14} /> Đặt lại tồn
-                  </button>
-                </div>
-              </div>
-
-              {/* Quantity Input */}
-              <div className="form-group">
-                <label className="form-label">
-                  {adjustType === 'add'
-                    ? 'Số lượng nhập thêm (Chiếc) (*)'
-                    : adjustType === 'subtract'
-                    ? 'Số lượng xuất giảm (Chiếc) (*)'
-                    : 'Số lượng tồn kho mới chính xác (Chiếc) (*)'}
-                </label>
-                <input
-                  type="number"
-                  className="form-input"
-                  required
-                  min="0"
-                  value={adjustQtyValue}
-                  onChange={(e) => setAdjustQtyValue(e.target.value === '' ? '' : Number(e.target.value))}
-                />
-              </div>
-
-              {/* Calculation Preview */}
-              {(() => {
-                const current = adjustingProduct.stockQuantity !== undefined ? adjustingProduct.stockQuantity : 50;
-                const val = adjustQtyValue === '' ? 0 : Number(adjustQtyValue);
-                let finalQty = current;
-                if (adjustType === 'add') finalQty = current + val;
-                else if (adjustType === 'subtract') finalQty = Math.max(0, current - val);
-                else if (adjustType === 'set') finalQty = val;
-
-                return (
-                  <div style={{ padding: '10px 14px', borderRadius: '8px', background: '#f1f5f9', fontSize: '0.85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: '#475569' }}>Dự kiến sau điều chỉnh:</span>
-                    <span style={{ fontWeight: 800, fontSize: '0.95rem', color: finalQty === 0 ? '#dc2626' : finalQty <= 5 ? '#d97706' : '#16a34a' }}>
-                      {current} ➔ {finalQty} chiếc ({finalQty === 0 ? 'Hết hàng' : finalQty <= 5 ? 'Sắp hết' : 'Còn hàng'})
-                    </span>
-                  </div>
-                );
-              })()}
-
-              {/* Reason */}
-              <div className="form-group">
-                <label className="form-label">Lý do điều chỉnh kho (*)</label>
-                <select
-                  className="form-input"
-                  value={adjustReason}
-                  onChange={(e) => setAdjustReason(e.target.value)}
-                >
-                  <option value="Nhập hàng từ xưởng sản xuất">Nhập hàng từ xưởng sản xuất</option>
-                  <option value="Kiểm kê kho định kỳ">Kiểm kê kho định kỳ</option>
-                  <option value="Xuất hàng hỏng / lỗi tiêu hủy">Xuất hàng hỏng / lỗi tiêu hủy</option>
-                  <option value="Khách trả hàng / hoàn tồn">Khách trả hàng / hoàn tồn</option>
-                  <option value="Xuất bán buôn / chuyển kho">Xuất bán buôn / chuyển kho</option>
-                  <option value="Khác">Khác (Ghi chú tự do)</option>
-                </select>
-              </div>
-
-              {adjustReason === 'Khác' && (
-                <div className="form-group">
-                  <label className="form-label">Chi tiết lý do khác</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Ghi chú cụ thể..."
-                    value={customReason}
-                    onChange={(e) => setCustomReason(e.target.value)}
-                  />
-                </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
-                <button
-                  type="button"
-                  className="btn-admin-reset"
-                  onClick={() => setIsAdjustModalOpen(false)}
-                >
-                  Hủy bỏ
-                </button>
-                <button type="submit" className="btn-admin-add">
-                  <IconSave size={14} /> Lưu & Cập nhật tồn kho
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <InventoryAdjustModal
+        isOpen={isAdjustModalOpen}
+        onClose={() => setIsAdjustModalOpen(false)}
+        product={adjustingProduct}
+        allProducts={products}
+        initialType={adjustType}
+        onAdjust={async (prodId, payload) => {
+          await adjustStock(prodId, payload);
+        }}
+      />
 
       {/* =====================================================================
           MODAL: ADD / EDIT BANNER (WITH IMAGE UPLOAD / LIVE PREVIEW)
@@ -5470,6 +5162,19 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+
+      {/* =====================================================================
+          MODAL 6: INVOICE PREVIEW & PRINT A4 (TANPOLO LEATHER GOODS)
+          ===================================================================== */}
+      <OrderInvoiceModal
+        order={invoiceOrder}
+        isOpen={isInvoiceModalOpen}
+        autoPrint={isAutoPrint}
+        onClose={() => {
+          setIsInvoiceModalOpen(false);
+          setIsAutoPrint(false);
+        }}
+      />
     </main>
   );
 }
