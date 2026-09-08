@@ -1674,7 +1674,8 @@ export default function AdminPage() {
               <button
                 className="btn-admin-add"
                 onClick={() => {
-                  if (products[0]) handleOpenAdjustModal(products[0], 'add');
+                  const target = filteredInventory[0] || products[0];
+                  if (target) handleOpenAdjustModal(target, 'add');
                 }}
               >
                 <span><IconPackage size={14} /> Nhập kho / Điều chỉnh</span>
@@ -1694,7 +1695,7 @@ export default function AdminPage() {
                   <th>Giá trị tồn kho</th>
                   <th>Mức tồn & Trạng thái</th>
                   <th style={{ textAlign: 'center' }}>Tăng / Giảm nhanh</th>
-                  <th style={{ textAlign: 'right' }}>Thao tác</th>
+                  <th style={{ textAlign: 'right', minWidth: '175px' }}>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -1888,21 +1889,33 @@ export default function AdminPage() {
                       </td>
 
                       <td style={{ textAlign: 'right' }}>
-                        <button
-                          className="btn-action-sm"
-                          style={{
-                            padding: '4px 10px',
-                            background: '#eff6ff',
-                            color: '#2563eb',
-                            borderColor: '#bfdbfe',
-                            borderRadius: '6px',
-                            fontWeight: 600,
-                            fontSize: '0.75rem',
-                          }}
-                          onClick={() => handleOpenAdjustModal(p, 'set')}
-                        >
-                          <IconSettings size={14} /> Điều chỉnh
-                        </button>
+                        <div className="inventory-action-pill-group">
+                          <button
+                            type="button"
+                            className="btn-inventory-adjust-main"
+                            onClick={() => handleOpenAdjustModal(p, 'add')}
+                            title="Mở bảng điều chỉnh tồn kho chi tiết"
+                          >
+                            <IconPackage size={14} />
+                            <span>Điều chỉnh</span>
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-inventory-adjust-quick btn-quick-add"
+                            onClick={() => handleOpenAdjustModal(p, 'add')}
+                            title="Nhập thêm hàng vào kho (+)"
+                          >
+                            <IconPlus size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-inventory-adjust-quick btn-quick-sub"
+                            onClick={() => handleOpenAdjustModal(p, 'subtract')}
+                            title="Xuất giảm hàng khỏi kho (-)"
+                          >
+                            <IconMinus size={13} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
