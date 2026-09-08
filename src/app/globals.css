@@ -2027,20 +2027,28 @@ img {
   color: var(--text-muted);
 }
 
+.admin-container {
+  max-width: 1400px;
+}
+
 .admin-tabs {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-bottom: 24px;
   border-bottom: 2px solid var(--border-color);
-  overflow-x: auto;
+  overflow-x: visible;
+  padding-bottom: 1px;
 }
 
 .admin-tab-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  font-size: 0.925rem;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-muted);
   background: transparent;
@@ -2050,6 +2058,13 @@ img {
   transition: all var(--transition-fast);
   margin-bottom: -2px;
   white-space: nowrap;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.admin-tab-btn span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .admin-tab-btn:hover {
@@ -2069,12 +2084,13 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 8px;
-  font-size: 0.75rem;
+  padding: 1px 7px;
+  font-size: 0.72rem;
   font-weight: 700;
   border-radius: var(--radius-pill);
   background-color: var(--border-color);
   color: var(--text-dark);
+  line-height: 1.2;
 }
 
 .admin-tab-btn.active .admin-tab-badge {

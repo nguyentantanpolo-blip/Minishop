@@ -893,7 +893,7 @@ export default function AdminPage() {
     : null;
 
   return (
-    <main className="container" style={{ paddingBottom: '60px' }}>
+    <main className="container admin-container" style={{ paddingBottom: '60px' }}>
       {/* Header Bar */}
       <div className="admin-header-bar">
         <div className="admin-title-area">
@@ -934,7 +934,7 @@ export default function AdminPage() {
           className={`admin-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
           onClick={() => setActiveTab('overview')}
         >
-          <span><IconBarChart size={14} /> Tổng quan & Báo cáo</span>
+          <span><IconBarChart size={14} /> Tổng quan</span>
         </button>
 
         <button
@@ -957,7 +957,7 @@ export default function AdminPage() {
           className={`admin-tab-btn ${activeTab === 'inventory' ? 'active' : ''}`}
           onClick={() => setActiveTab('inventory')}
         >
-          <span><IconBarChart size={14} /> Quản lý tồn kho</span>
+          <span><IconBarChart size={14} /> Tồn kho</span>
           <span
             className="admin-tab-badge"
             style={lowStockProducts.length > 0 ? { background: '#f59e0b', color: '#fff' } : {}}
