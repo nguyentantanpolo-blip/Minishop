@@ -1652,9 +1652,9 @@ export default function AdminPage() {
                 onChange={(e) => setInventoryStatusFilter(e.target.value as any)}
               >
                 <option value="all">Tất cả trạng thái kho</option>
-                <option value="in_stock"><IconDot size={10} style={{ color: '#16a34a' }} /> Còn hàng dồi dào (&gt; 5 chiếc)</option>
-                <option value="low_stock"><IconDot size={10} style={{ color: '#f59e0b' }} /> Sắp hết hàng (1 - 5 chiếc)</option>
-                <option value="out_of_stock"><IconDot size={10} style={{ color: '#dc2626' }} /> Đã hết hàng (0 chiếc)</option>
+                <option value="in_stock">● Còn hàng dồi dào (&gt; 5 chiếc)</option>
+                <option value="low_stock">● Sắp hết hàng (1 - 5 chiếc)</option>
+                <option value="out_of_stock">● Đã hết hàng (0 chiếc)</option>
               </select>
 
               <select

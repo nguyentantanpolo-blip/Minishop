@@ -149,6 +149,12 @@ export default function Footer() {
             <h4 className="footer-heading">HƯỚNG DẪN</h4>
             <ul className="footer-links-group">
               <li>
+                <Link href="/gioi-thieu">Giới thiệu thương hiệu</Link>
+              </li>
+              <li>
+                <Link href="/lien-he">Liên hệ & Hỗ trợ</Link>
+              </li>
+              <li>
                 <Link href="/products">Hướng dẫn mua hàng</Link>
               </li>
               <li>

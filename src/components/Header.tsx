@@ -58,10 +58,14 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#about">Giới thiệu</Link>
+                  <Link href="/gioi-thieu" className={pathname === '/gioi-thieu' ? 'active' : ''}>
+                    Giới thiệu
+                  </Link>
                 </li>
                 <li>
-                  <Link href="/#contact">Liên hệ</Link>
+                  <Link href="/lien-he" className={pathname === '/lien-he' ? 'active' : ''}>
+                    Liên hệ
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -209,19 +213,29 @@ export default function Header() {
             </Link>
           </li>
           <li>
-            <Link href="/wishlist" onClick={() => setMobileOpen(false)}>
+            <Link href="/gioi-thieu" onClick={() => setMobileOpen(false)} className={pathname === '/gioi-thieu' ? 'active' : ''}>
+              Giới thiệu
+            </Link>
+          </li>
+          <li>
+            <Link href="/lien-he" onClick={() => setMobileOpen(false)} className={pathname === '/lien-he' ? 'active' : ''}>
+              Liên hệ
+            </Link>
+          </li>
+          <li>
+            <Link href="/wishlist" onClick={() => setMobileOpen(false)} className={pathname === '/wishlist' ? 'active' : ''}>
               Yêu thích
               {wishlistCount > 0 && <span className="wishlist-badge">{wishlistCount}</span>}
             </Link>
           </li>
           <li>
-            <Link href="/cart" onClick={() => setMobileOpen(false)}>
+            <Link href="/cart" onClick={() => setMobileOpen(false)} className={pathname === '/cart' ? 'active' : ''}>
               Giỏ hàng
               <span className="cart-badge">{cartCount}</span>
             </Link>
           </li>
           <li>
-            <Link href="/admin" onClick={() => setMobileOpen(false)}>
+            <Link href="/admin" onClick={() => setMobileOpen(false)} className={pathname === '/admin' ? 'active' : ''}>
               Quản trị hệ thống
             </Link>
           </li>
